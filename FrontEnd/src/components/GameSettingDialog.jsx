@@ -80,7 +80,7 @@ const GameSettingDialog = ({ isOpen, onClose }) => {
     }
 
     const maxPlayer = parseInt(selectedMaxPlayer.split(" ")[0]);
-    const gameTime = parseInt(selectedGameTime.split(" ")[0]); 
+    const gameTime = parseInt(selectedGameTime.split(" ")[0]);
     const mapSize = parseInt(selectedMapSize.split(" ")[0]);
 
     try {
