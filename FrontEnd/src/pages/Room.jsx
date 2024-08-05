@@ -84,13 +84,9 @@ useEffect(() => {
       )}
       <div>3. 현재 참가자 목록</div>
       <ul className="mb-8">
-        {/* {gameRoomUsers.map((user, index) => {
-          <li key={index}>{user}</li>;
-        })} */}
         {gameRoomUsers.map((user, index) => (
-          <li key={index}>{user !== null ? user : "Unknown User"}</li>
+          <li key={index}>{user ? user : "Unknown User"}</li>
         ))}
-
       </ul>
 
       <Button
