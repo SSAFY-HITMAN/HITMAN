@@ -52,7 +52,7 @@ public class GameRoom {
     this.roomName = gameRoomRequest.getName();
     this.maxPlayer = gameRoomRequest.getMaxPlayer();
     this.mapSize = gameRoomRequest.getMapSize();
-    this.gameTime = gameRoomRequest.getTime();
+    this.gameTime = gameRoomRequest.getGameTime();
   }
 
   public void setCodeNumber(String code){

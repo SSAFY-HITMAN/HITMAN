@@ -7,10 +7,10 @@ import java.util.List;
 @Data
 public class EnterMessageResponse {
     private String msgType;
-    private List<String> list;
+    private List<String> users;
 
     public EnterMessageResponse(String msgType, List<String> users) {
         this.msgType = msgType;
-        this.list = users;
+        this.users = users;
     }
 }

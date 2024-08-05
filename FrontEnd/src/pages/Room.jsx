@@ -54,6 +54,15 @@ const Room = () => {
     }
   }, [navigate, gameStatus, gameRoomId]);
 
+// =====================확인용
+
+useEffect(() => {
+  console.log("Updated gameRoomUsers:", gameRoomUsers);
+}, [gameRoomUsers]);
+
+//==================
+
+
   return (
     <div className="flex h-screen flex-col items-center justify-center bg-white">
       {isLoading ? (
@@ -75,9 +84,9 @@ const Room = () => {
       )}
       <div>3. 현재 참가자 목록</div>
       <ul className="mb-8">
-        {gameRoomUsers.map((user, index) => {
-          <li key={index}>{user.username}</li>;
-        })}
+        {gameRoomUsers.map((user, index) => (
+          <li key={index}>{user ? user : "Unknown User"}</li>
+        ))}
       </ul>
 
       <Button

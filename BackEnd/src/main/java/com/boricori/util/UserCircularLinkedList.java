@@ -29,18 +29,17 @@ public class UserCircularLinkedList extends CircularLinkedList {
     }
   }
 
-    public Node<User> getByUsername(String username) {
-      Node<User> currNode = tail.next;
-      Node<User> prevNode;
+  public Node<User> getByUsername(String username) {
+    Node<User> currNode = tail.next; // 시작 노드
 
-      for (int i = 0; i < size; i++) {
-        prevNode = currNode;
-        currNode = currNode.next;
-
-        if (currNode.data.getUsername().equals(username)) {
-          return currNode;
-        }
+    do {
+      if (currNode.data.getUsername().equals(username)) {
+        return currNode;
       }
-      return null;
-    }
+      currNode = currNode.next;
+    } while (currNode != tail.next); // 한 바퀴 다 돌면 종료
+
+    return null;
+  }
+
 }
