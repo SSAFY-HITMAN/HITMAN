@@ -33,32 +33,91 @@ export const WebSocketProvider = ({ children }) => {
   } = useContext(GameContext);
   const stompClient = useRef(null);
 
-  // connect, disconnect 함수 정의
+  // // connect, disconnect 함수 정의
+  // const connect = useCallback(() => {
+  //   if (!gameRoomId) return;
+
+  //   const socket = new WebSocket(`ws://localhost:8080/gameRoom/${gameRoomId}`);
+  //   stompClient.current = Stomp.over(socket);
+
+  //   const username = localStorage.getItem("username");
+  //   stompClient.current.connect({ username: username }, frame => {
+  //     console.log("Connected: " + frame);
+
+  //     stompClient.current.subscribe(`/topic/room/${gameRoomId}`, serverMsg => {
+  //       const msg = JSON.parse(serverMsg.body);
+  //       handleAlertMessage(msg);
+  //     });
+  //   });
+  // }, [gameRoomId]);
+
+  const reconnectInterval = 1000; // 재연결 간격 (1초)
+
   const connect = useCallback(() => {
-    if (!gameRoomId) return;
-
-    const socket = new SockJS(`${BASE_URL}/gameRoom/${gameRoomId}`);
+    // if (!gameRoomId) return;
+    if (!gameRoomId || stompClient.current) return; // 이미 연결된 상태인지 확인
+  
+    // WebSocket 연결 생성
+    const socket = new WebSocket(`ws://localhost:8080/gameRoom/${gameRoomId}`);
     stompClient.current = Stomp.over(socket);
-
+  
+    // 사용자 이름 가져오기
     const username = localStorage.getItem("username");
-    stompClient.current.connect({ username: username }, frame => {
-      console.log("Connected: " + frame);
-
-      stompClient.current.subscribe(`/topic/room/${gameRoomId}`, serverMsg => {
-        const msg = JSON.parse(serverMsg.body);
-        handleAlertMessage(msg);
-      });
-    });
+  
+    // STOMP 연결 설정
+    stompClient.current.connect(
+      { username: username },  // 헤더에 username 추가
+      frame => {
+        console.log("Connected: " + frame);
+  
+        // 메시지 구독 설정
+        stompClient.current.subscribe(`/topic/room/${gameRoomId}`, serverMsg => {
+          const msg = JSON.parse(serverMsg.body);
+          handleAlertMessage(msg);
+        });
+      },
+      // error => {
+      //   // STOMP 연결 실패 시 에러 로깅
+      //   console.error('STOMP connection error:', error);
+      // }
+      error => {
+        // STOMP 연결 실패 시 에러 로깅 및 재연결 시도
+        console.error('STOMP connection error:', error);
+        setTimeout(connect, reconnectInterval);
+      }
+    );
+    // WebSocket 연결이 닫힐 때 자동 재연결
+    socket.onclose = () => {
+      console.log('WebSocket closed, attempting to reconnect...');
+      setTimeout(connect, reconnectInterval);
+    };
   }, [gameRoomId]);
+  
+
+  
+
+
+  // const disconnect = useCallback(() => {
+  //   if (stompClient.current) {
+  //     stompClient.current.disconnect();
+  //     console.log("Disconnected");
+  //   }
+  // }, []);
 
   const disconnect = useCallback(() => {
-    if (stompClient.current) {
-      stompClient.current.disconnect();
-      console.log("Disconnected");
+    if (stompClient.current && stompClient.current.ws.readyState === WebSocket.OPEN) {
+      stompClient.current.disconnect(() => {
+        console.log("Disconnected");
+      });
     }
   }, []);
+  
+
 
   const handleAlertMessage = msg => {
+    console.log("msg")
+    console.log(msg)
+    console.log(msg.msgType)
     switch (msg.msgType) {
       case "start":
         setGameStatus(true);
@@ -144,6 +203,7 @@ export const WebSocketProvider = ({ children }) => {
         }
         break;
       case "users":
+        console.log("Updating game room users:", msg.users);
         setGameRoomUsers(msg.users);
         break;
       default:
@@ -170,13 +230,25 @@ export const WebSocketProvider = ({ children }) => {
 
   // /room, /game-play에서만 import해서 작동하도록
   // 여기 context와 Room.jsx에만 connect(), disconnect() 활용
-  useEffect(() => {
-    connect();
+  // useEffect(() => {
+  //   connect();
 
+  //   return () => {
+  //     disconnect();
+  //   };
+  // }, [connect, disconnect]);
+
+
+  useEffect(() => {
+    if (gameRoomId) {
+      connect();
+    }
+  
     return () => {
       disconnect();
     };
-  }, [connect, disconnect]);
+  }, [connect, disconnect, gameRoomId]);
+  
 
   return (
     <WebSocketContext.Provider value={{ connect, disconnect }}>

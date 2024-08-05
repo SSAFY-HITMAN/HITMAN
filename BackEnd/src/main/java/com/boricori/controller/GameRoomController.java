@@ -164,6 +164,7 @@ public class GameRoomController {
   public ResponseEntity<GameInfoResponse> enterGame(@PathVariable Long gameId, HttpServletRequest req) {
     String username = (String) req.getAttribute("username");
     User target = GameManager.catchableList.get(gameId).getByUsername(username).next.data;
+//    User target = User.builder().username("sample").build(); // 임시값
     GameRoom game = gameRoomService.findGame(gameId);
     return ResponseEntity.status(ResponseEnum.SUCCESS.getCode()).body(
         GameInfoResponse.of(game, target));
