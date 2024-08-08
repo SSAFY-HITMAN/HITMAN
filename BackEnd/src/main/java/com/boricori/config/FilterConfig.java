@@ -23,7 +23,8 @@ public class FilterConfig {
   public FilterRegistrationBean<JwtAuthenticationFilter> jwtFilter() {
     FilterRegistrationBean<JwtAuthenticationFilter> registrationBean = new FilterRegistrationBean<>();
     registrationBean.setFilter(new JwtAuthenticationFilter(jwtUtil));
-    registrationBean.addUrlPatterns("/in-game/*", "/gameroom/*"); // 필터를 적용할 URL 패턴 설정
+    registrationBean.addUrlPatterns("/gameroom/**", "/in-game/init/*", "/participants/**",
+        "/user/ranks/*", "/user/myProfile", "/user/updateProfile", "/user/profile/*"); // 필터를 적용할 URL 패턴 설정
     return registrationBean;
   }
 

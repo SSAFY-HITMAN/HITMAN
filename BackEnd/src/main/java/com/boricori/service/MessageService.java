@@ -23,16 +23,7 @@ public class MessageService {
 
 
   public void readyGame(Long gameRoomId, GameRoom gameRoom){
-    // 여기는 현재 방에 웹소켓으로 연결된 유저들에게 알림만 주면 되므로 kafka 거칠 필요 없음
-    // pub('app/start') 받아서 sub('/topic/general/roomId') 한 유저들에게 뿌려줌
-    String startJSON = String.format("{\"msgType\":\"ready\",\"gameId\":\"%d\", \"mapSize\":\"%d\", \"gameTime\":\"%d\", \"startTime\":\"%s\", \"lat\":\"%s\", \"lng\":\"%s\"}",
-        gameRoom.getId(),
-        gameRoom.getMapSize(),
-        gameRoom.getGameTime(),
-        gameRoom.getStartTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
-        gameRoom.getCenterLat(),
-        gameRoom.getCenterLng());
-    messagingTemplate.convertAndSend(String.format("/topic/room/%d", gameRoomId), startJSON);
+    messagingTemplate.convertAndSend(String.format("/topic/room/%d", gameRoomId),"{\"msgType\":\"ready\"}");
   }
 
   public void processAlertMessage(String gameId, String alertJSON) {
@@ -41,5 +32,15 @@ public class MessageService {
 
   public void startGame(Long id) {
     messagingTemplate.convertAndSend(String.format("/topic/room/%d", id), "{\"msgType\":\"start\"}");
+  }
+
+  public void changeTarget(String username, String newTarget, long gameId){
+    String jsonPayload = String.format("{\"msgType\":\"start\", \"hunter\":\"%s\", \"target\":\"%s\"}", username, newTarget);
+    messagingTemplate.convertAndSend(String.format("/topic/room/%d", gameId), jsonPayload);
+  }
+
+  public void notifyStatus(String username, long gameId) {
+    String jsonPayload = String.format("{\"msgType\":\"caught\", \"user\":\"%s\"}", username);
+    messagingTemplate.convertAndSend(String.format("/topic/room/%d", gameId), jsonPayload);
   }
 }

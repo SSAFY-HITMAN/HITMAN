@@ -4,6 +4,7 @@ import static com.boricori.entity.QUser.user;
 import static org.springframework.util.StringUtils.hasText;
 
 import com.boricori.dto.request.gameroom.PlayerInfoRequest;
+import com.boricori.entity.GameRoom;
 import com.boricori.entity.User;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -15,15 +16,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class UserRepositoryImpl {
 
-  EntityManager em;
-
-  private JPAQueryFactory queryFactory;
-
-  public UserRepositoryImpl(
-      @Autowired EntityManager em) {
-    this.em = em;
-    queryFactory = new JPAQueryFactory(em);
-  }
+    @Autowired
+    JPAQueryFactory queryFactory;
 
   public List<User> getUserList(List<PlayerInfoRequest> playerInfoList) {
     return queryFactory

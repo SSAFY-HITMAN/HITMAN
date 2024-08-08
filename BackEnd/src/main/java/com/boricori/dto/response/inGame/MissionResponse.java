@@ -18,14 +18,14 @@ public class MissionResponse {
   String target;
 
   @Schema(description = "미션 목표 영어")
-  String targetEn;
+  String alt;
 
   @Builder
-  public MissionResponse(Long missionId, int category, String target, String targetEn){
+  public MissionResponse(Long missionId, int category, String target, String alt){
     this.missionId = missionId;
     this.category = category;
     this.target = target;
-    this.targetEn = targetEn;
+    this.alt = alt;
   }
 
   public static MissionResponse of(Mission mission){
@@ -33,7 +33,7 @@ public class MissionResponse {
         .missionId(mission.getId())
         .category(mission.getCategory())
         .target(mission.getTarget())
-        .targetEn(mission.getAlt())
+        .alt(mission.getAlt())
         .build();
   }
 }

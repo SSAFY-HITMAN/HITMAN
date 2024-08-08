@@ -13,7 +13,7 @@ public class ItemResponse {
   @Schema(description = "아이템 이름")
   private String name;
 
-  @Schema(description = "미션 아이디")
+  @Schema(description = "아이템 설명")
   private String description;
 
 

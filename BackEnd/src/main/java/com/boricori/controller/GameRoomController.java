@@ -3,13 +3,11 @@ package com.boricori.controller;
 import static com.boricori.util.ResponseEnum.FAIL;
 import static com.boricori.util.ResponseEnum.SUCCESS;
 
-import com.boricori.dto.request.gameroom.EndGameRoomRequest;
+
 import com.boricori.dto.request.gameroom.GameRequest;
 import com.boricori.dto.request.gameroom.StartGameRoomRequest;
 import com.boricori.dto.response.gameroom.CreateGameRoomResponse;
 import com.boricori.dto.response.gameroom.EnterRoomResponse;
-import com.boricori.dto.response.gameroom.GameInfoResponse;
-import com.boricori.dto.response.gameroom.end.EndGameResponse;
 import com.boricori.entity.GameParticipants;
 import com.boricori.entity.GameRoom;
 import com.boricori.entity.User;
@@ -19,7 +17,6 @@ import com.boricori.service.InGameService;
 import com.boricori.service.MessageService;
 import com.boricori.service.ParticipantsService;
 import com.boricori.service.UserService;
-import com.boricori.util.ResponseEnum;
 import com.boricori.util.UserCircularLinkedList;
 import com.google.zxing.WriterException;
 import io.swagger.v3.oas.annotations.Operation;
@@ -36,7 +33,6 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -137,7 +133,7 @@ public class GameRoomController {
     int interval = gameRoom.getGameTime() * 60 / 4;
     for (int t = 1; t < 5; t++) {
       redisTemplate.opsForValue()
-          .set(String.format("%d-%d", gameRoom.getId(), t), String.valueOf(t), interval * t,
+          .set(String.format("%d-%d", gameRoom.getId(), t), String.valueOf(t), 3 + interval * t,
               TimeUnit.SECONDS);
     }
     messageService.readyGame(gameRoom.getId(), gameRoom);
@@ -159,31 +155,4 @@ public class GameRoomController {
     GameManager.catchableList.put(roomId, userCircularLinkedList);
   }
 
-  @GetMapping("{gameId}/startInfo")
-  @Operation(summary = "게임 초기 정보 요청", description = "게임이 실제 시작하기 전, 게임 정보와 타겟, 미션을 받습니다.")
-  @ApiResponses(value = {
-      @ApiResponse(responseCode = "200", description = "OK"),
-  })
-  public ResponseEntity<GameInfoResponse> enterGame(@PathVariable Long gameId,
-      HttpServletRequest req) {
-    String username = (String) req.getAttribute("username");
-    User target = GameManager.catchableList.get(gameId).getByUsername(username).next.data;
-    GameRoom game = gameRoomService.findGame(gameId);
-    return ResponseEntity.status(ResponseEnum.SUCCESS.getCode()).body(
-        GameInfoResponse.of(game, target));
-  }
-
-
-  @PatchMapping("/end")
-  @Operation(summary = "게임 종료", description = "게임 종료")
-  @ApiResponses({
-      @ApiResponse(responseCode = "200", description = "성공"),
-      @ApiResponse(responseCode = "404", description = "실패"),
-      @ApiResponse(responseCode = "500", description = "서버 오류")
-  })
-  public ResponseEntity<EndGameResponse> endGameRoom(
-      @RequestBody @Parameter(description = "게임 종료 후 데이터 전달", required = true) EndGameRoomRequest request) {
-
-    return null;
-  }
 }

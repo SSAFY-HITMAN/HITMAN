@@ -1,6 +1,7 @@
 package com.boricori.game;
 
 import com.boricori.entity.User;
+import com.boricori.util.Node;
 import com.boricori.util.UserCircularLinkedList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -16,6 +17,18 @@ public class GameManager {
       gameManager = new GameManager();
     }
     return gameManager;
+  }
+
+  public Node<User> getByUsername(long gameId, String username){
+      return catchableList.get(gameId).getByUsername(username);
+  }
+
+  public Node<User> killTarget(long gameId, String username) {
+    return catchableList.get(gameId).killTarget(username);
+  }
+
+  public boolean isLastTwo(long gameId){
+    return catchableList.get(gameId).size() < 3;
   }
 
   public void shuffleUsers(List<User> users) {
