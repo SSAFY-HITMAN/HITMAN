@@ -25,15 +25,15 @@ const CamChattingComponent = ({gameRoomId, username}) => {
   const [currentVideoDevice, setCurrentVideoDevice] = useState(undefined);
 
   useEffect(() => {
-      const handleBeforeUnload = () => {
-          leaveSession();
-      };
+    const handleBeforeUnload = () => {
+      leaveSession();
+    };
 
-      window.addEventListener('beforeunload', handleBeforeUnload);
+    window.addEventListener('beforeunload', handleBeforeUnload);
 
-      return () => {
-          window.removeEventListener('beforeunload', handleBeforeUnload);
-      };
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
   }, [session]);
 
   // const handleChangeSessionId = (e) => {
@@ -55,10 +55,9 @@ const CamChattingComponent = ({gameRoomId, username}) => {
   };
 
   const joinSession = useCallback(async () => {
-    // event.preventDefault();
-
     const OV = new OpenVidu();
 
+    console.log("joiSession")
     // 브라우저 감지 우회
     OV.isBrowserSupported = function() {
         return true; // 무조건 브라우저가 지원되는 것으로 간주
@@ -70,28 +69,30 @@ const CamChattingComponent = ({gameRoomId, username}) => {
 
     const newSession = OV.initSession();
 
-    setSession(newSession);
-
-    newSession.on('streamCreated', (event) => {
+    // 이벤트 리스너 중복 등록 방지를 위한 확인
+    if (!session) {
+      newSession.on('streamCreated', (event) => {
         const subscriber = newSession.subscribe(event.stream, undefined);
         setSubscribers((prevSubscribers) => [...prevSubscribers, subscriber]);
-        console.log("09090-0-0-0-")
-        console.log(subscribers)
+        console.log("Updated subscribers: ", subscribers);
+      });
 
-    });
-
-    newSession.on('streamDestroyed', (event) => {
+      newSession.on('streamDestroyed', (event) => {
         deleteSubscriber(event.stream.streamManager);
-    });
+      });
 
-    newSession.on('exception', (exception) => {
+      newSession.on('exception', (exception) => {
         console.warn(exception);
-    });
+      });
+
+      setSession(newSession); // session 상태를 업데이트
+    }
 
     const token = await getToken();
 
-    newSession.connect(token, { clientData: myUserName })
-    .then(async () => {
+    try {
+      await newSession.connect(token, { clientData: myUserName });
+
       const newPublisher = await OV.initPublisherAsync(undefined, {
         audioSource: undefined,
         videoSource: undefined,
@@ -103,7 +104,7 @@ const CamChattingComponent = ({gameRoomId, username}) => {
         mirror: false,
       });
 
-      newSession.publish(newPublisher);
+      await newSession.publish(newPublisher);
 
       const devices = await OV.getDevices();
       const videoDevices = devices.filter(device => device.kind === 'videoinput');
@@ -113,18 +114,23 @@ const CamChattingComponent = ({gameRoomId, username}) => {
       setCurrentVideoDevice(currentVideoDevice);
       setMainStreamManager(newPublisher);
       setPublisher(newPublisher);
-    })
-    .catch((error) => {
+
+    } catch (error) {
       console.log('There was an error connecting to the session:', error.code, error.message);
-    });
-  },  [myUserName, mySessionId]);
+    }
+  }, [myUserName, session, subscribers]);
+
   
 
   // 추가한 부분 -> 자동 입장
   useEffect(() => {
-    // 컴포넌트가 마운트 될 때 joinSession을 자동으로 호출 
-    joinSession();
-  }, []); // 빈 배열로 해야 마운트 될 때 딱 한 번만 실행됨 
+    const initSession = async () => {
+      if (!session) {
+        await joinSession();
+      }
+    }
+    initSession();
+  }, []);
 
 
   const leaveSession = useCallback(() => {
@@ -193,7 +199,7 @@ const CamChattingComponent = ({gameRoomId, username}) => {
 
 
   return (
-    <div className="container">
+    <div>
 
       {session !== undefined ? (
         <div id="session">            
