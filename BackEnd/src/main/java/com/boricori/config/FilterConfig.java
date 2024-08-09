@@ -15,7 +15,7 @@ public class FilterConfig {
 
   private final JwtUtil jwtUtil;
 
-  public FilterConfig(JwtUtil jwtUtil){
+  public FilterConfig(JwtUtil jwtUtil) {
     this.jwtUtil = jwtUtil;
   }
 
@@ -24,16 +24,17 @@ public class FilterConfig {
     FilterRegistrationBean<JwtAuthenticationFilter> registrationBean = new FilterRegistrationBean<>();
     registrationBean.setFilter(new JwtAuthenticationFilter(jwtUtil));
     registrationBean.addUrlPatterns("/gameroom/**", "/in-game/init/*", "/participants/**",
-        "/user/ranks/*", "/user/myProfile", "/user/updateProfile", "/user/profile/*"); // 필터를 적용할 URL 패턴 설정
+        "/user/ranks/*", "/user/myProfile", "/user/updateProfile",
+        "/user/profile/*"); // 필터를 적용할 URL 패턴 설정
     return registrationBean;
   }
 
   @Bean
   public CorsConfiguration corsConfiguration() {
     CorsConfiguration configuration = new CorsConfiguration();
-    configuration.setAllowedOrigins(Collections.singletonList("http://localhost:5080"));
+    configuration.setAllowedOrigins(Collections.singletonList("https://i11b205.p.ssafy.io"));
     // configuration.setAllowedOrigins(Collections.singletonList("http://localhost:3000")); // 임시
-     configuration.setAllowedMethods(Collections.singletonList("*"));
+    configuration.setAllowedMethods(Collections.singletonList("*"));
     configuration.setAllowCredentials(true);
     configuration.setAllowedHeaders(Collections.singletonList("*"));
     configuration.setExposedHeaders(Collections.singletonList("Authorization"));
