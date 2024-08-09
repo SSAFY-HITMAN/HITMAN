@@ -45,4 +45,5 @@ public class ParticipantsServiceImpl implements ParticipantsService {
   public GameRoom getPlaying(String username) {
     return participantRepositoryImpl.getPlaying(username);
   }
+
 }

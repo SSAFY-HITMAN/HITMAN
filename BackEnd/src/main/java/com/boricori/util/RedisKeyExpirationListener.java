@@ -1,6 +1,8 @@
 package com.boricori.util;
 
+import com.boricori.service.InGameService;
 import com.boricori.service.MessageService;
+import com.boricori.service.ParticipantsService;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +24,9 @@ public class RedisKeyExpirationListener implements MessageListener {
   @Autowired
   private MessageService messageService;
 
+  @Autowired
+  private InGameService inGameService;
+
   @Override
   public void onMessage(Message message, byte[] pattern) {
     String expiredKey = new String(message.getBody());
@@ -33,9 +38,16 @@ public class RedisKeyExpirationListener implements MessageListener {
       String gameRoomId = parts[0];
       String alertDegree = parts[1];
       // kafka의 topic: game-alert에 보내놓기
-      String jsonData = String.format("{'msgType':alert, 'alert-degree':%s}", alertDegree);
+      String jsonData = String.format("{\"msgType\":\"alert\", \"alertDegree\":\"%s\"}", alertDegree);
       messageService.processAlertMessage(gameRoomId, jsonData);
-    } else {
+    }
+    else if (parts.length == 3){
+      System.out.println("LEFT: " + expiredKey);
+      String username = parts[0];
+      long roomId = Long.parseLong(parts[1]);
+      inGameService.killUser(username, roomId);
+    }
+    else {
       System.err.println("Invalid key format: " + expiredKey);
     }
   }

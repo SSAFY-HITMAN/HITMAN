@@ -17,16 +17,15 @@ const Room = () => {
   const { qrCode, gameCode } = location.state || {};
 
   const { handleStartGame, isLoading, error } = useReadyGame();
-
   // 방에 접속 시 username, gameRoomId 설정 및 WebSocket 연결
   useEffect(() => {
     setGameRoomId(paramGameRoomId);
-    connect();
-  }, [paramGameRoomId, connect]);
+    // connect();
+  }, [paramGameRoomId]);
 
   // isLoading은 WebSocketContext.jsx에서 변경
   return (
-    <div className="flex h-screen flex-col items-center justify-center bg-white">
+    <div className="flex h-screen flex-col items-center justify-center">
       {isLoading ? (
         <>
           {/* 서버에서 start 웹소켓 메시지가 오기 전까지 로딩 스피너 표시 */}

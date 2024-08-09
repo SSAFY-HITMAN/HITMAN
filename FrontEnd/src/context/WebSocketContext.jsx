@@ -29,6 +29,15 @@ export const WebSocketProvider = ({ children }) => {
   const stompClient = useRef(null);
   const location = useLocation();
   const navigate = useNavigate();
+  const { endGame } = useEndGame();
+  const areaRadiusRef = useRef(null);
+  useEffect(() => {
+    areaRadiusRef.current = areaRadius
+  }, [areaRadius])
+  const gameRoomIdRef = useRef(null);
+  useEffect(() => {
+    gameRoomIdRef.current = gameRoomId;
+  }, [gameRoomId]);
 
   const MAX_RECONNECTION_ATTEMPTS = 5; // 최대 재연결 시도 횟수
   const RECONNECT_INTERVAL = 1000; // 재연결 간격 (1초)
@@ -37,16 +46,21 @@ export const WebSocketProvider = ({ children }) => {
   const [reconnectAttempts, setReconnectAttempts] = useState(0);
 
   // connect, disconnect 함수 정의
-  const connect = useCallback(() => {
+  const connect = () => {
+    // if (
+    //   !gameRoomId ||
+    //   stompClient.current ||
+    //   reconnectAttempts >= MAX_RECONNECTION_ATTEMPTS
+    // )
     if (
-      !gameRoomId ||
-      stompClient.current ||
+      !gameRoomIdRef.current ||
+      (stompClient.current && stompClient.current.ws.readyState === WebSocket.OPEN) ||
       reconnectAttempts >= MAX_RECONNECTION_ATTEMPTS
     )
       return; // 이미 연결된 상태인지 확인
 
     // WebSocket 연결 생성
-    const socket = new WebSocket(`${WS_BASE_URL}/gameRoom/${gameRoomId}`);
+    const socket = new WebSocket(`${WS_BASE_URL}/gameRoom/${gameRoomIdRef.current}`);
     stompClient.current = Stomp.over(socket);
 
     // 사용자 이름 가져오기
@@ -61,7 +75,7 @@ export const WebSocketProvider = ({ children }) => {
 
         // 메시지 구독 설정
         stompClient.current.subscribe(
-          `/topic/room/${gameRoomId}`,
+          `/topic/room/${gameRoomIdRef.current}`,
           serverMsg => {
             const msg = JSON.parse(serverMsg.body);
             handleAlertMessage(msg);
@@ -90,32 +104,35 @@ export const WebSocketProvider = ({ children }) => {
         alert("연결에 실패했습니다. 잠시 후 다시 시도해 주세요.");
       }
     };
-  }, [gameRoomId]);
+  };
 
-  const disconnect = useCallback(() => {
+  const disconnect = () => {
     if (
       stompClient.current &&
       stompClient.current.ws.readyState === WebSocket.OPEN
     ) {
+      console.log("disconnect 함수 호출")
       stompClient.current.disconnect(() => {
         console.log("Disconnected");
       });
+      stompClient.current = null; 
     }
-  }, []);
+  };
 
   const handleAlertMessage = msg => {
     switch (msg.msgType) {
       case "start":
-        if (gameRoomId) {
-          navigate(`/game-play/${gameRoomId}`);
+        if (gameRoomIdRef.current) {
+          navigate(`/game-play/${gameRoomIdRef.current}`);
         }
         break;
       case "alert":
+        console.log("alert-alert")
         handleAlertDegree(msg.alertDegree);
         break;
       case "end":
         setGameStatus(false);
-        useEndGame();
+        endGame();
         break;
       case "ready":
         setIsLoading(true); // room.jsx에서 모든 플레이어가 게임 시작 예정 메시지
@@ -139,15 +156,16 @@ export const WebSocketProvider = ({ children }) => {
 
   const handleAlertDegree = degree => {
     switch (degree) {
-      case 1:
-      case 2:
-      case 3:
-        const newAreaRadius = areaRadius * 0.75;
+      case "1":
+      case "2":
+      case "3":
+        const newAreaRadius = areaRadiusRef.current * 0.75;
         setAreaRadius(newAreaRadius);
         sessionStorage.setItem("areaRadius", newAreaRadius);
         break;
-      case 4:
+      case "4":
         setGameStatus(false);
+        endGame();
         break;
       default:
         break;
@@ -157,19 +175,25 @@ export const WebSocketProvider = ({ children }) => {
   // /room, /game-play에서만 import해서 작동하도록
   // 여기 context와 Room.jsx에만 connect(), disconnect() 활용
   useEffect(() => {
-    if (gameRoomId) {
+    if (gameRoomIdRef.current && !stompClient.current) {
+      console.log("wsCont")
       connect();
     }
 
     return () => {
-      if (
-        location.pathname !== `/room/${gameRoomId}` &&
-        location.pathname !== `/game-play/${gameRoomId}`
-      ) {
+      // if (
+      //   location.pathname !== `/room/${gameRoomId}` &&
+      //   location.pathname !== `/game-play/${gameRoomId}`
+      // ) {
+      //   disconnect();
+      // }
+      const { pathname } = location;
+      if (!pathname.includes(`/room/${gameRoomIdRef.current}`) && !pathname.includes(`/game-play/${gameRoomIdRef.current}`)) {
+        console.log("useEffect -> disconnect")
         disconnect();
       }
     };
-  }, [connect, disconnect, gameRoomId]);
+  }, []);
 
   return (
     <WebSocketContext.Provider value={{ connect, disconnect }}>

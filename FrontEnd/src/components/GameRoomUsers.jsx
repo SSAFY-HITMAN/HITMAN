@@ -8,7 +8,7 @@ const GameRoomUsers = () => {
     <>
       <ul className="mb-8">
         {gameRoomUsers.map((user, index) => (
-          <li key={index}>{user.username}</li>
+          <li key={index}>{user}</li>
         ))}
       </ul>
     </>
