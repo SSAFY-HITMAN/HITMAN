@@ -27,4 +27,10 @@ public interface InGameService {
   List<Mission> getMissions(GameParticipants player);
 
   List<Item> getItems(GameParticipants player);
+
+  void stopPlaying(String username, String roomId);
+
+  void rejoin(String username, String roomId);
+
+  void killUser(String username, long roomId);
 }

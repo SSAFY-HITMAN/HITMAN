@@ -33,8 +33,7 @@ public class ParticipantRepositoryImpl {
   public GameParticipants getByUsername(String username, Long roomId){
     return queryFactory
         .selectFrom(participants)
-        .join(participants.user, user)
-        .where(user.username.eq(username)
+        .where(participants.user.username.eq(username)
         .and(participants.gameRoom.id.eq(roomId)))
         .fetchOne();
   }
@@ -46,10 +45,17 @@ public class ParticipantRepositoryImpl {
         .execute();
   }
 
-  public long changeStatus(User target) {
+  public long changeStatus(User target, long gameId) {
     return queryFactory.update(participants)
         .set(participants.alive, false)
-        .where(participants.user.userId.eq(target.getUserId()))
+        .where(participants.user.userId.eq(target.getUserId()).and(participants.gameRoom.id.eq(gameId)))
+        .execute();
+  }
+
+  public long changeStatusByName(String username, long gameId) {
+    return queryFactory.update(participants)
+        .set(participants.alive, false)
+        .where(participants.user.username.eq(username).and(participants.gameRoom.id.eq(gameId)))
         .execute();
   }
 
