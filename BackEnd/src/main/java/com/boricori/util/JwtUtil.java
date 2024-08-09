@@ -4,13 +4,12 @@ import com.boricori.exception.NoSuchTokenException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
-import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -29,8 +28,9 @@ public class JwtUtil {
 
   @PostConstruct
   protected void init() {
-    secretKey = new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8),
-        Jwts.SIG.HS256.key().build().getAlgorithm());
+//    secretKey = new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8),
+//        Jwts.SIG.HS256.key().build().getAlgorithm());
+    secretKey = Keys.secretKeyFor(SignatureAlgorithm.HS256);
   }
 
   public String createAccessToken(String username) {
