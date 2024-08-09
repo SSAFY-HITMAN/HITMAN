@@ -5,6 +5,7 @@ import com.boricori.dto.response.gameroom.EnterMessageResponse;
 import com.boricori.service.GameRoomService;
 import com.boricori.service.InGameService;
 import com.boricori.service.MessageService;
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -67,7 +68,7 @@ public class MessageController {
     // username을 세션 속성에 저장
     headerAccessor.getSessionAttributes().put("username", username);
   }
-  
+
 
   @EventListener
   public void handleSessionSubscribeEvent(SessionSubscribeEvent event) {
@@ -96,9 +97,10 @@ public class MessageController {
   public void handleWebSocketDisconnectListener(SessionDisconnectEvent event) {
     StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
     String sessionId = headerAccessor.getSessionId();
-    String roomId = (String) headerAccessor.getSessionAttributes().get("roomId");
-    String status = (String) headerAccessor.getSessionAttributes().get("status");
-    String username = (String) headerAccessor.getSessionAttributes().get("username");
+    Map<String, Object> attr = headerAccessor.getSessionAttributes();
+    String roomId = (String) attr.get("roomId");
+    String status = (String) attr.get("status");
+    String username = (String) attr.get("username");
     if (status.equals("waiting")){
 //      System.out.println("roomId:" + roomId + ", sessionId: " + sessionId);
       List<String> users = gameRoomService.leaveRoom(roomId, sessionId);

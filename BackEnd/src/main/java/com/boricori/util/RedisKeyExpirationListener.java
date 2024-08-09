@@ -40,14 +40,15 @@ public class RedisKeyExpirationListener implements MessageListener {
       // kafka의 topic: game-alert에 보내놓기
       String jsonData = String.format("{\"msgType\":\"alert\", \"alertDegree\":\"%s\"}", alertDegree);
       messageService.processAlertMessage(gameRoomId, jsonData);
-    } else {
-      System.err.println("Invalid key format: " + expiredKey);
     }
-    if (parts.length == 3){
+    else if (parts.length == 3){
       System.out.println("LEFT: " + expiredKey);
       String username = parts[0];
       long roomId = Long.parseLong(parts[1]);
       inGameService.killUser(username, roomId);
+    }
+    else {
+      System.err.println("Invalid key format: " + expiredKey);
     }
   }
 }
