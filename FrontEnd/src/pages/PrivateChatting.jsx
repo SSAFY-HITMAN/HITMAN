@@ -1,251 +1,199 @@
+import React, { useEffect, useState, useRef } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
-    LocalVideoTrack,
-    RemoteParticipant,
-    RemoteTrack,
-    RemoteTrackPublication,
-    Room,
-    RoomEvent,
-  } from "livekit-client";
-  
-  import {
-    Carousel,
-    CarouselContent,
-    CarouselItem,
-    CarouselNext,
-    CarouselPrevious,
-  } from "@/components/ui/Carousel.jsx";
-  
-  import { Card } from "@/components/ui/Card";
-  import "../hooks/WebRTC/CamChatting.css";
-  import { useState } from "react";
-  import VideoComponent from "../hooks/WebRTC/VideoComponent.jsx";
-  import AudioComponent from "../hooks/WebRTC/AudioComponent.jsx";
-  import React from "react";
-  import { createRoot } from "react-dom/client";
-  
-  
-  // 로컬 환경에서는 아래 변수들을 빈 값으로 남겨두기 
-  // =====> 배포할 때, 아래의 변수들을 조건에 맞게 정확한 url을 다시 setting할 것 
-  let APPLICATION_SERVER_URL = "";
-  let LIVEKIT_URL = "";
-  
-  configureUrls();
-  
-  function configureUrls() {
-    // APPLICATION_SERVER_URL 이 설정되지 않으면, 로컬 값을 디폴트로 사용 
-    const hostname = window.location.hostname;
-  
-    if (!APPLICATION_SERVER_URL) {
-      if (window.location.hostname === "localhost") {
-        APPLICATION_SERVER_URL = "http://localhost:6080/";
-      } else {
-        APPLICATION_SERVER_URL = "https://" + window.location.hostname + ":6443/";
-      }
-    }
-  
-    // LIVEKIT_URL 이 설정되지 않으면, 로컬 값을 디폴트로 사용 
-    if (!LIVEKIT_URL) {
-      if (window.location.hostname === "localhost") {
-        LIVEKIT_URL = "ws://localhost:7880/";
-      } else {
-        LIVEKIT_URL = "wss://" + hostname + ":7443/";
-      }
+  Room,
+  RoomEvent
+} from "livekit-client";
+import { Button } from "@/components/ui/Button";
+import "../hooks/WebRTC/CamChatting.css";
+import VideoComponent from "../hooks/WebRTC/VideoComponent.jsx";
+import AudioComponent from "../hooks/WebRTC/AudioComponent.jsx";
+
+let APPLICATION_SERVER_URL = '';
+let OPENVIDU_URL = '';
+
+configureUrls();
+
+function configureUrls() {
+  const hostname = window.location.hostname;
+
+  if (!APPLICATION_SERVER_URL) {
+    if (hostname === 'localhost') {
+      APPLICATION_SERVER_URL = 'http://localhost:6080/';
+      OPENVIDU_URL = 'ws://localhost:7880/';
+    } else {
+      APPLICATION_SERVER_URL = `https://${hostname}:6443/`;
+      OPENVIDU_URL = `wss://${hostname}:7443/`;
     }
   }
-  
-  const PrivateChatting = () => {
-    const [room, setRoom] = useState(undefined);
-    const [localTrack, setLocalTrack] = useState(undefined);
-    const [remoteTracks, setRemoteTracks] = useState([]);
-  
-    const [participantName, setParticipantName] = useState(
-      "Participant" + Math.floor(Math.random() * 100)
-    );
-    const [roomName, setRoomName] = useState("Test Room");
-  
-    async function joinRoom() {
-      const room = new Room();
-      setRoom(room);
-  
-      // 방에서 이벤트가 발생했을 때 수행할 작업 지정하기 
-      room.on(RoomEvent.TrackSubscribed, (_track, publication, participant) => {
+}
+
+const PrivateChatting = () => {
+  console.log(`PrivateChatting component rendered`);
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const [users, setUsers] = useState([]);
+  const [rooms, setRooms] = useState({});
+  const [localTracks, setLocalTracks] = useState({});
+  const [remoteTracks, setRemoteTracks] = useState([]);
+  const initializedRef = useRef(false);  // 추가: 초기화 확인용 Ref
+
+  // 전달된 state 정보를 받아와서 상태에 저장하는 로직
+  useEffect(() => {
+    if (initializedRef.current) return; // 초기화된 경우 더 이상 실행되지 않도록 함
+
+    console.log("useEffect for location.state triggered");
+    if (location.state && Array.isArray(location.state)) {
+      console.log("location.state is an array:", location.state);
+      setUsers(location.state);
+      initializedRef.current = true;  // 초기화 완료 표시
+    } else {
+      console.log("location.state is not an array:", location.state);
+    }
+  }, [location.state]);
+
+  // users 배열이 변경될 때마다 각 유저가 방에 입장하는 로직
+  useEffect(() => {
+    if (users.length > 0) {
+      console.log("users array changed:", users);
+      users.forEach(user => {
+        if (!rooms[user.privateRoom]) { // 해당 방에 아직 입장하지 않았을 때만 입장
+          joinRoom(user.name, user.privateRoom);
+        }
+      });
+    }
+  }, [users]);
+
+  async function joinRoom(name, roomName) {
+    console.log(`Joining room: ${roomName} as ${name}`);
+
+    const newRoom = new Room();
+    setRooms(prevRooms => ({ ...prevRooms, [roomName]: newRoom }));
+
+    newRoom.on(RoomEvent.TrackSubscribed, 
+      (_track, publication, participant) => {
         setRemoteTracks(prev => [
           ...prev,
           {
             trackPublication: publication,
             participantIdentity: participant.identity,
+            roomName: roomName
           },
         ]);
-      });
-  
-      // 유저 입장 처리 로직 
-      room.on(RoomEvent.TrackUnsubscribed, (_track, publication) => {
-        setRemoteTracks(prev =>
-          prev.filter(
-            track => track.trackPublication.trackSid !== publication.trackSid
-          )
-        );
-      });
-  
-      try {
-        // 어플리케이션 서버로부터 방 이름과 유저 이름이 있는 토큰 받기 
-        console.log(roomName, participantName);
-        const token = await getToken(roomName, participantName);
-        console.log("Token retrieved:", token);
-  
-        // LiveKit URL 와 token 으로 방에 연결하기 
-        await room.connect(LIVEKIT_URL, token);
-        console.log("Connected to room");
-  
-        // 카메라 및 마이크 게시하기 
-        await room.localParticipant.enableCameraAndMicrophone();
-        setLocalTrack(
-          room.localParticipant.videoTrackPublications.values().next().value
-            .videoTrack
-        );
-      } catch (error) {
-        console.log("There was an error connecting to the room:", error.message);
-        await leaveRoom();
       }
+    );
+
+    newRoom.on(RoomEvent.TrackUnsubscribed, (_track, publication) => {
+      setRemoteTracks(prev =>
+        prev.filter(track => track.trackPublication.trackSid !== publication.trackSid)
+      );
+    });
+
+    try {
+      console.log(roomName, name);
+      const token = await getToken(roomName, name);
+      console.log('Token retrieved:', token);
+
+      await newRoom.connect(OPENVIDU_URL, token);
+      console.log('Connected to room');
+
+      await newRoom.localParticipant.enableCameraAndMicrophone();
+      setLocalTracks(prev => ({
+        ...prev,
+        [roomName]: newRoom.localParticipant.videoTrackPublications.values().next().value.videoTrack
+      }));
+    } catch (error) {
+      console.log("There was an error connecting to the room:", error.message);
+      await leaveRoom(name, roomName);
     }
-  
-    async function leaveRoom() {
-      // 'disconnect' 버튼을 눌러 호출하며 방 떠나기 
-      await room?.disconnect();
-  
-      // 상태 값 초기화 
-      setRoom(undefined);
-      setLocalTrack(undefined);
-      setRemoteTracks([]);
+  };
+
+  async function leaveRoom(name, roomName) {
+    console.log(`Leaving room for user: ${name}`);
+    setUsers(prevUsers => prevUsers.filter(user => user.name !== name));
+    const room = rooms[roomName];
+    await room?.disconnect();
+    
+    setRooms(prev => {
+      const { [roomName]: _, ...rest } = prev;
+      return rest;
+    });
+    setLocalTracks(prev => {
+      const { [roomName]: _, ...rest } = prev;
+      return rest;
+    });
+    setRemoteTracks(prev => prev.filter(track => track.roomName !== roomName));
+
+    navigate("/cam-chatting");
+  }
+
+  async function getToken(roomName, participantName) {
+    const response = await fetch(APPLICATION_SERVER_URL + "token", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        roomName: roomName,
+        participantName: participantName,
+      }),
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(`Failed to get token: ${error.errorMessage}`);
     }
-  
-    async function getToken(roomName, participantName) {
-      const response = await fetch(APPLICATION_SERVER_URL + "token", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          roomName: roomName,
-          participantName: participantName,
-        }),
-      });
-  
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(`Failed to get token: ${error.errorMessage}`);
-      }
-  
-      const data = await response.json();
-      return data.token;
-    }
-  
-    return (
-      <>
-        <div>CamChatting Page</div>
-        {!room ? (
-          <div id="join">
-            <div id="join-dialog">
-              <h2>Join a Video Room</h2>
-              <form
-                onSubmit={e => {
-                  joinRoom();
-                  e.preventDefault();
-                }}
-              >
-                <div>
-                  <label htmlFor="participant-name">Participant</label>
-                  <input
-                    id="participant-name"
-                    className="form-control"
-                    type="text"
-                    value={participantName}
-                    onChange={e => setParticipantName(e.target.value)}
-                    required
-                  />
-                </div>
-                <div>
-                  <label htmlFor="room-name">Room</label>
-                  <input
-                    id="room-name"
-                    className="form-control"
-                    type="text"
-                    value={roomName}
-                    onChange={e => setRoomName(e.target.value)}
-                    required
-                  />
-                </div>
-                <button
-                  className="btn btn-lg btn-success"
-                  type="submit"
-                  disabled={!roomName || !participantName}
-                >
-                  Join!
-                </button>
-              </form>
-            </div>
-          </div>
-        ) : (
-          <div id="room">
+
+    const data = await response.json();
+    return data.token;
+  }
+
+  return (
+    <>
+      <div>PrivateChatting Page</div>
+      {Object.keys(rooms).length > 0 ? (
+        Object.keys(rooms).map(roomName => (
+          <div key={roomName} id="room">
             <div id="room-header">
               <h2 id="room-title">{roomName}</h2>
-              <button
-                className="btn btn-danger"
-                id="leave-room-button"
-                onClick={leaveRoom}
-              >
-                Leave Room
-              </button>
             </div>
-            
-            <Carousel opts={{ align: "start", }} >
-              <CarouselContent> 
-                {/* 나 자신  */}
-                {/* {localTrack && (
-                  <VideoComponent                  
-                    track={localTrack}
-                    participantIdentity={participantName}
-                    local={true}
+
+            {localTracks[roomName] && (
+              <VideoComponent track={localTracks[roomName]} participantIdentity={users.map(p => p.name).join(', ')} local={true} />
+            )}
+            {remoteTracks.filter(track => track.roomName === roomName).map(remoteTrack => {
+              const { trackPublication, participantIdentity } = remoteTrack;
+              const { kind, videoTrack, audioTrack, trackSid } = trackPublication;
+
+              if (kind === "video" && videoTrack) {
+                return (
+                  <VideoComponent
+                    key={trackSid}
+                    track={videoTrack}
+                    participantIdentity={participantIdentity}
                   />
-                )} */}
-  
-                {/* 다른 참여자들 */}
-                {remoteTracks.map((remoteTrack) => {
-                  console.log(remoteTracks);
-                  const { trackPublication, participantIdentity } = remoteTrack;
-                  const { kind, videoTrack, audioTrack, trackSid } =
-                    trackPublication;
-                  console.log(`trackSid: ${trackSid}`);
-  
-                  if (kind === "video" && videoTrack) {
-                    return (
-                      <CarouselItem key={trackSid}>                    
-                        <div>
-                          <Card>
-                            <VideoComponent                 
-                              key={trackSid}
-                              track={videoTrack}
-                              participantIdentity={participantIdentity}
-                            />
-                          </Card>
-                        </div>
-                      </CarouselItem>
-                    );
-                  } else if (audioTrack) {
-                    return (
-                      <AudioComponent key={trackSid} track={audioTrack} />
-                    )
-                  }
-                })}
-              </CarouselContent>
-              <CarouselPrevious />
-              <CarouselNext />
-            </Carousel>
+                );
+              } else if (audioTrack) {
+                return (
+                  <AudioComponent
+                    key={trackSid}
+                    track={audioTrack}
+                  />
+                );
+              }
+            })}
+
+            <div className="mt-5">
+              <Button onClick={() => leaveRoom(users.find(user => user.privateRoom === roomName).name, roomName)}>Leave Room</Button>
+            </div>
           </div>
-        )}
-      </>
-    );
-  };
-  
-  export default PrivateChatting;
-  
+        ))
+      ) : (
+        <div>Loading...</div>
+      )}
+    </>
+  );
+};
+
+export default PrivateChatting;

@@ -14,7 +14,7 @@ const GameHeader = () => {
   const { targetId, missionList } = useContext(GameContext);
 
   return (
-    <div className="flex flex-col items-center justify-center bg-theme-color-1 p-4">
+    <div className="flex flex-col items-center justify-center bg-gradient-to-r from-blue-700 to-teal-700 p-4">
       <div className="mb-2 font-bold">
         당신의 타겟은 <span className="text-white">"{targetId}"</span>입니다.
       </div>

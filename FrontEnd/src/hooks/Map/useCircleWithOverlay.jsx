@@ -31,7 +31,7 @@ const useCircleWithOverlay = mapInstance => {
   const centerPointRef = useRef(null);
 
   useEffect(() => {
-    if (mapInstance) {
+    if (mapInstance && areaCenter && areaRadius) {
       const createOverlay = () => {
         const worldCoords = [
           new kakao.maps.LatLng(31, 120),
@@ -84,10 +84,11 @@ const useCircleWithOverlay = mapInstance => {
       }
 
       if (centerPointRef.current) {
-        centerPointRef.setMap(null);
+        centerPointRef.current.setMap(null);
         centerPointRef.current = null;
       }
 
+      // 오버레이 생성
       createOverlay();
     }
   }, [mapInstance, areaCenter, areaRadius]);

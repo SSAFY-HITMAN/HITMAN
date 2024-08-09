@@ -94,10 +94,10 @@ const GameSettingDialog = ({ isOpen, onClose }) => {
       if (response.status == 200) {
         navigate(`/room/${response.data.gameRoomId}`);
       } else {
-        setError("방 생성에 실패했습니다. 다시 시도해주세요.");
+        alert("방 생성에 실패했습니다. 다시 시도해주세요.");
       }
     } catch (err) {
-      setError(
+      alert(
         "서버와 통신하는 중에 문제가 발생했습니다. 나중에 다시 시도해주세요."
       );
     }
@@ -108,10 +108,10 @@ const GameSettingDialog = ({ isOpen, onClose }) => {
       <DialogTrigger asChild>
         <Button className="mb-4 bg-theme-color-2 font-bold text-cyan-600" />
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="w-auto">
         <DialogHeader>
           <DialogTitle className="mb-2">게임 설정</DialogTitle>
-          <DialogDescription>
+          <DialogDescription className="leading-relaxed">
             게임 영역의 기준점은 &quot;방장의 현재 위치&quot;입니다. <br />
             기준점으로부터 설정한 반경만큼의 원 모양으로 <br />
             게임 영역이 생성됩니다.
@@ -172,7 +172,7 @@ const GameSettingDialog = ({ isOpen, onClose }) => {
           <div className="flex justify-center gap-12">
             <Button
               onClick={handleCreateRoom}
-              className="w-30 bg-theme-color-1 font-bold"
+              className="w-40 bg-gradient-to-r from-teal-500 to-blue-500 font-bold"
             >
               방 만들기
             </Button>

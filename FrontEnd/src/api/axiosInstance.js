@@ -10,47 +10,34 @@ const axiosInstance = axios.create({
 axiosInstance.interceptors.request.use(
   config => {
     const accessToken = localStorage.getItem("accessToken");
-    const refreshToken = localStorage.getItem("refreshToken");
     if (accessToken) {
       config.headers["Authorization"] = `Bearer ${accessToken}`;
     }
-    if (refreshToken) {
-      config.headers["RefreshToken"] = `Bearer ${refreshToken}`;
-    }
     return config;
   },
-  error => {
-    return Promise.reject(error);
-  }
+  error => Promise.reject(error)
 );
 
 // 응답 인터셉터
 // - accessToken이 만료되어 토큰 재발급했다는 응답이 올 경우, refreshToken으로 재요청
 axiosInstance.interceptors.response.use(
-  response => {
-    return response;
-  },
+  response => response,
+
   async error => {
     const originalRequest = error.config;
-    if (
-      error.response.status === 401 &&
-      error.response.data.errorCode === 7000
-    ) {
-      try {
-        const response = await axiosInstance.post("/user/refresh-token", {
-          refreshToken: localStorage.getItem("refreshToken"),
-        });
-        const { newToken } = response.data;
+    if (error.response.status === 401) {
+      alert("인증이 만료되었습니다. 다시 로그인해 주세요.");
+      window.location.href = "/login";
+      return Promise.reject(error);
+    } else if (error.response.status === 7000) {
+      const newToken = error.response.headers["newToken"];
+      if (newToken) {
         localStorage.setItem("accessToken", newToken);
         originalRequest.headers["Authorization"] = `Bearer ${newToken}`;
         return axiosInstance(originalRequest);
-      } catch (tokenRefreshError) {
-        console.error("Token refresh failed:", tokenRefreshError);
-        return Promise.reject(tokenRefreshError);
       }
     }
     return Promise.reject(error);
   }
 );
-
 export default axiosInstance;

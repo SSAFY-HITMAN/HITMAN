@@ -1,4 +1,9 @@
+import { useNavigate } from "react-router-dom";
+
 const useEndGame = () => {
+  const navigate = useNavigate();
+  const gameRoomId = sessionStorage.getItem("gameRoomId");
+
   const removeSessionStorageList = [
     "gameStatus",
     "isAlive",
@@ -11,9 +16,16 @@ const useEndGame = () => {
     "gamePlayTime",
     "remainingPlayTime",
   ];
-  removeSessionStorageList.forEach(value => {
-    sessionStorage.removeItem(value);
-  });
+
+  const removeSessionStorageFunc = () => {
+    removeSessionStorageList.forEach(value => {
+      sessionStorage.removeItem(value);
+    });
+  };
+
+  removeSessionStorageFunc();
+
+  navigate(`/ending/${gameRoomId}`);
 };
 
 export default useEndGame;

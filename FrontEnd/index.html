@@ -3,20 +3,121 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RunTail</title>
+    <link rel="icon" href="/favicon.png" />
+
+    <!-- Noto Sans Korean 폰트 추가 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap"
+      rel="stylesheet"
+    />
+
     <!-- KakaoMaps API -->
     <script
       type="text/javascript"
       src="//dapi.kakao.com/v2/maps/sdk.js?appkey=%VITE_KAKAO_MAPS_API_KEY%&libraries=drawing"
     ></script>
-    <!-- end: KakaoMaps API -->
 
-    <title>RunTail</title>
-    <link rel="manifest" href="/manifest.json" />
-    <link rel="icon" href="/favicon.png" />
+    <!-- Kakao Login -->
+    <script
+      src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.2/kakao.min.js"
+      integrity="sha384-TiCUE00h649CAMonG018J2ujOgDKW/kVWlChEuu4jK2vxfAAD0eZxzCKakxg55G4"
+      crossorigin="anonymous"
+    ></script>
+    <script>
+      Kakao.init(import.meta.env.VITE_JAVASCRIPT_KEY); // SDK 초기화
+      console.log(Kakao.isInitialized());
+    </script>
   </head>
 
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
+
+    <!-- <script>
+      // 1. 카메라 권한 요청 및 사용
+      async function useCamera() {
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia({
+            video: true,
+          });
+          console.log("카메라 권한 승인 성공");
+          // 스트림을 사용하여 비디오 요소에 출력하거나 다른 처리를 할 수 있습니다.
+        } catch (error) {
+          console.error("카메라 권한 부여 거절됨:", error);
+        }
+      }
+
+      // 2. 마이크 권한 요청 및 사용
+      async function useMicrophone() {
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia({
+            audio: true,
+          });
+          console.log("마이크 권한 승인 성공 ");
+          // 스트림을 사용하여 오디오 요소에 출력하거나 다른 처리를 할 수 있습니다.
+        } catch (error) {
+          console.error("마이크 권한 부여 거절됨:", error);
+        }
+      }
+
+      // 3. GPS 권한 요청 및 사용
+      function useGPS() {
+        if ("geolocation" in navigator) {
+          navigator.geolocation.getCurrentPosition(
+            position => {
+              console.log("GPS 권한 승인 성공. -> 위치:", position);
+              // 위치 정보를 사용하여 필요한 처리를 할 수 있습니다.
+            },
+            error => {
+              console.error("GPS 권한 부여 거절됨:", error);
+            }
+          );
+        } else {
+          console.error("Geolocation is not supported by this browser.");
+        }
+      }
+
+      // 4. 푸시 알림 권한 요청 및 사용
+      async function usePushNotifications() {
+        if ("Notification" in window) {
+          const permission = await Notification.requestPermission();
+          if (permission === "granted") {
+            console.log("푸시 알림 권한 승인 성공");
+            if ("serviceWorker" in navigator) {
+              navigator.serviceWorker.ready.then(registration => {
+                registration.showNotification("테스트 알림", {
+                  body: "이것은 테스트 알림입니다.",
+                  icon: "/favicon.png",
+                });
+              });
+            }
+          } else {
+            console.error("푸시 알림 권한 부여 거절됨:", permission);
+          }
+        } else {
+          console.error("Notifications are not supported by this browser.");
+        }
+      }
+
+      // 5. 진동 사용 (권한 요청 불필요)
+      function useVibration() {
+        if ("vibrate" in navigator) {
+          navigator.vibrate(200);
+          console.log("진동 실행");
+        } else {
+          console.error("Vibration is not supported by this browser.");
+        }
+      }
+
+      // 권한 요청 함수 호출
+      useCamera();
+      useMicrophone();
+      useGPS();
+      usePushNotifications();
+      useVibration();
+    </script> -->
   </body>
 </html>

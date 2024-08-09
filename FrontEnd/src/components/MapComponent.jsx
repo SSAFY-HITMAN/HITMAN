@@ -1,23 +1,24 @@
-import React, { useContext } from "react";
-import { GameContext } from "@/context/GameContext";
+import React, { useEffect, useRef, useContext } from "react";
 import useKakaoMap from "@/hooks/Map/useKakaoMap";
-import MapCenterButton from "./MapCenterButton";
+
+import { GameContext } from "@/context/GameContext";
+import crosshair from "@/assets/material-icon/profile-icon.svg";
 
 const MapComponent = () => {
   const { myLocation } = useContext(GameContext);
-  const { mapRef, panToMyLocation } = useKakaoMap();
+  const { mapRef, goToLocation } = useKakaoMap();
+  const myLocationRef = useRef(myLocation);
+
+  useEffect(() => {
+    myLocationRef.current = myLocation;
+  }, [myLocation]);
 
   const handleOnClickCenter = () => {
-    if (myLocation) {
-      panToMyLocation(myLocation.lat, myLocation.lng);
-    }
+    const { lat, lng } = myLocationRef.current;
+    goToLocation(lat, lng);
   };
 
-  return !myLocation ? (
-    <div>
-      <h1>Loading...</h1>
-    </div>
-  ) : (
+  return (
     <div className="flex justify-center">
       <div className="w-full p-2">
         <div id="map-wrap" className="relative">
@@ -26,9 +27,13 @@ const MapComponent = () => {
             ref={mapRef}
             className="z-10 h-[45vh] w-full rounded-lg border-2 border-black"
           />
-          <div id="map-control">
-            <MapCenterButton onClick={handleOnClickCenter} />
-          </div>
+          <img
+            id="map-center-button"
+            src={crosshair}
+            alt="Crosshair"
+            onClick={handleOnClickCenter}
+            className="border-1 absolute right-[1%] top-[1%] z-20 h-12 w-12 rounded-lg border-black bg-teal-200"
+          />
         </div>
       </div>
     </div>

@@ -46,7 +46,7 @@ function configureUrls() {
   }
 }
 
-const CamChatting = () => {
+const CamChattingComponent = () => {
   const [room, setRoom] = useState(undefined);                          // 방 생성 시 사용
   const [localVideoTrack, setLocalVideoTrack] = useState(undefined);    // 화상 채팅 때 사용하는 비디오 변수 
   const [localAudioTrack, setLocalAudioTrack] = useState(undefined);    // 음소거 관련
@@ -65,8 +65,6 @@ const CamChatting = () => {
   const privateRoom = useRef("")
   const fromUser = useRef("")
   const toUser = useRef("")
-
-  const WebSocketUsers = useRef({});
 
   const remoteStream = useRef(new MediaStream());
   const navigate = useNavigate();
@@ -140,8 +138,8 @@ const CamChatting = () => {
     }
   }, [room]);
 
-  // RTCPeerConnection 객체를 설정 
-  // 연결을 설정하고 원격 스트림 처리 
+  // WebRTC의 RTCPeerConnection 객체를 설정 
+  // WebRTC 연결을 설정하고 원격 스트림 처리 
   useEffect(() => {
 
     // RTCPeerConnection 객체 생성 및 ICE 서버 (google STUN 서버 사용)
@@ -248,6 +246,8 @@ const CamChatting = () => {
           onClick={async () => {
             await handleAcceptClick(toUser.current);
 
+
+            
             if (room) {
               room.disconnect();
               const localParticipant = room.localParticipant;
@@ -326,7 +326,6 @@ const CamChatting = () => {
     const room = new Room();
     setRoom(room);
     
-    
     // 웹소켓 연결 활성화
     const ws = new WebSocket('ws://localhost:6080/ChattingServer');
     webSocket.current = ws;
@@ -399,7 +398,28 @@ const CamChatting = () => {
     } catch (error) {
       console.log('There was an error connecting to the room:', error.message);
       await leaveRoom();
-      
+      // 카메라와 마이크 끄기
+      if (room) {
+        const localParticipant = room.localParticipant;
+
+        // 비디오 트랙 끄기
+        if (localParticipant.videoTrackPublications) {
+          localParticipant.videoTrackPublications.forEach(publication => {
+            if (publication.track) {
+              publication.track.stop();
+            }
+          });
+        }
+
+        // 오디오 트랙 끄기
+        if (localParticipant.audioTrackPublications) {
+          localParticipant.audioTrackPublications.forEach(publication => {
+            if (publication.track) {
+              publication.track.stop();
+            }
+          });
+        }
+      }
     }
   }
 
@@ -408,30 +428,55 @@ const CamChatting = () => {
   async function leaveRoom() {
     console.log('leaveRoom called');
 
-    // 이벤트 리스너 제거
-    room.off(RoomEvent.TrackSubscribed, handleTrackSubscribed);
-    room.off(RoomEvent.TrackUnsubscribed, handleTrackUnsubscribed);
-    room.off(RoomEvent.ParticipantConnected, handleParticipantConnected);
-    room.off(RoomEvent.ParticipantDisconnected, handleParticipantDisconnected);
+    if (room) {
+      // 트랙이 존재하는지 확인한 후 forEach 호출
+      if (room.localParticipant && room.localParticipant.tracks) {
+        room.localParticipant.tracks.forEach(publication => {
+          if (publication.track) {
+            publication.track.stop();
+            room.localParticipant.unpublishTrack(publication.track);
+          }
+        });
+      }
 
-    await room.disconnect(); // 방 연결 끊기
-    console.log('Disconnected from room');
+      // 참가자가 존재하는지 확인한 후 forEach 호출
+      if (room.participants) {
+        room.participants.forEach(participant => {
+          if (participant.tracks) {
+            participant.tracks.forEach(publication => {
+              if (publication.track) {
+                publication.track.stop();
+                participant.unpublishTrack(publication.track);
+              }
+            });
+          }
+        });
+      }
 
-    setRoom(undefined);
-    setLocalVideoTrack(undefined);
-    setLocalAudioTrack(undefined);
-    setRemoteTracks([]);
-    setParticipants([]);
+      // 이벤트 리스너 제거
+      room.off(RoomEvent.TrackSubscribed, handleTrackSubscribed);
+      room.off(RoomEvent.TrackUnsubscribed, handleTrackUnsubscribed);
+      room.off(RoomEvent.ParticipantConnected, handleParticipantConnected);
+      room.off(RoomEvent.ParticipantDisconnected, handleParticipantDisconnected);
 
-    console.log("---- fromUser and toUser ----->")
-    console.log(`fromUser: ${fromUser.data}`)
-    console.log(`toUser: ${toUser.data}`)
+      await room.disconnect(); // 방 연결 끊기
+      console.log('Disconnected from room');
+
+      setRoom(undefined);
+      setLocalVideoTrack(undefined);
+      setLocalAudioTrack(undefined);
+      setRemoteTracks([]);
+      setParticipants([]);
+
+      console.log("---- fromUser and toUser ----->")
+      console.log(`fromUser: ${fromUser.data}`)
+      console.log(`toUser: ${toUser.data}`)
 
 
-    console.log('=== State after room disconnection: ===>');
-    console.log('Participants:', participants);
-    console.log('RemoteTracks:', remoteTracks);
-  
+      console.log('=== State after room disconnection: ===>');
+      console.log('Participants:', participants);
+      console.log('RemoteTracks:', remoteTracks);
+    }
 
     if (webSocket.current) {
       webSocket.current.close(); // WebSocket 연결 닫기
@@ -605,4 +650,4 @@ const CamChatting = () => {
   );
 };
 
-export default CamChatting;
+export default CamChattingComponent;

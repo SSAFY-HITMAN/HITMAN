@@ -36,18 +36,18 @@ const RoomNumber = () => {
 
   return (
     <div className="m-4 flex h-screen flex-col items-center justify-center">
-      <h1 className="mb-4 p-4 text-2xl font-bold">방 코드 입력</h1>
-      <p className="mb-4">방장이 알려주는 방 코드를 입력해 입장하세요.</p>
+      <h1 className="mb-4 text-3xl font-bold">방 코드 입력</h1>
+      <p className="mb-12">방장이 알려주는 방 코드를 입력해 입장하세요.</p>
       <Input
         type="text"
         placeholder="Room Code"
-        className="mb-4 w-60 p-4"
+        className="mb-4 w-60 p-4 text-black"
         value={gameCode}
         onChange={e => setGameCode(e.target.value)}
       />
       <Button
         type="submit"
-        className="mb-8 bg-theme-color-1 font-bold"
+        className="mb-8 w-20 bg-gradient-to-r from-teal-300 to-blue-800 font-bold"
         onClick={handleEnterRoom}
       >
         입장

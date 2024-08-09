@@ -4,18 +4,33 @@ import react from "@vitejs/plugin-react";
 import { VitePWA } from "vite-plugin-pwa";
 import path from "path";
 
-// PWA 설정 파일을 별도로 분리하기 위해 manifest.json 파일을 import합니다.
-import manifest from "./manifest.json";
-
 export default defineConfig({
   plugins: [
     react(),
     VitePWA({
       registerType: "autoUpdate",
-      devOptions: {
-        enabled: true,
+      manifest: {
+        start_url: "/",
+        name: "HITMAN",
+        short_name: "HITMAN",
+        background_color: "#131419",
+        theme_color: "#04479C",
+        description: "앱 설명",
+        dir: "auto",
+        display: "standalone",
+        icons: [
+          {
+            src: "/icon-192x192.png",
+            sizes: "192x192",
+            type: "image/png",
+          },
+          {
+            src: "/icon-512x512.png",
+            sizes: "512x512",
+            type: "image/png",
+          },
+        ],
       },
-      manifest,
     }),
   ],
   // SockJS 라이브러리가 Node.js 환경에서 사용되는 global 객체 참조 시 에러 수정
