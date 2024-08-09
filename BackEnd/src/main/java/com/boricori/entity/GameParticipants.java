@@ -45,6 +45,7 @@ public class GameParticipants {
   public GameParticipants(GameRoom gameRoom, User user) {
     this.gameRoom = gameRoom;
     this.user = user;
+    alive = true;
   }
 
   public void deadUser() {

@@ -1,8 +1,10 @@
 package com.boricori.repository.ParticipantRepo;
 
 import com.boricori.entity.GameParticipants;
+import com.boricori.entity.GameRoom;
 import com.boricori.entity.QGameParticipants;
 import com.boricori.entity.QUser;
+import com.boricori.entity.User;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,4 +39,25 @@ public class ParticipantRepositoryImpl {
         .fetchOne();
   }
 
+  public long addKills(User user) {
+    return queryFactory.update(participants)
+        .set(participants.kills, participants.kills.add(1))
+        .where(participants.user.userId.eq(user.getUserId()))
+        .execute();
+  }
+
+  public long changeStatus(User target) {
+    return queryFactory.update(participants)
+        .set(participants.alive, false)
+        .where(participants.user.userId.eq(target.getUserId()))
+        .execute();
+  }
+
+  public GameRoom getPlaying(String username) {
+    return queryFactory
+        .select(participants.gameRoom)
+        .from(participants)
+        .where(participants.user.username.eq(username).and(participants.gameRoom.isActivated.eq(true)))
+        .fetchOne();
+  }
 }

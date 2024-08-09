@@ -21,6 +21,6 @@ public class Mission {
 
   private int category;
   private String target;
-  private String targetEn;
+  private String alt;
 
 }

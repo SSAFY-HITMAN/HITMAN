@@ -78,6 +78,15 @@ dependencies {
     // QR Code Generation using ZXing
     implementation 'com.google.zxing:core:3.4.1'
     implementation 'com.google.zxing:javase:3.4.1'
+
+    // https://mvnrepository.com/artifact/com.google.cloud/google-cloud-vision
+    implementation group: 'com.google.cloud', name: 'google-cloud-vision', version: '3.41.0'
+//    // https://mvnrepository.com/artifact/com.google.cloud/google-cloud-storage
+//    implementation 'com.google.cloud:google-cloud-storage:2.40.1'
+    implementation platform('com.google.cloud:libraries-bom:25.4.0')
+    implementation 'com.google.cloud:google-cloud-storage'
+    implementation 'com.google.guava:guava'
+
 }
 
 dependencyManagement {

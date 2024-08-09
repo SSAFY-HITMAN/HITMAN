@@ -19,7 +19,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
   @Override
   public void registerStompEndpoints(StompEndpointRegistry registry) {
-    registry.addEndpoint("/gameroom/{rooId}");
+    registry.addEndpoint("/gameRoom/{roomId}")
+        .setAllowedOrigins("http://localhost:5080");
   }
 
 }

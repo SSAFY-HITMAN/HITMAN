@@ -12,4 +12,6 @@ public interface ParticipantsService {
 
   void addRecord(GameParticipants participants);
 
+  public GameRoom getPlaying(String username);
+
 }

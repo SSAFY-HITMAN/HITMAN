@@ -4,8 +4,10 @@ import com.boricori.dto.request.User.UserLoginRequest;
 import com.boricori.dto.request.User.UserSignupRequest;
 import com.boricori.dto.response.User.RankDtoResponse;
 import com.boricori.dto.response.User.UserLoginResponse;
+import com.boricori.entity.GameRoom;
 import com.boricori.entity.User;
 import com.boricori.repository.userRepo.UserRepository;
+import com.boricori.repository.userRepo.UserRepositoryImpl;
 import com.boricori.util.CookieUtil;
 import com.boricori.util.JwtUtil;
 import com.boricori.util.ResponseEnum;
@@ -23,6 +25,9 @@ public class UserServiceImpl implements UserService {
 
   @Autowired
   UserRepository userRepo;
+
+  @Autowired
+  UserRepositoryImpl userRepoImpl;
 
   @Autowired
   PasswordEncoder passwordEncoder;
@@ -85,4 +90,6 @@ public class UserServiceImpl implements UserService {
   public User findByUsername(String username) {
     return userRepo.findByUsername(username);
   }
+
+
 }

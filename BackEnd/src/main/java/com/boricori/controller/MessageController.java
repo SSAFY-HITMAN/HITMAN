@@ -11,6 +11,7 @@ import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.socket.messaging.SessionConnectEvent;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 import org.springframework.web.socket.messaging.SessionSubscribeEvent;
 
@@ -56,12 +57,25 @@ public class MessageController {
 
 
   @EventListener
+  public void handleSTOMPConnectEvent(SessionConnectEvent event) {
+    StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
+    String username = headerAccessor.getFirstNativeHeader("username");
+    // username을 세션 속성에 저장
+    headerAccessor.getSessionAttributes().put("username", username);
+  }
+
+
+
+  @EventListener
   public void handleSessionSubscribeEvent(SessionSubscribeEvent event) {
     StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
     String sessionId = headerAccessor.getSessionId();
     String destination = headerAccessor.getDestination();
-    String roomId = destination.split("/")[2];
-    String username = headerAccessor.getFirstNativeHeader("username");
+    String roomId = destination.split("/")[3];
+    // 세션 속성에서 username 가져오기
+    String username = (String) headerAccessor.getSessionAttributes().get("username");
+    // roomId를 세션 속성에 저장
+    headerAccessor.getSessionAttributes().put("roomId", roomId);
 
     gameRoomService.enterRoom(roomId, sessionId, username);
     List<String> users = gameRoomService.GameRoomPlayerAll(roomId);
@@ -73,10 +87,10 @@ public class MessageController {
   public void handleWebSocketDisconnectListener(SessionDisconnectEvent event) {
     StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
     String sessionId = headerAccessor.getSessionId();
-    String destination = headerAccessor.getDestination();
-    String roomId = destination.split("/")[2];
-    List<String> message = gameRoomService.leaveRoom(roomId, sessionId);
-
+    String roomId = (String) headerAccessor.getSessionAttributes().get("roomId");
+    System.out.println("roomId:" + roomId + ", sessionId: " + sessionId);
+    List<String> users = gameRoomService.leaveRoom(roomId, sessionId);
+    EnterMessageResponse message = new EnterMessageResponse("users", users);
     messagingTemplate.convertAndSend("/topic/room/"+roomId, message);
   }
 }

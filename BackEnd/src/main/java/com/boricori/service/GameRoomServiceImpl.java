@@ -101,14 +101,11 @@ public class GameRoomServiceImpl implements GameRoomService {
     try {
       acquired = lock.tryLock(10, 10, TimeUnit.SECONDS);
       if (acquired) {
-        Map<String, Object> room = (Map<String, Object>) redisObjectTemplate.opsForHash().get("roomId", roomId);
-        if (room == null) {
-          room = new HashMap<>();
-        }
-        room.put(sessionId, userName);
-        redisObjectTemplate.opsForHash().put("roomId", roomId, room);
+        // "room:" + roomId 해시에 새로운 엔트리 추가
+        redisObjectTemplate.opsForHash().put("room:" + roomId, sessionId, userName);
+        System.out.println("User added to room " + roomId + ": sessionId=" + sessionId + ", username=" + userName);
       } else {
-        log.info("{} 아직 들어갈 수 없습니다", roomId);
+        log.info("{} 방에 아직 들어갈 수 없습니다.", roomId);
       }
     } catch (InterruptedException e) {
       Thread.currentThread().interrupt();
@@ -121,23 +118,21 @@ public class GameRoomServiceImpl implements GameRoomService {
 
   @Override
   public List<String> leaveRoom(String roomId, String sessionId) {
+    String redisKey = "room:" + roomId;
+    log.info("Redis DELETE: {} -> {}", redisKey, sessionId);
     RLock lock = redissonClient.getLock("lock:room:" + roomId);
     boolean acquired = false;
     List<String> result = Collections.emptyList();
     try {
       acquired = lock.tryLock(10, 10, TimeUnit.SECONDS);
       if (acquired) {
-        Map<Object, Object> room = redisObjectTemplate.opsForHash().entries(roomId);
-        if (room != null && room.containsKey(sessionId)) {
-          redisObjectTemplate.opsForHash().delete(roomId, sessionId);
-          // room 데이터를 다시 가져옴
-          room = redisObjectTemplate.opsForHash().entries(roomId);
-          result = room.values().stream()
-                  .map(Object::toString)
-                  .collect(Collectors.toList());
-        } else {
-          log.info("유저가 떠난 방을 찾을 수 없습니다.");
-        }
+        redisObjectTemplate.opsForHash().delete(redisKey, sessionId);
+        Map<Object, Object> room = redisObjectTemplate.opsForHash().entries(redisKey);
+        result = room.values().stream()
+            .map(Object::toString)
+            .collect(Collectors.toList());
+//          room.entrySet().stream().filter(e -> !e.getKey().equals(sessionId)).map(e -> (String) e.getValue())
+//              .collect(Collectors.toList());
       } else {
         log.info("떠나야 하는 {}방을 아직 들어갈 수 없습니다", roomId);
       }
@@ -174,16 +169,17 @@ public class GameRoomServiceImpl implements GameRoomService {
     try {
       acquired = lock.tryLock(10, 10, TimeUnit.SECONDS);
       if (acquired) {
-        Map<String, String> room = (Map<String, String>) redisObjectTemplate.opsForHash().get("roomId", roomId);
-        if (room != null) {
-          result = room.values().stream()
-                  .map(Object::toString)
-                  .collect(Collectors.toList());
+        Map<Object, Object> room = redisObjectTemplate.opsForHash().entries("room:" + roomId);
+
+        // 방에 플레이어가 있으면, 그들의 사용자 이름을 리스트로 변환합니다.
+        if (!room.isEmpty()) {
+          result = room.values().stream().map(name -> (String) name)
+              .collect(Collectors.toList());
         } else {
-          log.info("getUsers를 위한 {}방에 아직 들어갈 수 없습니다", roomId);
+          log.info("방 {} 에 아직 플레이어가 없습니다", roomId);
         }
       } else {
-        log.info("getUsers를 위한 방{}에 들어갈 수 없습니다", roomId);
+        log.info("방 {} 에 들어갈 수 없습니다", roomId);
       }
     } catch (InterruptedException e) {
       Thread.currentThread().interrupt();

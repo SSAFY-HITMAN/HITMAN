@@ -3,10 +3,14 @@ package com.boricori.service;
 import com.boricori.dto.request.inGame.MissionChangeRequest;
 import com.boricori.dto.request.inGame.UseItemRequest;
 import com.boricori.entity.GameParticipants;
+import com.boricori.entity.GameRoom;
 import com.boricori.entity.InGameItems;
 import com.boricori.entity.InGameMissions;
 import com.boricori.entity.Item;
 import com.boricori.entity.Mission;
+import com.boricori.entity.User;
+import com.boricori.exception.NotAPlayerException;
+import com.boricori.repository.GameRoomRepo.GameRoomRepository;
 import com.boricori.repository.ParticipantRepo.ParticipantRepositoryImpl;
 import com.boricori.repository.inGameRepo.InGameItemsRepository;
 import com.boricori.repository.inGameRepo.InGameMissionsRepository;
@@ -15,6 +19,7 @@ import com.boricori.repository.inGameRepo.ItemRepository;
 import com.boricori.repository.inGameRepo.ItemRepositoryImpl;
 import com.boricori.repository.inGameRepo.MissionRepository;
 import com.boricori.repository.inGameRepo.MissionRepositoryImpl;
+import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -38,6 +43,8 @@ public class InGameServiceImpl implements InGameService{
   private InGameMissionsRepository inGameMissionsRepository;
   @Autowired
   private InGameItemsRepository inGameItemsRepository;
+  @Autowired
+  private GameRoomRepository gameRoomRepository;
 
   @Override
   public List<Mission> assignMissions(String username, Long gameId) {
@@ -51,20 +58,20 @@ public class InGameServiceImpl implements InGameService{
   }
 
   @Override
-  public Mission changeMission(Long gameId, String username, MissionChangeRequest request) {
-    Mission newMission =  missionRepositoryImpl.changeMission(request.getMissionId());
+  public Mission changeMission(Long gameId, String username, long missionId) {
+    Mission newMission =  missionRepositoryImpl.changeMission(missionId);
     GameParticipants player = participantRepository.getByUsername(username, gameId);
     inGameMissionsRepository.save(
         InGameMissions.builder().missionId(newMission).user(player).build()
     );
-    inGameRepositoryImpl.updateMission(request.getMissionId(), player);
+    inGameRepositoryImpl.updateMission(missionId, player);
     return newMission;
   }
 
   @Override
-  public void completeMission(Long gameId, String username, MissionChangeRequest request) {
+  public void completeMission(Long gameId, String username, long missionId) {
     GameParticipants player = participantRepository.getByUsername(username, gameId);
-    inGameRepositoryImpl.updateMission(request.getMissionId(), player);
+    inGameRepositoryImpl.updateMission(missionId, player);
   }
 
   @Override
@@ -76,8 +83,38 @@ public class InGameServiceImpl implements InGameService{
   }
 
   @Override
-  public void useItem(Long gameId, String username, UseItemRequest req) {
+  public void useItem(Long gameId, String username, long itemId) {
     GameParticipants player = participantRepository.getByUsername(username, gameId);
-    inGameRepositoryImpl.useItem(player, req.getItemId());
+    inGameRepositoryImpl.useItem(player, itemId);
+  }
+
+  @Override
+  public void catchTarget(User user, User target, long gameId) {
+    participantRepository.changeStatus(target);
+    participantRepository.addKills(user);
+    GameParticipants participant = participantRepository.getByUsername(user.getUsername(), gameId);
+    List<Item> unusedItems = inGameRepositoryImpl.getUserItems(target);
+    List<InGameItems> igItems = new ArrayList<>();
+    unusedItems.forEach(item -> igItems.add(new InGameItems(participant, item)));
+    inGameItemsRepository.saveAll(igItems);
+  }
+
+  @Override
+  public GameParticipants checkIfPlayer(String username, long gameId) {
+    GameParticipants player = participantRepository.getByUsername(username, gameId);
+    if (player == null) {
+      throw new NotAPlayerException();
+    }
+    return player;
+  }
+
+  @Override
+  public List<Mission> getMissions(GameParticipants player) {
+    return inGameRepositoryImpl.getMissions(player);
+  }
+
+  @Override
+  public List<Item> getItems(GameParticipants player) {
+    return inGameRepositoryImpl.getItems(player);
   }
 }

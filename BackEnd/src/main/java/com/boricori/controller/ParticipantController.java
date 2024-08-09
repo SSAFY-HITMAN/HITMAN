@@ -2,13 +2,16 @@ package com.boricori.controller;
 
 import com.boricori.dto.response.ParticipantResponse;
 import com.boricori.dto.response.ParticipantsResponse;
+import com.boricori.entity.GameRoom;
 import com.boricori.service.GameRoomService;
 import com.boricori.service.ParticipantsService;
 import com.boricori.service.UserService;
+import com.boricori.util.ResponseEnum;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +23,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "게임 참여자 컨트롤러", description = "게임에 참여하는 인원의 상태를 관리하는 API")
-@CrossOrigin("*")
 @RestController
 @RequestMapping("/participants")
 public class ParticipantController {
@@ -33,6 +35,19 @@ public class ParticipantController {
 
   @Autowired
   private ParticipantsService participantsService;
+
+
+  @Operation(summary = "현재 플레이중인 게임 검색", description = "유저가 플레이중이던 게임이 있으면 참가 확인")
+  @GetMapping("/playing")
+  public ResponseEntity<Long> getPlayingGame(HttpServletRequest req){
+    String username = (String) req.getAttribute("username");
+    GameRoom game = participantsService.getPlaying(username);
+    if (game == null){
+      return ResponseEntity.status(ResponseEnum.NOT_FOUND.getCode()).body(null);
+    }
+    return ResponseEntity.status(ResponseEnum.SUCCESS.getCode()).body(game.getId());
+  }
+
 
   @GetMapping("/{playId}")
   @Operation(summary = "모든 게임 참여자 상태", description = "게임에 참여 중인 모든 인원의 상태를 반환해줍니다.")

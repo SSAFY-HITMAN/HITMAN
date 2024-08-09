@@ -1,0 +1,82 @@
+pipeline {
+    agent any
+
+    environment {
+        TARGET_BRANCH = 'back-dev'  // 목표 브랜치 이름 설정
+        JENKINS_USER = 'boricori'
+        JENKINS_TOKEN = credentials('dbstjr9898')
+    }
+
+    stages {
+        stage('Cleanup Workspace') {
+            steps {
+                deleteDir() // 작업 공간 초기화
+            }
+        }
+        stage('Checkout') {
+            steps {
+                script {
+                    checkout([$class: 'GitSCM',
+                              branches: [[name: '*/back-dev']],
+                              doGenerateSubmoduleConfigurations: false,
+                              extensions: [[$class: 'CleanCheckout']],
+                              userRemoteConfigs: [[url: 'https://lab.ssafy.com/s11-webmobile1-sub2/S11P12B205.git',
+                              credentialsId: 'dbstjr9898']]  // credentialsId를 올바르게 설정
+                    ])
+                }
+            }
+        }
+        stage('Create Directories') {
+            steps {
+                script {
+                   // 필요한 디렉토리 생성
+                    sh 'mkdir -p ${WORKSPACE}/BackEnd/src/main/resources'
+                }
+            }
+        }
+        stage('Copy application.properties') {
+            steps {
+                script {
+                    withCredentials([file(credentialsId: 'application-properties', variable: 'APP_PROPERTIES')]) {
+                        // 파일 복사
+                        sh 'cp $APP_PROPERTIES BackEnd/src/main/resources/application.properties'
+                        // 복사된 파일 내용 확인
+                        sh 'cat BackEnd/src/main/resources/application.properties'
+                    }
+                }
+            }
+        }
+        stage('Build with Gradle') {
+            steps {
+                dir('BackEnd') {
+                    sh 'chmod +x ./gradlew'  // 실행 권한 추가
+                    sh './gradlew clean build --no-daemon'
+                }
+            }
+        }
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    // JAR 파일을 이용하여 Docker 이미지 빌드
+                    sh 'docker build -t backend -f BackEnd/Dockerfile BackEnd/.'
+                }
+            }
+        }
+        stage('Deploy with Docker Compose') {
+            steps {
+                script {
+                    // SSH 키를 사용하여 원격 서버에 연결하고 명령을 실행
+                    sh '''
+                        ssh -o StrictHostKeyChecking=no -i /var/jenkins_home/.ssh/I11B205T.pem ubuntu@i11b205.p.ssafy.io '
+                        cd /home/ubuntu/plog &&
+                        docker-compose stop backend && 
+                        docker-compose rm -f backend &&
+                        docker-compose up -d backend
+                        '
+                    '''
+                }
+            }
+        }
+    }
+
+}
