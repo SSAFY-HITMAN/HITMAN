@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/Button";
 
 import catchButton from "@/assets/gameplay-icon/catch-button.png";
 
+
 const GamePlay = () => {
   const { gameStatus } = useContext(GameContext);
   const { disconnect } = useContext(WebSocketContext);
@@ -58,7 +59,10 @@ const GamePlay = () => {
       {camChatting ? (
         <>
           <GameTime />
-          <CamChattingComponent />
+          <CamChattingComponent 
+            gameRoomId={paramGameRoomId}   // gameRoomId를 prop으로 전달
+            username={username}            // username을 prop으로 전달
+          />
         </>
       ) : (
         <>
