@@ -25,7 +25,7 @@ const useKakaoMap = () => {
   };
 
   useEffect(() => {
-    if (gameStatus && mapRef.current && !mapInstanceRef.current) {
+    if (mapRef.current && !mapInstanceRef.current) {
       const options = {
         center: new kakao.maps.LatLng(areaCenter.lat, areaCenter.lng),
         level: 1,

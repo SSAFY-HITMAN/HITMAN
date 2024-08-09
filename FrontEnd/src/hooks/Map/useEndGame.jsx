@@ -17,15 +17,15 @@ const useEndGame = () => {
     "remainingPlayTime",
   ];
 
-  const removeSessionStorageFunc = () => {
+  const endGame = () => {
     removeSessionStorageList.forEach(value => {
       sessionStorage.removeItem(value);
     });
+
+    navigate(`/ending/${gameRoomId}`);
   };
 
-  removeSessionStorageFunc();
-
-  navigate(`/ending/${gameRoomId}`);
+  return { endGame };
 };
 
 export default useEndGame;

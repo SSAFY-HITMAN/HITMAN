@@ -4,8 +4,8 @@ import GameHeader from "@/components/GameHeader";
 import MapComponent from "@/components/MapComponent";
 import CamChattingComponent from "@/components/CamChattingComponent";
 import { GameContext } from "@/context/GameContext";
-import { WebSocketContext } from "@/context/WebSocketContext";
 
+import useGameWebSocket from "@/hooks/WebSocket/useGameWebSocket";
 import useStartGame from "@/hooks/Map/useStartGame";
 import useSendGPS from "@/hooks/Map/useSendGPS";
 import GameTime from "@/components/GameTime";
@@ -18,15 +18,23 @@ import catchButton from "@/assets/gameplay-icon/catch-button.png";
 
 const GamePlay = () => {
   const { gameStatus } = useContext(GameContext);
-  const { disconnect } = useContext(WebSocketContext);
   const { fetch, timeUntilStart } = useStartGame();
   const { startSendingGPS } = useSendGPS();
   const { isAbleToCatchTarget, handleOnClickCatchTarget } = useCatchTarget();
   const [camChatting, setCamChatting] = useState(false); // camChatting 상태 초기화
+  const { connect, disconnect } = useGameWebSocket();
 
   const toggleCamChatting = () => {
     setCamChatting(prevState => !prevState); // camChatting 상태 토글 함수
   };
+
+  useEffect(() => {
+    connect();
+
+    return () => {
+      disconnect();
+    };
+  }, []);
 
   useEffect(() => {
     fetch();
@@ -37,13 +45,7 @@ const GamePlay = () => {
       const stopSendingGPS = startSendingGPS();
       return () => stopSendingGPS(); // 컴포넌트 unmount 시 GPS 전송 중지
     }
-  }, [gameStatus, startSendingGPS]);
-
-  useEffect(() => {
-    return () => {
-      disconnect();
-    };
-  }, [disconnect]);
+  }, [gameStatus]);
 
   return (
     <>

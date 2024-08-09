@@ -21,13 +21,15 @@ const useStartGame = () => {
       const response = await axiosInstance.get(`/in-game/init/${gameRoomId}`);
 
       if (response.status == 200) {
+        const metadata = response.data;
+
         // 반경, 중심, 타겟 닉네임 수신
-        const newAreaRadius = parseInt(response.gameInfo.mapSize, 10);
+        const newAreaRadius = parseInt(metadata.gameInfo.mapSize, 10);
         const newAreaCenter = {
-          lat: parseFloat(response.gameInfo.centerLat).toFixed(5),
-          lng: parseFloat(response.gameInfo.centerLng).toFixed(5),
+          lat: parseFloat(metadata.gameInfo.centerLat).toFixed(5),
+          lng: parseFloat(metadata.gameInfo.centerLng).toFixed(5),
         };
-        const newTargetId = response.targetName;
+        const newTargetId = metadata.targetName;
 
         // 상태 업데이트
         setAreaRadius(newAreaRadius);
@@ -39,14 +41,14 @@ const useStartGame = () => {
         sessionStorage.setItem("targetId", newTargetId); // "target" msgType에서 관리
 
         // 이하는 sessionStorage를 통해 GameTime.jsx에서 사용되는 부분
-        const newGamePlayTime = parseInt(response.gameInfo.time, 10); // 분 단위
-        const newStartTime = response.gameInfo.startTime;
+        const newGamePlayTime = parseInt(metadata.gameInfo.time, 10); // 분 단위
+        const newStartTime = metadata.gameInfo.startTime;
         sessionStorage.setItem("gamePlayTime", newGamePlayTime.toString());
         sessionStorage.setItem("startTime", newStartTime);
 
         // 미션, 아이템 목록
-        const newMissionList = response.myMissions;
-        const newItemList = response.myItems;
+        const newMissionList = metadata.myMissions;
+        const newItemList = metadata.myItems;
         setMissionList(newMissionList);
         setItemList(newItemList);
 

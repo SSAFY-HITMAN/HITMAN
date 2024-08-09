@@ -11,7 +11,7 @@ const useCatchTarget = () => {
   const handleOnClickCatchTarget = async () => {
     try {
       // 잡기 관련 로직 추가
-      const response = await axiosInstance.patch(
+      const response = await axiosInstance.post(
         `/in-game/${gameRoomId}/catchTarget`
       );
       if (response.status === 200) {

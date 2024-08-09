@@ -1,16 +1,16 @@
 import React, { useContext, useEffect } from "react";
 import { useParams, useLocation } from "react-router-dom";
-import { WebSocketContext } from "@/context/WebSocketContext";
 import { GameContext } from "@/context/GameContext";
 import GameRoomUsers from "@/components/GameRoomUsers";
 import useReadyGame from "@/hooks/Map/useReadyGame";
 import loadingSpinner from "@/assets/loading-spinner.gif";
 import { Button } from "@/components/ui/Button";
+import useRoomWebSocket from "@/hooks/WebSocket/useRoomWebSocket";
 
 const Room = () => {
   const { gameRoomId: paramGameRoomId } = useParams();
   const { setGameRoomId } = useContext(GameContext);
-  const { connect } = useContext(WebSocketContext);
+  const { connect, disconnect } = useRoomWebSocket();
 
   // GameSettingDialog 컴포넌트에서 보낸 state에서 QR과 방 코드를 추출
   const location = useLocation();
@@ -21,12 +21,19 @@ const Room = () => {
   // 방에 접속 시 username, gameRoomId 설정 및 WebSocket 연결
   useEffect(() => {
     setGameRoomId(paramGameRoomId);
-    connect();
-  }, [paramGameRoomId, connect]);
+  }, [paramGameRoomId]);
 
-  // isLoading은 WebSocketContext.jsx에서 변경
+  useEffect(() => {
+    connect();
+
+    return () => {
+      disconnect();
+    };
+  }, []);
+
+  // isLoading은 useRoomWebSocket.jsx에서 변경
   return (
-    <div className="flex h-screen flex-col items-center justify-center bg-white">
+    <div className="flex h-screen flex-col items-center justify-center">
       {isLoading ? (
         <>
           {/* 서버에서 start 웹소켓 메시지가 오기 전까지 로딩 스피너 표시 */}

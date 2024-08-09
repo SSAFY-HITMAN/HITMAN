@@ -42,10 +42,9 @@ export const GameProvider = ({ children }) => {
   const [areaCenter, setAreaCenter] = useState(() => {
     const savedCenter = sessionStorage.getItem("areaCenter");
     if (savedCenter) {
-      const parsedCenter = JSON.parse(savedCenter);
       return {
-        lat: parseFloat(parsedCenter.lat),
-        lng: parseFloat(parsedCenter.lng),
+        lat: savedCenter.lat,
+        lng: savedCenter.lng,
       };
     }
     return { lat: 0, lng: 0 };
