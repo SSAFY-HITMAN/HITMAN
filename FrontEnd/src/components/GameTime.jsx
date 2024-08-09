@@ -69,12 +69,8 @@ const GameTime = () => {
   }, [gamePlayTime, startTime]);
 
   return (
-    <div className="flex justify-center">
-      <div className="relative w-full p-2">
-        <div className="flex h-[8vh] w-[65vw] items-center justify-center rounded-lg border-2 border-black text-4xl font-bold">
-          ⏱ {formatTime(remainingPlayTime)}
-        </div>
-      </div>
+    <div className="m-4 flex h-[8vh] w-[65vw] items-center justify-center rounded-lg border-2 border-black bg-white text-4xl font-bold text-black">
+      ⏱ {formatTime(remainingPlayTime)}
     </div>
   );
 };

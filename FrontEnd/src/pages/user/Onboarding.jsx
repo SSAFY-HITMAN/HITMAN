@@ -6,21 +6,23 @@ const Onboarding = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="m-4 flex h-screen flex-col items-center justify-center">
-      <img
-        src={onboardingImage}
-        alt="onboardingImage"
-        className="w-400 h-400 mb-8"
-      />
-      <h1 className="mb-2 p-4 text-2xl font-bold">
-        <i>RunTail</i> 에<br /> 오신 것을 환영합니다
-      </h1>
-      <p className="mb-8"> 꼬리 한 번 잡아볼까요?</p>
+    <div className="flex h-screen flex-col items-center justify-center">
+      <img src={onboardingImage} alt="onboardingImage" className="w-400" />
+      <article>
+        <h1 className="mb-4 text-4xl font-bold leading-relaxed">
+          현실에서 즐기는 <br />
+          추격 서바이벌 게임 !
+        </h1>
+        <p className="mb-8 leading-relaxed opacity-80">
+          <i className="font-bold">HITMAN</i> 에 오신 것을 환영합니다. <br />
+          타겟을 잡고 최후의 1인이 되세요 !
+        </p>
+      </article>
       <Button
         onClick={() => navigate("/login")}
-        className="bg-theme-color-1 font-bold"
+        className="bg-gradient-rainbow animate-gradient-move shadow-3d w-60 bg-[length:200%_200%] font-bold"
       >
-        Get Started &gt;
+        시작하기
       </Button>
     </div>
   );

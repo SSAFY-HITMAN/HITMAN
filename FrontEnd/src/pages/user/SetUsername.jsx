@@ -43,11 +43,16 @@ const SetUsername = () => {
 
   return (
     <div className="m-4 flex h-screen flex-col items-center justify-center">
-      <h1 className="mb-4 p-4 text-2xl font-bold">닉네임 설정</h1>
-      <div className="w-60">
+      <h1 className="mb-4 text-3xl font-bold">닉네임 설정</h1>
+      <p className="mb-12 opacity-80">
+        소셜 로그인이 완료되었습니다.
+        <br />
+        닉네임만 설정하면 회원가입이 완료됩니다.
+      </p>
+      <div className="w-60 text-black">
         <Input
           type="text"
-          placeholder="username"
+          placeholder="닉네임"
           className="mb-4 p-4"
           value={username}
           onChange={e => setUsername(e.target.value)}
@@ -55,10 +60,10 @@ const SetUsername = () => {
       </div>
       <Button
         type="submit"
-        className="mb-8 bg-theme-color-2 font-bold text-cyan-600"
+        className="mb-8 w-60 bg-gradient-to-r from-purple-600 to-teal-300 font-bold"
         onClick={handleSignup}
       >
-        Sign Up &gt;
+        Sign Up
       </Button>
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent>

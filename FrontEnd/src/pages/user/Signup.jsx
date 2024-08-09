@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/Dialog";
 
 import { BASE_URL } from "@/constants/baseURL";
+import loginTitle from "@/assets/login-title.png";
 
 const Signup = () => {
   const navigate = useNavigate();
@@ -44,25 +45,25 @@ const Signup = () => {
 
   return (
     <div className="m-4 flex h-screen flex-col items-center justify-center">
-      <h1 className="mb-4 p-4 text-2xl font-bold">회원가입</h1>
-      <div className="w-60">
+      <img src={loginTitle} className="mb-12" />
+      <div className="w-60 text-black">
         <Input
           type="text"
-          placeholder="username"
+          placeholder="닉네임"
           className="mb-4 p-4"
           value={username}
           onChange={e => setUsername(e.target.value)}
         />
         <Input
           type="email"
-          placeholder="email"
+          placeholder="이메일"
           className="mb-4 p-4"
           value={email}
           onChange={e => setEmail(e.target.value)}
         />
         <Input
           type="password"
-          placeholder="password"
+          placeholder="비밀번호"
           className="mb-8 p-4"
           value={password}
           onChange={e => setPassword(e.target.value)}
@@ -70,10 +71,10 @@ const Signup = () => {
       </div>
       <Button
         type="submit"
-        className="mb-8 bg-theme-color-2 font-bold text-cyan-600"
+        className="mb-8 w-60 bg-gradient-to-r from-purple-600 to-teal-300 font-bold"
         onClick={handleSignup}
       >
-        Sign Up &gt;
+        회원가입
       </Button>
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent>
@@ -82,7 +83,7 @@ const Signup = () => {
             <DialogDescription>
               <Button
                 onClick={() => navigate("/login")}
-                className="mt-4 w-40 bg-theme-color-1 font-bold"
+                className="mt-4 w-40 bg-gradient-to-r from-teal-300 to-blue-800 font-bold"
               >
                 로그인 하러가기
               </Button>

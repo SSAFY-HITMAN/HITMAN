@@ -13,14 +13,19 @@ export default defineConfig({
         start_url: "/",
         name: "HITMAN",
         short_name: "HITMAN",
-        background_color: "#a5eab3",
-        theme_color: "#b2c2e9",
+        background_color: "#131419",
+        theme_color: "#04479C",
         description: "앱 설명",
         dir: "auto",
         display: "standalone",
         icons: [
           {
-            src: "/app-icon.png",
+            src: "/icon-192x192.png",
+            sizes: "192x192",
+            type: "image/png",
+          },
+          {
+            src: "/icon-512x512.png",
             sizes: "512x512",
             type: "image/png",
           },

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import QrScanner from "react-qr-scanner";
 import axiosInstance from "@/api/axiosInstance";
@@ -27,9 +27,11 @@ const ActionButton = ({ onClick, icon, color, label }) => {
 };
 
 const Home = () => {
+  const navigate = useNavigate();
   const [isDialogOpen, setDialogOpen] = useState(false);
   const [isQrReaderOpen, setIsQrReaderOpen] = useState(false);
-  const navigate = useNavigate();
+
+  const username = localStorage.getItem("username");
 
   const handleLogout = () => {
     localStorage.removeItem("accessToken");
@@ -78,36 +80,45 @@ const Home = () => {
   return (
     <div className="h-screen bg-theme-color-2">
       <div className="m-4 flex h-screen flex-col items-center justify-center">
-        <img src={titleImage} alt="titleImage" className="w-60" />
-
-        <div className="mb-4 font-bold">XXX 님 환영합니다.</div>
-        <Button onClick={handleLogout} className="mb-12 bg-rose-600 font-bold">
-          로그아웃
-        </Button>
-
+        <img
+          src={titleImage}
+          alt="titleImage"
+          className="animate-fade-in mb-8 w-80"
+        />
+        <div>
+          <span className="mb-4 mr-4 font-bold">
+            "{username}" 님 환영합니다.
+          </span>
+          <Button
+            onClick={handleLogout}
+            className="mb-20 bg-rose-500 font-bold"
+          >
+            로그아웃
+          </Button>
+        </div>
         <div className="grid grid-cols-2 gap-8">
           <ActionButton
             onClick={() => setDialogOpen(true)}
             icon={plusIcon}
-            color="bg-amber-300"
+            color="bg-gradient-to-r from-amber-300 to-amber-600"
             label="방 만들기"
           />
           <ActionButton
             onClick={() => setIsQrReaderOpen(true)}
             icon={qrcodeIcon}
-            color="bg-teal-300"
+            color="bg-gradient-to-r from-teal-300 to-teal-600"
             label="방 코드 찍기"
           />
           <ActionButton
             onClick={() => navigate("/rank")}
             icon={trophyIcon}
-            color="bg-rose-300"
+            color="bg-gradient-to-r from-rose-200 to-rose-400"
             label="순위"
           />
           <ActionButton
             onClick={() => navigate("/profile")}
             icon={profileIcon}
-            color="bg-indigo-300"
+            color="bg-gradient-to-r from-indigo-300 to-indigo-600"
             label="내 정보"
           />
         </div>
@@ -126,7 +137,7 @@ const Home = () => {
                 className="mb-16 font-bold text-white"
               >
                 스캔이 안되시나요?{" "}
-                <span className="text-rose-400">방 코드 입력하기</span>
+                <span className="text-rose-500">방 코드 입력하기</span>
               </div>
               <QrScanner
                 className="mb-8 w-60 rounded-lg ring-4 ring-yellow-300"
@@ -136,7 +147,7 @@ const Home = () => {
               />
               <Button
                 onClick={() => setIsQrReaderOpen(false)}
-                className="mb-8 bg-rose-600 font-bold"
+                className="mb-8 w-20 bg-rose-500 font-bold"
               >
                 닫기
               </Button>

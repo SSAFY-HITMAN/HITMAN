@@ -9,11 +9,11 @@ import { WebSocketContext } from "@/context/WebSocketContext";
 import useStartGame from "@/hooks/Map/useStartGame";
 import useSendGPS from "@/hooks/Map/useSendGPS";
 import GameTime from "@/components/GameTime";
-import CatchTargetButton from "@/components/CatchTargetButton";
 import useCatchTarget from "@/hooks/Map/useCatchTarget";
-import CheckMyItemButton from "@/components/CheckMyItemButton";
-import CamChattingButton from "@/components/CamChattingButton";
 import GiveUpButton from "@/components/GiveUpGameButton";
+import { Button } from "@/components/ui/Button";
+
+import catchButton from "@/assets/gameplay-icon/catch-button.png";
 
 const GamePlay = () => {
   const { gameStatus } = useContext(GameContext);
@@ -67,16 +67,26 @@ const GamePlay = () => {
           <div className="flex justify-between">
             <div />
             <div />
-            <div id="catch-button" className="flex justify-center">
-              <CatchTargetButton
-                onClick={handleOnClickCatchTarget}
-                isDisabled={!isAbleToCatchTarget}
-              />
-            </div>
-            <div />
+            <img
+              src={catchButton}
+              alt="catch button"
+              onClick={handleOnClickCatchTarget}
+              className={`w-60 ${isAbleToCatchTarget ? "" : "cursor-not-allowed opacity-50"}`}
+            />
             <div id="mini-buttons" className="mx-3 flex flex-col">
-              <CheckMyItemButton />
-              <CamChattingButton onClick={toggleCamChatting} />
+              <Button
+                id="item-button"
+                className="m-1 h-[8vh] w-[8vh] rounded-full border-2 border-black bg-white text-black"
+              >
+                Item
+              </Button>
+              <Button
+                id="camchatting-button"
+                onClick={toggleCamChatting}
+                className="m-1 h-[8vh] w-[8vh] rounded-full border-2 border-black bg-white text-black"
+              >
+                Cam
+              </Button>
               <GiveUpButton />
             </div>
             <div />

@@ -17,9 +17,11 @@ module.exports = {
       },
     },
     extend: {
+      fontFamily: {
+        sans: ["Noto Sans KR", "sans-serif"],
+      },
       colors: {
-        "theme-color-1": "#25B4BB",
-        "theme-color-2": "#E0FDF7",
+        "theme-color": "#001242", // 배경색
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
@@ -54,6 +56,10 @@ module.exports = {
           foreground: "hsl(var(--card-foreground))",
         },
       },
+      backgroundImage: {
+        "gradient-rainbow":
+          "linear-gradient(-90deg, #4fd1c5, #2a4365, #ed64a6, #ed8936, #9f7aea, #48bb78)",
+      },
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
@@ -68,10 +74,23 @@ module.exports = {
           from: { height: "var(--radix-accordion-content-height)" },
           to: { height: "0" },
         },
+        "gradient-move": {
+          "0%, 100%": { "background-position": "0% 50%" },
+          "50%": { "background-position": "100% 50%" },
+        },
+        "fade-in": {
+          "0%": { opacity: 0 },
+          "100%": { opacity: 1 },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        "gradient-move": "gradient-move 5s ease infinite",
+        "fade-in": "fade-in 2s ease-out forwards",
+      },
+      boxShadow: {
+        "3d": "0 4px 6px rgba(0, 0, 0, 0.3), 0 8px 16px rgba(0, 0, 0, 0.2)",
       },
     },
   },

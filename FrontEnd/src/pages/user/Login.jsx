@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
@@ -6,14 +6,14 @@ import { Button } from "@components/ui/Button";
 import { Input } from "@components/ui/Input";
 
 import { BASE_URL } from "@/constants/baseURL";
+import loginTitle from "@/assets/login-title.png";
 import kaKaoLoginImg from "@/assets/kakao-login.png";
-import googleLoginImg from "@/assets/google-login.svg";
+import googleLoginImg from "@/assets/google-login.png";
 
 const Login = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
 
   const handleLogin = async () => {
     try {
@@ -31,10 +31,10 @@ const Login = () => {
 
         navigate("/home");
       } else {
-        setError("로그인에 실패했습니다. 다시 시도해주세요.");
+        alert("로그인에 실패했습니다. 다시 시도해주세요.");
       }
     } catch (err) {
-      setError(
+      alert(
         "서버와 통신하는 중에 문제가 발생했습니다. 나중에 다시 시도해주세요."
       );
     }
@@ -50,7 +50,7 @@ const Login = () => {
         redirectUri: url,
       });
     } catch (err) {
-      setError(
+      alert(
         "서버와 통신하는 중에 문제가 발생했습니다. 나중에 다시 시도해주세요."
       );
     }
@@ -64,7 +64,7 @@ const Login = () => {
 
       window.location.href = url;
     } catch (err) {
-      setError(
+      alert(
         "서버와 통신하는 중에 문제가 발생했습니다. 나중에 다시 시도해주세요."
       );
     }
@@ -72,18 +72,18 @@ const Login = () => {
 
   return (
     <div className="m-4 flex h-screen flex-col items-center justify-center">
-      <h1 className="mb-4 p-4 text-2xl font-bold">로그인</h1>
-      <div className="w-60">
+      <img src={loginTitle} className="mb-12" />
+      <div className="w-60 text-black">
         <Input
           type="email"
-          placeholder="email"
-          className="mb-4 p-4"
+          placeholder="이메일"
+          className="mb-4 p-4 caret-pink-500"
           value={email}
           onChange={e => setEmail(e.target.value)}
         />
         <Input
           type="password"
-          placeholder="password"
+          placeholder="비밀번호"
           className="mb-8 p-4"
           value={password}
           onChange={e => setPassword(e.target.value)}
@@ -91,18 +91,18 @@ const Login = () => {
       </div>
       <Button
         type="submit"
-        className="mb-8 w-60 bg-theme-color-1 font-bold"
+        className="mb-8 w-60 bg-gradient-to-r from-teal-200 to-blue-800 font-bold"
         onClick={handleLogin}
       >
-        Login &gt;
+        로그인
       </Button>
-      <div className="mb-8 cursor-pointer" onClick={() => navigate("/signup")}>
+      <div className="mb-12 cursor-pointer" onClick={() => navigate("/signup")}>
         계정이 없으신가요?{" "}
         <span className="font-bold text-rose-500">회원가입</span>
       </div>
 
       {/* 구분선 */}
-      <div className="mb-8 flex w-full items-center">
+      <div className="mb-12 flex w-full items-center">
         <div className="border-lightGray/30 flex-grow border-t"></div>
         <span className="mx-4 text-gray-400">또는</span>
         <div className="border-lightGray/30 flex-grow border-t"></div>
@@ -111,16 +111,15 @@ const Login = () => {
       <img
         src={kaKaoLoginImg}
         alt="Kakao Login"
-        className="mb-4 w-60 cursor-pointer"
+        className="mb-4 w-60"
         onClick={handleKakaoLogin}
       />
       <img
         src={googleLoginImg}
         alt="Google Login"
-        className="w-60 cursor-pointer"
+        className="mb-4 w-60"
         onClick={handleGoogleLogin}
       />
-      {error && <div className="text-red-500">{error}</div>}
     </div>
   );
 };
