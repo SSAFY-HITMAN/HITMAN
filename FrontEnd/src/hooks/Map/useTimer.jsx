@@ -31,15 +31,17 @@ const useTimer = () => {
             sessionStorage.setItem("isAlive", false);
           } else {
             // 타이머 종료 상태를 서버에 보냈으나 실패 시 부분 입력
+            console.error("Failed to handle death:", response.status);
           }
         } catch {
           // axios 요청 실패 시 부분 입력
+          console.error("Failed to send death status:", error);
         }
       })();
     }
 
     sessionStorage.setItem("remainingTime", remainingTime);
-  }, [remainingTime, gameRoomId, username]);
+  }, [remainingTime, gameRoomId, username, setIsAlive]);
 
   return { decreaseTime };
 };

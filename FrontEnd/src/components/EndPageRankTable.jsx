@@ -1,6 +1,6 @@
 import { Card } from "@/components/ui/Card";
 
-const RankingTable = () => {
+const EndPageRankTable = () => {
   // 랭킹 관련 로직 추가
   // 임시 목록
   const rankingList = [
@@ -38,11 +38,10 @@ const RankingTable = () => {
                 </h1>
               )}
               <div id="player-result" className="flex h-[10vh]">
-                <div id="player-profile" className="m-2 border-2">
+                <div id="player-profile" className="m-2 border-2 w-[30%]">
                   <img
                     src=""
                     alt="profile-image"
-                    className="h-[100%] w-[30%]"
                   />
                 </div>
                 <div
@@ -54,7 +53,7 @@ const RankingTable = () => {
                 {user.rank !== 1 && (
                   <div
                     id="player-rank"
-                    className="m-2 flex w-[5%] flex-col justify-center border-2 text-2xl"
+                    className="m-2 flex flex-col justify-center text-2xl font-bold"
                   >
                     {user.rank}
                   </div>
@@ -68,4 +67,4 @@ const RankingTable = () => {
   );
 };
 
-export default RankingTable;
+export default EndPageRankTable;

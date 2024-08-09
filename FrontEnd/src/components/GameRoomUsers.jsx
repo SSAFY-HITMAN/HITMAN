@@ -1,7 +1,7 @@
 import { useContext } from "react";
 import { GameContext } from "@/context/GameContext";
 
-const PlotGameRoomUsers = () => {
+const GameRoomUsers = () => {
   const { gameRoomUsers } = useContext(GameContext);
 
   return (
@@ -15,4 +15,4 @@ const PlotGameRoomUsers = () => {
   );
 };
 
-export default PlotGameRoomUsers;
+export default GameRoomUsers;
