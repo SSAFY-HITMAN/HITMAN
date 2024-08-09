@@ -33,8 +33,7 @@ public class ParticipantRepositoryImpl {
   public GameParticipants getByUsername(String username, Long roomId){
     return queryFactory
         .selectFrom(participants)
-        .join(participants.user, user)
-        .where(user.username.eq(username)
+        .where(participants.user.username.eq(username)
         .and(participants.gameRoom.id.eq(roomId)))
         .fetchOne();
   }

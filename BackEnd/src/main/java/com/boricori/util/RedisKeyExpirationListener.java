@@ -33,7 +33,7 @@ public class RedisKeyExpirationListener implements MessageListener {
       String gameRoomId = parts[0];
       String alertDegree = parts[1];
       // kafka의 topic: game-alert에 보내놓기
-      String jsonData = String.format("{'msgType':alert, 'alert-degree':%s}", alertDegree);
+      String jsonData = String.format("{\"msgType\":\"alert\", \"alertDegree\":\"%s\"}", alertDegree);
       messageService.processAlertMessage(gameRoomId, jsonData);
     } else {
       System.err.println("Invalid key format: " + expiredKey);

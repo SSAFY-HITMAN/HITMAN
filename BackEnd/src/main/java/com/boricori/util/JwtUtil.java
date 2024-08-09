@@ -47,8 +47,8 @@ public class JwtUtil {
 
 
   public String createRefreshToken(String username) {
-    String token = UUID.randomUUID().toString();
-    redisTemplate.opsForValue().set(username + "-refresh", token, 100 * 60 * 60 * 24 * 14, TimeUnit.SECONDS);
+    String token = UUID.randomUUID().toString();  redisTemplate.opsForValue().set(username + "-refresh", token, 100 * 60 * 60 * 24 * 14, TimeUnit.SECONDS);
+
     return token;
   }
 

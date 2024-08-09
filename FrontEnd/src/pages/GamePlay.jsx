@@ -38,11 +38,7 @@ const GamePlay = () => {
     }
   }, [gameStatus, startSendingGPS]);
 
-  useEffect(() => {
-    return () => {
-      disconnect();
-    };
-  }, [disconnect]);
+
 
   return (
     <>
