@@ -3,6 +3,7 @@ package com.boricori.controller;
 import com.boricori.dto.RoomMessage;
 import com.boricori.dto.response.gameroom.EnterMessageResponse;
 import com.boricori.service.GameRoomService;
+import com.boricori.service.InGameService;
 import com.boricori.service.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
@@ -29,6 +30,9 @@ public class MessageController {
 
   @Autowired
   private SimpMessagingTemplate messagingTemplate;
+
+  @Autowired
+  InGameService inGameService;
 
   public MessageController(MessageService messageService) {
     this.messageService = messageService;
@@ -58,29 +62,34 @@ public class MessageController {
 
   @EventListener
   public void handleSTOMPConnectEvent(SessionConnectEvent event) {
-    StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
+    StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage()); //
     String username = headerAccessor.getFirstNativeHeader("username");
     // username을 세션 속성에 저장
     headerAccessor.getSessionAttributes().put("username", username);
   }
-
-
+  
 
   @EventListener
   public void handleSessionSubscribeEvent(SessionSubscribeEvent event) {
     StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
     String sessionId = headerAccessor.getSessionId();
     String destination = headerAccessor.getDestination();
+    String status = destination.split("/")[2];
     String roomId = destination.split("/")[3];
-    // 세션 속성에서 username 가져오기
-    String username = (String) headerAccessor.getSessionAttributes().get("username");
-    // roomId를 세션 속성에 저장
+    headerAccessor.getSessionAttributes().put("status", status);
     headerAccessor.getSessionAttributes().put("roomId", roomId);
-
-    gameRoomService.enterRoom(roomId, sessionId, username);
-    List<String> users = gameRoomService.GameRoomPlayerAll(roomId);
-    EnterMessageResponse message = new EnterMessageResponse("users", users);
-    messagingTemplate.convertAndSend("/topic/room/" + roomId, message);
+    String username = (String) headerAccessor.getSessionAttributes().get("username");
+    if (status.equals("waiting")){
+      gameRoomService.enterRoom(roomId, sessionId, username);
+      List<String> users = gameRoomService.GameRoomPlayerAll(roomId);
+      EnterMessageResponse message = new EnterMessageResponse("users", users);
+      messagingTemplate.convertAndSend("/topic/room/" + roomId, message);
+    }
+    if (status.equals("play")){
+      // Redis에 disconnect 된 유저가 있는 지 확인 후 있으면 60초 안에 재접속한 유저니까 기록 삭제
+      // 없으면 새로 생긴 방에 접속한 유저거나 이미 60초 지나서 아웃처리된 유저, 처리 필요 없음
+      inGameService.rejoin(username, roomId);
+    }
   }
 
   @EventListener
@@ -88,9 +97,17 @@ public class MessageController {
     StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
     String sessionId = headerAccessor.getSessionId();
     String roomId = (String) headerAccessor.getSessionAttributes().get("roomId");
-    System.out.println("roomId:" + roomId + ", sessionId: " + sessionId);
-    List<String> users = gameRoomService.leaveRoom(roomId, sessionId);
-    EnterMessageResponse message = new EnterMessageResponse("users", users);
-    messagingTemplate.convertAndSend("/topic/room/"+roomId, message);
+    String status = (String) headerAccessor.getSessionAttributes().get("status");
+    String username = (String) headerAccessor.getSessionAttributes().get("username");
+    if (status.equals("waiting")){
+//      System.out.println("roomId:" + roomId + ", sessionId: " + sessionId);
+      List<String> users = gameRoomService.leaveRoom(roomId, sessionId);
+      EnterMessageResponse message = new EnterMessageResponse("users", users);
+      messagingTemplate.convertAndSend("/topic/room/"+roomId, message);
+    }
+    if (status.equals("play")){
+      // Redis에 60초 후 만료되는 username-roomId key 저장
+      inGameService.stopPlaying(username, roomId);
+    }
   }
 }
