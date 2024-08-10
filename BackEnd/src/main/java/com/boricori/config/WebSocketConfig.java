@@ -20,7 +20,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
   @Override
   public void registerStompEndpoints(StompEndpointRegistry registry) {
-    registry.addEndpoint("/gameRoom/{roomId}")
+    registry.addEndpoint("/waiting/{roomId}", "/play/{roomId}")
         .setAllowedOrigins("https://i11b205.p.ssafy.io");
 //        .setAllowedOrigins("http://localhost:5080");
   }

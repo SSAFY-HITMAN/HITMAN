@@ -29,25 +29,25 @@ public class MessageService {
 
 
   public void readyGame(Long gameRoomId, GameRoom gameRoom){
-    messagingTemplate.convertAndSend(String.format("/topic/room/%d", gameRoomId),"{\"msgType\":\"ready\"}");
+    messagingTemplate.convertAndSend(String.format("/topic/waiting/%d", gameRoomId),"{\"msgType\":\"ready\"}");
   }
 
   public void processAlertMessage(String gameId, String alertJSON) {
-    messagingTemplate.convertAndSend(String.format("/topic/room/%s", gameId), alertJSON);
+    messagingTemplate.convertAndSend(String.format("/topic/play/%s", gameId), alertJSON);
   }
 
   public void startGame(Long id) {
-    messagingTemplate.convertAndSend(String.format("/topic/room/%d", id), "{\"msgType\":\"start\"}");
+    messagingTemplate.convertAndSend(String.format("/topic/waiting/%d", id), "{\"msgType\":\"start\"}");
   }
 
   public void changeTarget(String username, String newTarget, long gameId){
     String jsonPayload = String.format("{\"msgType\":\"start\", \"hunter\":\"%s\", \"target\":\"%s\"}", username, newTarget);
-    messagingTemplate.convertAndSend(String.format("/topic/room/%d", gameId), jsonPayload);
+    messagingTemplate.convertAndSend(String.format("/topic/play/%d", gameId), jsonPayload);
   }
 
   public void notifyStatus(String username, long gameId) {
     String jsonPayload = String.format("{\"msgType\":\"caught\", \"user\":\"%s\"}", username);
-    messagingTemplate.convertAndSend(String.format("/topic/room/%d", gameId), jsonPayload);
+    messagingTemplate.convertAndSend(String.format("/topic/play/%d", gameId), jsonPayload);
   }
 
   public void endGameScore(long gameId, String winner, List<EndGameUserInfoResponse> usersInfo) throws JsonProcessingException {

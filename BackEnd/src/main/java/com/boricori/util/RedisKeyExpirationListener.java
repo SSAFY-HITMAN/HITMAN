@@ -45,6 +45,7 @@ public class RedisKeyExpirationListener implements MessageListener {
       String username = parts[0];
       long roomId = Long.parseLong(parts[1]);
       inGameService.killUser(username, roomId);
+      // 해당 유저 쫓던 유저의 타겟이 바뀌는 로직 구현 필요함
     }
     else {
       System.err.println("Invalid key format: " + expiredKey);

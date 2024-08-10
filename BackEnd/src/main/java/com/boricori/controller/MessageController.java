@@ -86,7 +86,7 @@ public class MessageController {
       gameRoomService.enterRoom(roomId, sessionId, username);
       List<String> users = gameRoomService.GameRoomPlayerAll(roomId);
       EnterMessageResponse message = new EnterMessageResponse("users", users);
-      messagingTemplate.convertAndSend("/topic/room/" + roomId, message);
+      messagingTemplate.convertAndSend("/topic/waiting/" + roomId, message);
     }
     if (status.equals("play")){
       // Redis에 disconnect 된 유저가 있는 지 확인 후 있으면 60초 안에 재접속한 유저니까 기록 삭제
@@ -107,7 +107,7 @@ public class MessageController {
 //      System.out.println("roomId:" + roomId + ", sessionId: " + sessionId);
       List<String> users = gameRoomService.leaveRoom(roomId, sessionId);
       EnterMessageResponse message = new EnterMessageResponse("users", users);
-      messagingTemplate.convertAndSend("/topic/room/"+roomId, message);
+      messagingTemplate.convertAndSend("/topic/waiting/"+roomId, message);
     }
     if (status.equals("play")){
       // Redis에 60초 후 만료되는 username-roomId key 저장
