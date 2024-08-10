@@ -8,6 +8,11 @@ const { kakao } = window;
 
 const useKakaoMap = () => {
   const { gameStatus, areaCenter } = useContext(GameContext);
+  const areaCenterRef = useRef(areaCenter);
+
+  useEffect(() => {
+    areaCenterRef.current = areaCenter;
+  }, [areaCenter]);
 
   const mapRef = useRef(null);
   const mapInstanceRef = useRef(null);
@@ -27,7 +32,7 @@ const useKakaoMap = () => {
   useEffect(() => {
     if (mapRef.current && !mapInstanceRef.current) {
       const options = {
-        center: new kakao.maps.LatLng(areaCenter.lat, areaCenter.lng),
+        center: new kakao.maps.LatLng(areaCenterRef.current.lat, areaCenterRef.current.lng),
         level: 1,
       };
       const mapInstance = new kakao.maps.Map(mapRef.current, options);
