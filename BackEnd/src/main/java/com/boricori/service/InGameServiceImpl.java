@@ -24,6 +24,7 @@ import java.util.concurrent.TimeUnit;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class InGameServiceImpl implements InGameService{
@@ -146,6 +147,7 @@ public class InGameServiceImpl implements InGameService{
     redisTemplate.opsForValue().getAndDelete((username + "-" + roomId + "-left"));
   }
 
+  @Transactional
   @Override
   public void killUser(String username, long roomId) {
     participantRepository.changeStatusByName(username, roomId);
