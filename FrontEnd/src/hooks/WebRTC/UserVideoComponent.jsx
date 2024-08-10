@@ -1,7 +1,7 @@
 // UserVideoComponent.jsx
 import React, { Component } from 'react';
 import OpenViduVideoComponent from './OvVideo';
-import "./UserVideo.css";  // 현재 파일과 같은 디렉토리에 있는 경우
+import "./UserVideo.css";  
 
 export default class UserVideoComponent extends Component {
 

@@ -1,10 +1,12 @@
-// OvVideo.jsx
 import React, { Component } from 'react';
 
 export default class OpenViduVideoComponent extends Component {
     constructor(props) {
         super(props);
         this.videoRef = React.createRef();
+
+        // 메서드 바인딩
+        this.applyVideoInversion = this.applyVideoInversion.bind(this);
     }
 
     componentDidUpdate(prevProps) {
@@ -20,6 +22,15 @@ export default class OpenViduVideoComponent extends Component {
         if (this.props && !!this.videoRef.current) {
             this.props.streamManager.addVideoElement(this.videoRef.current);
             this.applyVideoInversion(); // 좌우 반전 적용
+        }
+    }
+
+    applyVideoInversion() {
+        // 비디오 요소에 좌우 반전 스타일 적용
+        if (this.videoRef.current) {
+            this.videoRef.current.style.transform = 'rotateY(180deg)';
+            this.videoRef.current.style.WebkitTransform = 'rotateY(180deg)';
+            this.videoRef.current.style.MozTransform = 'rotateY(180deg)';
         }
     }
 
