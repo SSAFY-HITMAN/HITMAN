@@ -1,6 +1,8 @@
 package com.boricori.util;
 
 import com.boricori.entity.User;
+
+import java.util.ArrayList;
 import java.util.List;
 
 public class UserCircularLinkedList extends CircularLinkedList {
@@ -58,5 +60,19 @@ public class UserCircularLinkedList extends CircularLinkedList {
     return null;
   }
 
+  public List<String> toList() {
+    List<String> usernameList = new ArrayList<>();
+    if (isEmpty()) {
+      return usernameList; // 빈 리스트를 반환
+    }
+
+    Node<User> currNode = tail.next;
+    do {
+      usernameList.add(currNode.data.getUsername()); // User 객체에서 username을 추출하여 추가
+      currNode = currNode.next;
+    } while (currNode != tail.next);
+
+    return usernameList;
+  }
 }
 

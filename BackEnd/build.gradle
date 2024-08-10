@@ -28,6 +28,14 @@ ext {
     set('springCloudVersion', "2023.0.3")
 }
 
+dependencyManagement {
+    imports {
+        mavenBom "com.google.cloud:spring-cloud-gcp-dependencies:${springCloudGcpVersion}"
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+        mavenBom "com.google.cloud:libraries-bom:25.4.0"
+    }
+}
+
 dependencies {
 
 //    implementation 'org.springframework.boot:spring-boot-starter-amqp'
@@ -79,22 +87,10 @@ dependencies {
     implementation 'com.google.zxing:core:3.4.1'
     implementation 'com.google.zxing:javase:3.4.1'
 
-    // https://mvnrepository.com/artifact/com.google.cloud/google-cloud-vision
-    implementation group: 'com.google.cloud', name: 'google-cloud-vision', version: '3.41.0'
-//    // https://mvnrepository.com/artifact/com.google.cloud/google-cloud-storage
-//    implementation 'com.google.cloud:google-cloud-storage:2.40.1'
-    implementation platform('com.google.cloud:libraries-bom:25.4.0')
-    implementation 'com.google.cloud:google-cloud-storage'
-    implementation 'com.google.guava:guava'
+    implementation 'com.google.cloud:google-cloud-vision:3.45.0'
 
 }
 
-dependencyManagement {
-    imports {
-        mavenBom "com.google.cloud:spring-cloud-gcp-dependencies:${springCloudGcpVersion}"
-        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
-    }
-}
 
 tasks.named('test') {
     useJUnitPlatform()
