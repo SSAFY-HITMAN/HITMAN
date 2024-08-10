@@ -17,11 +17,12 @@ const useGameWebSocket = () => {
 
   const connect = () => {
     // WebSocket 연결 생성
+    console.log(`GamePlay: ${WS_BASE_URL}/gameRoom/${gameRoomId}`)
     const socket = new WebSocket(`${WS_BASE_URL}/gameRoom/${gameRoomId}`);
     stompClient.current = Stomp.over(socket);
 
     // STOMP 연결 설정
-    stompClient.current.connect(
+    stompClient.current.connect({}, 
       frame => {
         console.log("Connected:" + frame);
 

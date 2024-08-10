@@ -34,11 +34,11 @@ const Room = () => {
   useEffect(() => {
     if (gameRoomId) {
       connect();
-
-      return () => {
-        disconnect();
-      };
     }
+    
+    return () => {
+      disconnect();
+    };
   }, [gameRoomId]);
 
   // isLoading은 useRoomWebSocket.jsx에서 변경

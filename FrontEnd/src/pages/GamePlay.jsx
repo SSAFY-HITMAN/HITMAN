@@ -49,6 +49,7 @@ const GamePlay = () => {
   };
 
   useEffect(() => {
+    console.log(1234)
     connect();
 
     return () => {
