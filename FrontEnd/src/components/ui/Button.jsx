@@ -18,10 +18,11 @@ const buttonVariants = cva(
           "bg-secondary text-secondary-foreground hover:bg-secondary/80",
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
+        
         // 수락 버튼 스타일
         accept: "border border-green-500 text-green-500 hover:bg-green-500 hover:text-white",
         // 거절 버튼 스타일 
-        decline: "border border-red-500 text-red-500 hover:bg-red-500 hover:text-white" 
+        refuse: "border border-red-500 text-red-500 hover:bg-red-500 hover:text-white" 
 
       },
       size: {

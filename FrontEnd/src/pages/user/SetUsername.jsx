@@ -42,9 +42,9 @@ const SetUsername = () => {
   };
 
   return (
-    <div className="m-4 flex h-screen flex-col items-center justify-center">
+    <div className="flex h-screen flex-col items-center justify-center">
       <h1 className="mb-4 text-3xl font-bold">닉네임 설정</h1>
-      <p className="mb-12 opacity-80">
+      <p className="mb-12 text-center leading-loose opacity-80">
         소셜 로그인이 완료되었습니다.
         <br />
         닉네임만 설정하면 회원가입이 완료됩니다.
@@ -60,10 +60,10 @@ const SetUsername = () => {
       </div>
       <Button
         type="submit"
-        className="mb-8 w-60 bg-gradient-to-r from-purple-600 to-teal-300 font-bold"
+        className="shadow-3d mb-8 w-60 bg-gradient-to-r from-purple-600 to-teal-300 font-bold"
         onClick={handleSignup}
       >
-        Sign Up
+        회원가입
       </Button>
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent>

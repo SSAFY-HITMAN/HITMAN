@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import QrScanner from "react-qr-scanner";
 import axiosInstance from "@/api/axiosInstance";
@@ -28,7 +28,7 @@ const ActionButton = ({ onClick, icon, color, label }) => {
 
 const Home = () => {
   const navigate = useNavigate();
-  const [isDialogOpen, setDialogOpen] = useState(false);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isQrReaderOpen, setIsQrReaderOpen] = useState(false);
 
   const username = localStorage.getItem("username");
@@ -79,26 +79,24 @@ const Home = () => {
 
   return (
     <div className="h-screen bg-theme-color-2">
-      <div className="m-4 flex h-screen flex-col items-center justify-center">
+      <div className="flex h-screen flex-col items-center justify-center">
         <img
           src={titleImage}
           alt="titleImage"
           className="animate-fade-in mb-8 w-80"
         />
         <div>
-          <span className="mb-4 mr-4 font-bold">
-            "{username}" 님 환영합니다.
-          </span>
+          <span className="mb-4 mr-4 font-bold">{username} 님 환영합니다.</span>
           <Button
             onClick={handleLogout}
-            className="mb-20 bg-rose-500 font-bold"
+            className="shadow-3d mb-20 bg-rose-500 font-bold"
           >
             로그아웃
           </Button>
         </div>
         <div className="grid grid-cols-2 gap-8">
           <ActionButton
-            onClick={() => setDialogOpen(true)}
+            onClick={() => setIsDialogOpen(true)}
             icon={plusIcon}
             color="bg-gradient-to-r from-amber-300 to-amber-600"
             label="방 만들기"
@@ -124,7 +122,7 @@ const Home = () => {
         </div>
         <GameSettingDialog
           isOpen={isDialogOpen}
-          onClose={() => setDialogOpen(false)}
+          onClose={() => setIsDialogOpen(false)}
         />
         {isQrReaderOpen && (
           <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-70">
@@ -147,7 +145,7 @@ const Home = () => {
               />
               <Button
                 onClick={() => setIsQrReaderOpen(false)}
-                className="mb-8 w-20 bg-rose-500 font-bold"
+                className="shadow-3d mb-8 w-20 bg-rose-500 font-bold"
               >
                 닫기
               </Button>

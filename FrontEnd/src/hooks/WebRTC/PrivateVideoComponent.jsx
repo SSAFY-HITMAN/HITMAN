@@ -1,8 +1,8 @@
 import { useEffect, useRef } from "react";
 import { LocalVideoTrack, RemoteVideoTrack } from "livekit-client";
-import "./VideoComponent.css";
+import "./PrivateVideoComponent.css";
 
-function VideoComponent({ track, participantIdentity, local = false }) {
+function PrivateVideoComponent({ track, participantIdentity, local = false }) {
   const videoElement = useRef(null);
 
   useEffect(() => {
@@ -26,4 +26,4 @@ function VideoComponent({ track, participantIdentity, local = false }) {
   );
 }
 
-export default VideoComponent;
+export default PrivateVideoComponent;

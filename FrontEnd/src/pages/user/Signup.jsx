@@ -44,8 +44,8 @@ const Signup = () => {
   };
 
   return (
-    <div className="m-4 flex h-screen flex-col items-center justify-center">
-      <img src={loginTitle} className="mb-12" />
+    <div className="flex h-screen flex-col items-center justify-center">
+      <img src={loginTitle} className="mb-12 w-96" />
       <div className="w-60 text-black">
         <Input
           type="text"
@@ -71,7 +71,7 @@ const Signup = () => {
       </div>
       <Button
         type="submit"
-        className="mb-8 w-60 bg-gradient-to-r from-purple-600 to-teal-300 font-bold"
+        className="shadow-3d mb-8 w-60 bg-gradient-to-r from-purple-600 to-teal-300 font-bold"
         onClick={handleSignup}
       >
         회원가입

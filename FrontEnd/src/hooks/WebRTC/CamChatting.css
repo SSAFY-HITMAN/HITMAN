@@ -1,134 +1,112 @@
-#join {
+/* 전체 컨테이너 스타일 */
+#join, #session {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    height: 100%;
-}
-
-#join-dialog {
-    width: 70%;
-    max-width: 900px;
-    padding: 60px;
-    border-radius: 6px;
-    background-color: #f0f0f0;
-}
-
-#join-dialog h2 {
-    color: #4d4d4d;
-    font-size: 60px;
-    font-weight: bold;
+    height: 100vh;
+  }
+  
+  #join-dialog, #session-header {
+    margin-bottom: 20px;
     text-align: center;
-}
-
-#join-dialog form {
-    text-align: left;
-}
-
-#join-dialog label {
-    display: block;
-    margin-bottom: 10px;
-    color: #0088aa;
-    font-weight: bold;
-    font-size: 20px;
-}
-
-.form-control {
+  }
+  
+  .jumbotron.vertical-center {
+    margin: 0 auto;
+    text-align: center;
+    padding: 30px;
+    background-color: #f8f9fa;
+    border-radius: 5px;
+  }
+  
+  .form-group {
+    margin-bottom: 15px;
     width: 100%;
-    padding: 8px;
+  }
+  
+  .form-control {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
     margin-bottom: 10px;
-    box-sizing: border-box;
-    color: #0088aa;
-    font-weight: bold;
-}
-
-.form-control:focus {
-    color: #0088aa;
-    border-color: #0088aa;
-    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(0, 136, 170, 0.6);
-    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(0, 136, 170, 0.6);
-}
-
-#join-dialog button {
-    display: block;
-    margin: 20px auto 0;
-}
-
-.btn {
-    font-weight: bold;
-}
-
-.btn-success {
-    background-color: #06d362;
-    border-color: #06d362;
-}
-
-.btn-success:hover {
-    background-color: #1abd61;
-    border-color: #1abd61;
-}
-
-#room {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-}
-
-#room-header {
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+  }
+  
+  .btn {
+    width: 100%;
+    padding: 10px 20px;
+    margin-top: 10px;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .btn-success {
+    background-color: #28a745;
+    border: 1px solid #28a745;
+    color: white;
+  }
+  
+  .btn-danger {
+    background-color: #dc3545;
+    border: 1px solid #dc3545;
+    color: white;
+  }
+  
+  .btn-success:hover, .btn-danger:hover {
+    opacity: 0.9;
+  }
+  
+  #session {
+    width: 100%;
+    padding: 20px;
+  }
+  
+  #session-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     width: 100%;
-    max-width: 1000px;
-    padding: 0 20px;
     margin-bottom: 20px;
-}
-
-#room-title {
-    font-size: 2em;
-    font-weight: bold;
-    margin: 0;
-}
-
-#layout-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fit);
-    gap: 10px;
-    justify-content: center;
-    align-items: center;
+    border-bottom: 1px solid #dee2e6;
+    padding-bottom: 10px;
+  }
+  
+  #main-video {
     width: 100%;
-    max-width: 1000px;
-    height: 100%;
-}
-
-/* Media Queries */
-@media screen and (max-width: 768px) {
-    #join-dialog {
-        width: 90%;
-        padding: 30px;
-    }
-
-    #join-dialog h2 {
-        font-size: 50px;
-    }
-
-    #layout-container {
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    }
-}
-
-@media screen and (max-width: 480px) {
-    #join-dialog {
-        width: 100%;
-        padding: 20px;
-    }
-
-    #join-dialog h2 {
-        font-size: 40px;
-    }
-
-    #layout-container {
-        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    }
-}
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: center;
+  }
+  
+  .streamcomponent {
+    margin-bottom: 20px;
+  }
+  
+  #video-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+  }
+  
+  /* Carousel Styles */
+  .carousel-container {
+    width: 100%;
+    overflow: hidden;
+    margin-top: 20px;
+  }
+  
+  .carousel-content {
+    display: flex;
+    transition: transform 0.3s ease-in-out;
+  }
+  
+  .carousel-item {
+    flex: 0 0 auto;
+    width: 100%;
+    padding: 10px;
+    margin-right: 10px;
+    border: 1p
+  }  

@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>RunTail</title>
+    <title>HITMAN</title>
     <link rel="icon" href="/favicon.png" />
 
     <!-- Noto Sans Korean 폰트 추가 -->
@@ -26,9 +26,9 @@
       integrity="sha384-TiCUE00h649CAMonG018J2ujOgDKW/kVWlChEuu4jK2vxfAAD0eZxzCKakxg55G4"
       crossorigin="anonymous"
     ></script>
-    <script>
+    <script type="module">
       Kakao.init(import.meta.env.VITE_JAVASCRIPT_KEY); // SDK 초기화
-      console.log(Kakao.isInitialized());
+      console.log("Kakao SDK 초기화 여부: " + Kakao.isInitialized());
     </script>
   </head>
 

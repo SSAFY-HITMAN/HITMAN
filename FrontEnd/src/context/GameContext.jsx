@@ -42,10 +42,9 @@ export const GameProvider = ({ children }) => {
   const [areaCenter, setAreaCenter] = useState(() => {
     const savedCenter = sessionStorage.getItem("areaCenter");
     if (savedCenter) {
-      const parsedCenter = JSON.parse(savedCenter);
       return {
-        lat: parseFloat(parsedCenter.lat),
-        lng: parseFloat(parsedCenter.lng),
+        lat: savedCenter.lat,
+        lng: savedCenter.lng,
       };
     }
     return { lat: 0, lng: 0 };
@@ -69,45 +68,96 @@ export const GameProvider = ({ children }) => {
   const username = localStorage.getItem("username"); // sendGPS 함수에서 활용 (useFirebase.jsx)
   // 로그인 시 setItem 대상이 sessionStorage로 변경되면 이 부분도 같이 변경되어야 함
 
+  const GET_POSITION_COUNT = 5;
+
+  const myLocationRef = useRef(myLocation);
   const targetLocationRef = useRef(targetLocation);
   const areaCenterRef = useRef(areaCenter);
 
   useEffect(() => {
+    myLocationRef.current = myLocation;
+  }, [myLocation]);
+
+  useEffect(() => {
     targetLocationRef.current = targetLocation;
+  }, [targetLocation]);
+
+  useEffect(() => {
     areaCenterRef.current = areaCenter;
-  }, [targetLocation, areaCenter]);
+  }, [areaCenter]);
+
+  const calculationAverageLocation = () => {
+    const averageLat = latSum / count;
+    const averageLng = lngSum / count;
+
+    const newLocation = {
+      lat: averageLat.toFixed(5),
+      lng: averageLng.toFixed(5),
+    };
+
+    setMyLocation(newLocation);
+    myLocationRef.current = newLocation;
+
+    if (areaCenterRef.current) {
+      const myDist = approximateDistance(
+        myLocationRef.current.lat,
+        myLocationRef.current.lng,
+        areaCenterRef.current.lat,
+        areaCenterRef.current.lng
+      );
+      setDistance(myDist);
+    }
+
+    if (targetLocationRef.current) {
+      const targetDist = approximateDistance(
+        myLocationRef.current.lat,
+        myLocationRef.current.lng,
+        targetLocationRef.current.lat,
+        targetLocationRef.current.lng
+      );
+      setDistToTarget(targetDist);
+    }
+  };
 
   // 내 위치를 잡고, 거리를 계산하는 함수
-  const fetchLocation = () => {
-    navigator.geolocation.getCurrentPosition(
-      position => {
-        const { latitude, longitude } = position.coords;
-        const newLocation = coordToFixed(latitude, longitude);
-        setMyLocation(newLocation);
+  const fetchLocation = async () => {
+    let latSum = 0;
+    let lngSum = 0;
+    let count = 0;
 
-        if (areaCenterRef.current) {
-          const myDist = approximateDistance(
-            newLocation.lat,
-            newLocation.lng,
-            areaCenterRef.current.lat,
-            areaCenterRef.current.lng
+    const successCallback = position => {
+      const { latitude, longitude } = position.coords;
+      latSum += latitude;
+      lngSum += longitude;
+      count += 1;
+
+      if (count === GET_POSITION_COUNT) {
+        calculationAverageLocation();
+      }
+    };
+
+    const errorCallback = error => {
+      console.log(error);
+    };
+
+    const positionPromises = [];
+    for (let i = 0; i < GET_POSITION_COUNT; i++) {
+      positionPromises.push(
+        new Promise(resolve => {
+          navigator.geolocation.getCurrentPosition(
+            position => {
+              successCallback(position);
+              resolve();
+            },
+            error => {
+              errorCallback(error);
+              resolve();
+            }
           );
-
-          setDistance(myDist);
-        }
-
-        if (targetLocationRef.current) {
-          const targetDist = approximateDistance(
-            newLocation.lat,
-            newLocation.lng,
-            targetLocationRef.current.lat,
-            targetLocationRef.current.lng
-          );
-          setDistToTarget(targetDist);
-        }
-      },
-      error => console.log(error)
-    );
+        })
+      );
+    }
+    await Promise.all(positionPromises);
   };
 
   // gameRoomId 값에 변동이 있다면 sessionStorage에 저장
@@ -130,7 +180,7 @@ export const GameProvider = ({ children }) => {
     const intervalId = setInterval(fetchLocation, 1000); // 1초마다 내 위치 및 거리 계산 함수 실행
 
     return () => clearInterval(intervalId);
-  }, [location.pathname, gameRoomId]);
+  }, [location.pathname]);
 
   return (
     <GameContext.Provider

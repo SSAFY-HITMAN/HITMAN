@@ -87,7 +87,7 @@ module.exports = {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
         "gradient-move": "gradient-move 5s ease infinite",
-        "fade-in": "fade-in 2s ease-out forwards",
+        "fade-in": "fade-in 3s ease-out forwards",
       },
       boxShadow: {
         "3d": "0 4px 6px rgba(0, 0, 0, 0.3), 0 8px 16px rgba(0, 0, 0, 0.2)",

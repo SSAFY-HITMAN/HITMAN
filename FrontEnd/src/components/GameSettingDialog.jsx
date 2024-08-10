@@ -92,7 +92,10 @@ const GameSettingDialog = ({ isOpen, onClose }) => {
       });
 
       if (response.status == 200) {
-        navigate(`/room/${response.data.gameRoomId}`);
+        sessionStorage.setItem("isChief", "true"); // 게임 시작한 사람 = 방장
+
+        const { gameRoomId, qrCode, gameCode } = response.data;
+        navigate(`/room/${gameRoomId}`, { state: { qrCode, gameCode } });
       } else {
         alert("방 생성에 실패했습니다. 다시 시도해주세요.");
       }
@@ -105,9 +108,6 @@ const GameSettingDialog = ({ isOpen, onClose }) => {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogTrigger asChild>
-        <Button className="mb-4 bg-theme-color-2 font-bold text-cyan-600" />
-      </DialogTrigger>
       <DialogContent className="w-auto">
         <DialogHeader>
           <DialogTitle className="mb-2">게임 설정</DialogTitle>
@@ -172,7 +172,7 @@ const GameSettingDialog = ({ isOpen, onClose }) => {
           <div className="flex justify-center gap-12">
             <Button
               onClick={handleCreateRoom}
-              className="w-40 bg-gradient-to-r from-teal-500 to-blue-500 font-bold"
+              className="shadow-3d w-40 bg-gradient-to-r from-teal-500 to-blue-500 font-bold"
             >
               방 만들기
             </Button>

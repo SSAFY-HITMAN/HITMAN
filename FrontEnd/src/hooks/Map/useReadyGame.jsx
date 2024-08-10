@@ -34,7 +34,7 @@ const useReadyGame = () => {
     );
   };
 
-  // setIsLoading은 WebSocketContext.jsx에서 사용
+  // setIsLoading은 useRoomWebSocket.jsx에서 사용
   return { handleStartGame, isLoading, setIsLoading, error };
 };
 

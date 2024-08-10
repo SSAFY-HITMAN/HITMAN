@@ -71,8 +71,8 @@ const Login = () => {
   };
 
   return (
-    <div className="m-4 flex h-screen flex-col items-center justify-center">
-      <img src={loginTitle} className="mb-12" />
+    <div className="flex h-screen flex-col items-center justify-center">
+      <img src={loginTitle} className="mb-12 w-96" />
       <div className="w-60 text-black">
         <Input
           type="email"
@@ -91,7 +91,7 @@ const Login = () => {
       </div>
       <Button
         type="submit"
-        className="mb-8 w-60 bg-gradient-to-r from-teal-200 to-blue-800 font-bold"
+        className="shadow-3d mb-8 w-60 bg-gradient-to-r from-teal-200 to-blue-800 font-bold"
         onClick={handleLogin}
       >
         로그인

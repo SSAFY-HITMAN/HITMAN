@@ -1,0 +1,24 @@
+.video-container {
+    position: relative;
+    width: fit-content;
+    height: fit-content;
+    /* aspect-ratio: 16/9; */
+  }
+  
+  .participant-data {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 20px;
+    z-index: 10;
+  }
+  
+  .video-box {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+  }
+  

@@ -14,22 +14,17 @@ import Room from "./pages/Room";
 import RoomNumber from "./pages/RoomNumber";
 import GamePlay from "./pages/GamePlay";
 import CamChatting from "./pages/CamChatting";
-import PrivateChatting from "./pages/PrivateChatting";
 import Ending from "./pages/Ending";
 import Rank from "./pages/Rank";
 import { GameProvider } from "@/context/GameContext";
-import { WebSocketProvider } from "./context/WebSocketContext";
 
 const GameRoutes = () => (
   <GameProvider>
-    <WebSocketProvider>
-      <Routes>
-        <Route path="/room/:gameRoomId" element={<Room />} />
-        <Route path="/game-play/:gameRoomId" element={<GamePlay />} />
-        <Route path="/cam-chatting" element={<CamChatting />} />
-        <Route path="/private-chatting" element={<PrivateChatting />} />
-      </Routes>
-    </WebSocketProvider>
+    <Routes>
+      <Route path="/room/:gameRoomId" element={<Room />} />
+      <Route path="/game-play/:gameRoomId" element={<GamePlay />} />
+      <Route path="/cam-chatting" element={<CamChatting />} />
+    </Routes>
   </GameProvider>
 );
 
@@ -37,7 +32,7 @@ const App = () => {
   const location = useLocation();
 
   return (
-    <div className="bg-theme-color min-h-screen text-white">
+    <div className="min-h-screen bg-gradient-to-r from-indigo-900 to-indigo-950 text-white">
       <TransitionGroup>
         <CSSTransition key={location.key} classNames="page" timeout={300}>
           <Routes location={location}>
