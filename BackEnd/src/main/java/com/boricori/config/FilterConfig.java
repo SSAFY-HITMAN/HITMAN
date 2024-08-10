@@ -33,13 +33,10 @@ public class FilterConfig {
   @Bean
   public CorsConfiguration corsConfiguration() {
     CorsConfiguration configuration = new CorsConfiguration();
-//    configuration.setAllowedOrigins(Collections.singletonList("https://i11b205.p.ssafy.io"));
-//    configuration.setAllowedOrigins(Collections.singletonList("*"));
-    // configuration.setAllowedOrigins(Collections.singletonList("http://localhost:3000")); // 임시
-//    configuration.setAllowedMethods(Collections.singletonList("*"));
+//    configuration.setAllowedOrigins(Collections.singletonList("http://localhost:5080/")); // 임시
     configuration.setAllowedOrigins(Arrays.asList("https://i11b205.p.ssafy.io"));
-    configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
-    configuration.setAllowedHeaders(Arrays.asList("Authorization"));
+    configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+    configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
     configuration.setAllowCredentials(true);
     configuration.setExposedHeaders(Collections.singletonList("Authorization"));
     configuration.setMaxAge(3600L);

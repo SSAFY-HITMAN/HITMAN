@@ -34,6 +34,9 @@ public class RedisKeyExpirationListener implements MessageListener {
     // 키 형식: gameRoomId-AlertDegree
     String[] parts = expiredKey.split("-");
     if (parts.length == 2) {
+      if (parts[1].equals("refresh")){
+        return;
+      }
       String gameRoomId = parts[0];
       String alertDegree = parts[1];
       // kafka의 topic: game-alert에 보내놓기
