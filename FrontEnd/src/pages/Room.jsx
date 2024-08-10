@@ -15,7 +15,7 @@ import GameRuleDialog from "@/components/GameRuleDialog";
 const Room = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const { gameRoomId: paramGameRoomId } = useParams();
-  const { setGameRoomId } = useContext(GameContext);
+  const { gameRoomId, setGameRoomId } = useContext(GameContext);
   const { connect, disconnect } = useRoomWebSocket();
 
   // GameSettingDialog 컴포넌트에서 보낸 state에서 QR과 방 코드를 추출
@@ -32,12 +32,14 @@ const Room = () => {
   }, [paramGameRoomId]);
 
   useEffect(() => {
-    connect();
+    if (gameRoomId) {
+      connect();
 
-    return () => {
-      disconnect();
-    };
-  }, []);
+      return () => {
+        disconnect();
+      };
+    }
+  }, [gameRoomId]);
 
   // isLoading은 useRoomWebSocket.jsx에서 변경
   return (

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useContext } from "react";
+import { useRef, useContext } from "react";
 import { WS_BASE_URL } from "@/constants/baseURL";
 import Stomp from "stompjs";
 import useReadyGame from "@/hooks/Map/useReadyGame";
@@ -11,16 +11,9 @@ const useRoomWebSocket = () => {
   const navigate = useNavigate();
   const stompClient = useRef(null);
 
-  const gameRoomIdRef = useRef(null);
-  useEffect(() => {
-    gameRoomIdRef.current = gameRoomId;
-  }, [gameRoomId]);
-
   const connect = () => {
     // WebSocket 연결 생성
-    const socket = new WebSocket(
-      `${WS_BASE_URL}/gameRoom/${gameRoomIdRef.current}`
-    );
+    const socket = new WebSocket(`${WS_BASE_URL}/gameRoom/${gameRoomId}`);
     stompClient.current = Stomp.over(socket);
 
     // 사용자 이름 가져오기
@@ -34,7 +27,7 @@ const useRoomWebSocket = () => {
 
         // 메시지 구독 설정
         stompClient.current.subscribe(
-          `/topic/waiting/${gameRoomIdRef.current}`,
+          `/topic/waiting/${gameRoomId}`,
           serverMsg => {
             const msg = JSON.parse(serverMsg.body);
             handleAlertMessage(msg);
@@ -68,8 +61,8 @@ const useRoomWebSocket = () => {
         setIsLoading(true);
         break;
       case "start":
-        if (gameRoomIdRef.current) {
-          navigate(`/game-play/${gameRoomIdRef.current}`);
+        if (gameRoomId) {
+          navigate(`/game-play/${gameRoomId}`);
         }
         break;
       default:
