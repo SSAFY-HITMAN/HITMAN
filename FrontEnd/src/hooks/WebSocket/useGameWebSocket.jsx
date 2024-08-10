@@ -20,8 +20,12 @@ const useGameWebSocket = () => {
     const socket = new WebSocket(`${WS_BASE_URL}/gameRoom/${gameRoomId}`);
     stompClient.current = Stomp.over(socket);
 
+    // 사용자 이름 가져오기
+    const username = localStorage.getItem("username");
+
     // STOMP 연결 설정
     stompClient.current.connect(
+      { username: username }, // 헤더에 username 추가
       frame => {
         console.log("Connected:" + frame);
 

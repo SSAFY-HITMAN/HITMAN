@@ -35,7 +35,7 @@ const useTimer = () => {
           }
         } catch {
           // axios 요청 실패 시 부분 입력
-          console.error("Failed to send death status:", error);
+          console.error("Failed to send death status");
         }
       })();
     }

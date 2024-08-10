@@ -1,0 +1,64 @@
+pipeline {
+    agent any
+
+    environment {
+        TARGET_BRANCH = 'front-dev'  
+        JENKINS_USER = 'boricori'
+        JENKINS_TOKEN = credentials('dbstjr9898')
+    }
+
+    stages {
+        stage('Cleanup Workspace') {
+            steps {
+                deleteDir() 
+            }
+        }
+        stage('Checkout') {
+            steps {
+                script {
+                    checkout([$class: 'GitSCM',
+                              branches: [[name: '*/front-dev']],
+                              doGenerateSubmoduleConfigurations: false,
+                              extensions: [[$class: 'CleanCheckout']],
+                              userRemoteConfigs: [[url: 'https://lab.ssafy.com/s11-webmobile1-sub2/S11P12B205.git',
+                              credentialsId: 'dbstjr9898']]  
+                    ])
+                }
+            }
+        }
+        stage('Copy .env.local') {
+            steps {
+                script {
+                    withCredentials([file(credentialsId: 'env-local', variable: 'APP_PROPERTIES')]) {
+                        sh 'cp $APP_PROPERTIES FrontEnd/.env.local'
+                        sh 'cat FrontEnd/.env.local'
+                    }
+                }
+            }
+        }
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    sh 'docker build -t frontend -f FrontEnd/Dockerfile FrontEnd/.'
+                }
+            }
+        }
+        stage('Deploy with Docker Compose') {
+            steps {
+                script {
+                    sh '''
+                        ssh -o StrictHostKeyChecking=no -i /var/jenkins_home/.ssh/I11B205T.pem ubuntu@i11b205.p.ssafy.io '
+                        cd /home/ubuntu/plog &&
+                        docker-compose stop frontend && 
+                        docker-compose rm -f frontend &&
+                        docker-compose up -d frontend &&
+                        docker image prune -f
+                        '
+                    '''
+                }
+            }
+        }
+    }
+
+}
+

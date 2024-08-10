@@ -86,7 +86,7 @@ export const GameProvider = ({ children }) => {
     areaCenterRef.current = areaCenter;
   }, [areaCenter]);
 
-  const calculationAverageLocation = () => {
+  const calculationAverageLocation = (latSum, lngSum, count) => {
     const averageLat = latSum / count;
     const averageLng = lngSum / count;
 
@@ -132,7 +132,7 @@ export const GameProvider = ({ children }) => {
       count += 1;
 
       if (count === GET_POSITION_COUNT) {
-        calculationAverageLocation();
+        calculationAverageLocation(latSum, lngSum, count);
       }
     };
 
