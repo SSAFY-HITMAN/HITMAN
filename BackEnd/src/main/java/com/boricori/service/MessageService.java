@@ -1,9 +1,14 @@
 package com.boricori.service;
 
+import com.boricori.dto.response.gameroom.end.EndGameResponse;
+import com.boricori.dto.response.inGame.EndGameUserInfoResponse;
 import com.boricori.entity.GameRoom;
 import com.boricori.game.GameManager;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
+
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +20,7 @@ public class MessageService {
   private final GameManager gameManager = GameManager.getGameManager();
 
   private final ObjectMapper mapper = new ObjectMapper();
+
 
 
   public MessageService(SimpMessagingTemplate messagingTemplate) {
@@ -41,6 +47,12 @@ public class MessageService {
 
   public void notifyStatus(String username, long gameId) {
     String jsonPayload = String.format("{\"msgType\":\"caught\", \"user\":\"%s\"}", username);
+    messagingTemplate.convertAndSend(String.format("/topic/room/%d", gameId), jsonPayload);
+  }
+
+  public void endGameScore(long gameId, String winner, List<EndGameUserInfoResponse> usersInfo) throws JsonProcessingException {
+    String rankJson = mapper.writeValueAsString(usersInfo);
+    String jsonPayload = String.format("{\"msgType\":\"end\", \"winner\":\"%s\", \"rank\":\"%s\"}", winner);
     messagingTemplate.convertAndSend(String.format("/topic/room/%d", gameId), jsonPayload);
   }
 }

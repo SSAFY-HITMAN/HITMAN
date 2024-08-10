@@ -6,6 +6,7 @@ import com.boricori.dto.request.inGame.MissionChangeRequest;
 import com.boricori.dto.request.inGame.UseItemRequest;
 import com.boricori.dto.response.gameroom.GameInfo;
 import com.boricori.dto.response.gameroom.end.EndGameResponse;
+import com.boricori.dto.response.inGame.EndGameUserInfoResponse;
 import com.boricori.dto.response.inGame.InitResponse;
 import com.boricori.dto.response.inGame.ItemResponse;
 import com.boricori.dto.response.inGame.MissionResponse;
@@ -22,6 +23,7 @@ import com.boricori.service.MessageService;
 import com.boricori.service.UserService;
 import com.boricori.util.Node;
 import com.boricori.util.ResponseEnum;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -92,17 +94,52 @@ public class InGameController {
 
   @Transactional
   @PostMapping("/catchTarget")
-  public void catchTarget(@RequestBody InGameRequest request){
-    String username = request.getUsername();
-    long gameId = request.getGameId();
-    Node<User> targetNode = gameManager.killTarget(gameId, username);
-    Node<User> newTarget = targetNode.next;
-    messageService.changeTarget(username, newTarget.data.getUsername(), gameId);
-    messageService.notifyStatus(targetNode.data.getUsername(), gameId);
-    User user = userService.findByUsername(username);
-    inGameService.catchTarget(user, targetNode.data, gameId);
-    if (gameManager.isLastTwo(gameId)){
-      // 여기에 2명남았을 때 설정, 알림
+  public void catchTarget(@RequestBody InGameRequest request) {
+    try {
+      String username = request.getUsername();
+      long gameId = request.getGameId();
+      Node<User> targetNode = gameManager.killTarget(gameId, username);
+      Node<User> newTarget = targetNode.next;
+      messageService.changeTarget(username, newTarget.data.getUsername(), gameId);
+      messageService.notifyStatus(targetNode.data.getUsername(), gameId);
+      User user = userService.findByUsername(username);
+      inGameService.catchTarget(user, targetNode.data, gameId);
+
+      if (gameManager.isLastTwo(gameId)) {
+        handleLastTwoPlayers(gameId);
+      }
+    } catch (JsonProcessingException e) {
+      e.printStackTrace(); // 예외 처리 (필요한 경우 로그로 대체 가능)
+    }
+  }
+
+  private void handleLastTwoPlayers(long gameId) throws JsonProcessingException {
+    List<String> users = gameManager.EndGameUserInfo(gameId);
+    GameParticipants userA = inGameService.getUserInfo(gameId, users.get(0));
+    GameParticipants userB = inGameService.getUserInfo(gameId, users.get(1));
+    String winner = determineWinner(userA, userB);
+
+    List<EndGameUserInfoResponse> usersInfo = new ArrayList<>();
+    if (userA.getKills() == userB.getKills() && userA.getMissionComplete() == userB.getMissionComplete()) {
+      usersInfo = inGameService.getDrawEndGameUsersInfo(gameId, userA.getUser().getUsername(), userB.getUser().getUsername());
+    } else {
+      usersInfo = inGameService.getWinEndGameUsersInfo(gameId, winner);
+    }
+
+    messageService.endGameScore(gameId, winner, usersInfo);
+  }
+
+  private String determineWinner(GameParticipants userA, GameParticipants userB) {
+    if (userA.getKills() == userB.getKills()) {
+      if (userA.getMissionComplete() > userB.getMissionComplete()) {
+        return userA.getUser().getUsername();
+      } else if (userA.getMissionComplete() < userB.getMissionComplete()) {
+        return userB.getUser().getUsername();
+      } else {
+        return userA.getUser().getUsername() + " " + userB.getUser().getUsername(); // 무승부
+      }
+    } else {
+      return userA.getKills() > userB.getKills() ? userA.getUser().getUsername() : userB.getUser().getUsername();
     }
   }
 
@@ -149,6 +186,17 @@ public class InGameController {
       return ResponseEntity.status(ResponseEnum.NOT_ACCEPTABLE.getCode()).body(null);
     }
   }
+
+//  @GetMapping("/endscore/{roomId}")
+//  public ResponseEntity<?> EndGameWinner(@PathVariable long roomId, @RequestBody InGameRequest req){
+//    String username = req.getUsername();
+//    try {
+//      GameParticipants player = inGameService.checkIfPlayer(username, roomId);
+//      return ResponseEntity.status(ResponseEnum.SUCCESS.getCode()).body(EndGameUserInfoResponse.of(player));
+//    }catch (Exception e){
+//      return ResponseEntity.status(ResponseEnum.NOT_ACCEPTABLE.getCode()).body(null);
+//    }
+//  }
 
 
 //  @PatchMapping("/end")

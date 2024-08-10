@@ -1,5 +1,7 @@
 package com.boricori.repository.ParticipantRepo;
 
+import com.boricori.dto.response.inGame.EndGameUserInfoResponse;
+import com.boricori.dto.response.inGame.QEndGameUserInfoResponse;
 import com.boricori.entity.GameParticipants;
 import com.boricori.entity.GameRoom;
 import com.boricori.entity.QGameParticipants;
@@ -9,6 +11,8 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 @Repository
 public class ParticipantRepositoryImpl {
@@ -65,5 +69,37 @@ public class ParticipantRepositoryImpl {
         .from(participants)
         .where(participants.user.username.eq(username).and(participants.gameRoom.isActivated.eq(true)))
         .fetchOne();
+  }
+
+  public List<EndGameUserInfoResponse> getDrawEndGameUsersInfo(Long roomId, String userA, String userB) {
+    return queryFactory
+            .select(new QEndGameUserInfoResponse(
+                    user.username,
+                    participants.missionComplete,
+                    participants.kills
+            ))
+            .from(participants)
+            .join(participants.user, user)
+            .where(participants.gameRoom.id.eq(roomId)
+                    .and(user.username.ne(userA))
+                    .and(user.username.ne(userB))) // userA와 userB가 아닌 경우만 포함
+            .orderBy(participants.kills.desc(), participants.missionComplete.desc())
+            .fetch();
+  }
+
+
+  public List<EndGameUserInfoResponse> getWinEndGameUsersInfo(Long roomId, String username) {
+    return queryFactory
+            .select(new QEndGameUserInfoResponse(
+                    user.username,
+                    participants.missionComplete,
+                    participants.kills
+            ))
+            .from(participants)
+            .join(participants.user, user)
+            .where(participants.gameRoom.id.eq(roomId)
+                    .and(user.username.ne(username))) // username이 같지 않은 경우만 포함
+            .orderBy(participants.kills.desc(), participants.missionComplete.desc())
+            .fetch();
   }
 }

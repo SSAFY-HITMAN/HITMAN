@@ -39,5 +39,8 @@ public class GameManager {
     return new UserCircularLinkedList(users);
   }
 
+  public List<String> EndGameUserInfo(long gameId){
+    return catchableList.get(gameId).toList();
+  }
 
 }
