@@ -14,7 +14,7 @@ import useReadyGame from "@/hooks/Map/useReadyGame";
 const Room = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const { gameRoomId: paramGameRoomId } = useParams();
-  const { setGameRoomId, gameRoomUsers } = useContext(GameContext);
+  const { gameRoomId, setGameRoomId, gameRoomUsers } = useContext(GameContext);
 
   const { connect, disconnect } = useRoomWebSocket();
 
