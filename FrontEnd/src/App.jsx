@@ -32,7 +32,7 @@ const App = () => {
   const location = useLocation();
 
   return (
-    <div className="bg-theme-color min-h-screen text-white">
+    <div className="min-h-screen bg-gradient-to-r from-indigo-900 to-indigo-950 text-white">
       <TransitionGroup>
         <CSSTransition key={location.key} classNames="page" timeout={300}>
           <Routes location={location}>

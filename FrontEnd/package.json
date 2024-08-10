@@ -39,6 +39,7 @@
     "react-kakao-login": "^2.1.1",
     "react-qr-scanner": "^1.0.0-alpha.11",
     "react-router-dom": "^6.24.1",
+    "react-spinners": "^0.14.1",
     "react-toastify": "^10.0.5",
     "react-transition-group": "^4.4.5",
     "sockjs-client": "^1.6.1",

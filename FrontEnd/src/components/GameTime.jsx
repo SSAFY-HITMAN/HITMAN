@@ -43,13 +43,15 @@ const GameTime = () => {
     const elapsedTime = Math.floor((now - start) / 1000); // 경과 시간
     const newRemainingPlayTime = gamePlayTime - elapsedTime; // 남은 시간
 
-    if (newRemainingPlayTime <= 0) {  // 남은 시간이 0이 되면 타이머 정지하고 남은 시간을 0으로 설정
+    if (newRemainingPlayTime <= 0) {
+      // 남은 시간이 0이 되면 타이머 정지하고 남은 시간을 0으로 설정
       clearInterval(intervalIdRef.current);
       if (remainingPlayTime !== 0) {
         setRemainingPlayTime(0);
         sessionStorage.setItem(SESSION_STORAGE_KEYS.REMAINING_PLAY_TIME, "0");
       }
-    } else {  // 남은 시간을 sessionStorage에 저장
+    } else {
+      // 남은 시간을 sessionStorage에 저장
       setRemainingPlayTime(newRemainingPlayTime);
       sessionStorage.setItem(
         SESSION_STORAGE_KEYS.REMAINING_PLAY_TIME,
@@ -69,7 +71,7 @@ const GameTime = () => {
   }, [gamePlayTime, startTime]);
 
   return (
-    <div className="m-4 flex h-[8vh] w-[65vw] items-center justify-center rounded-lg border-2 border-black bg-white text-4xl font-bold text-black">
+    <div className="m-4 flex h-16 w-48 items-center justify-center rounded-lg border-2 border-black bg-white text-4xl font-bold text-black">
       ⏱ {formatTime(remainingPlayTime)}
     </div>
   );

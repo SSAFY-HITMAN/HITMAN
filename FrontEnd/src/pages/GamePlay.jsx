@@ -36,6 +36,7 @@ const APPLICATION_SERVER_URL = process.env.NODE_ENV === 'production' ? '' : 'htt
 //====================================================================
 import GiveUpButton from "@/components/GiveUpGameButton";
 import { Button } from "@/components/ui/Button";
+import GameRuleDialog from "@/components/GameRuleDialog";
 
 import catchButton from "@/assets/gameplay-icon/catch-button.png";
 
@@ -46,6 +47,7 @@ const GamePlay = () => {
   const { startSendingGPS } = useSendGPS();
   const { isAbleToCatchTarget, handleOnClickCatchTarget } = useCatchTarget();
   const [camChatting, setCamChatting] = useState(false); // camChatting 상태 초기화
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   useEffect(() => {
     setGameRoomId(paramGameRoomId);
@@ -299,7 +301,21 @@ const GamePlay = () => {
       )}
 
       <GameHeader />
-
+      <div className="flex items-center justify-center">
+        <div id="game-rule-dialog" className="m-4">
+          <Button
+            onClick={() => setIsDialogOpen(true)}
+            className="shadow-3d h-14 w-32 bg-gradient-to-r from-teal-400 to-blue-700 font-bold"
+          >
+            게임 규칙 요약
+          </Button>
+          <GameRuleDialog
+            isOpen={isDialogOpen}
+            onClose={() => setIsDialogOpen(false)}
+          />
+        </div>
+        <GameTime />
+      </div>
       {camChatting ? (
         <>
           <GameTime />
@@ -345,7 +361,6 @@ const GamePlay = () => {
       ) : (
         <>
           <MapComponent />
-          <GameTime />
           <div className="flex justify-between">
             <div />
             <div />
