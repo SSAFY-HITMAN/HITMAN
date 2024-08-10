@@ -41,4 +41,5 @@ public interface InGameService {
 
   void killUser(String username, long roomId);
 
+  Mission getMissionById(long missionId);
 }

@@ -91,5 +91,15 @@ public class UserServiceImpl implements UserService {
     return userRepo.findByUsername(username);
   }
 
+  @Override
+  public boolean isDupEmail(String value) {
+    return userRepo.findByEmail(value) != null;
+  }
+
+  @Override
+  public boolean isDupUsername(String value) {
+    return userRepo.findByUsername(value) != null;
+  }
+
 
 }

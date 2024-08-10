@@ -17,7 +17,9 @@ import com.boricori.entity.Mission;
 import com.boricori.entity.User;
 import com.boricori.exception.NotAPlayerException;
 import com.boricori.game.GameManager;
+import com.boricori.repository.inGameRepo.MissionRepositoryImpl;
 import com.boricori.service.GameRoomService;
+import com.boricori.service.ImageService;
 import com.boricori.service.InGameService;
 import com.boricori.service.MessageService;
 import com.boricori.service.UserService;
@@ -30,9 +32,11 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -41,7 +45,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 @Tag(name = "게임 컨트롤러", description = "게임 진행 중 일어나는 이벤트 관리")
 @RestController
@@ -62,6 +68,9 @@ public class InGameController {
   @Autowired
   private GameRoomService gameRoomService;
 
+  @Autowired
+  private ImageService imageService;
+
   @Transactional
   @PostMapping("/changeMission")
   public ResponseEntity<MissionResponse> changeMission(@RequestBody MissionChangeRequest request){
@@ -72,15 +81,46 @@ public class InGameController {
     return ResponseEntity.status(ResponseEnum.SUCCESS.getCode()).body(MissionResponse.of(newMission));
   }
 
+//  @Transactional
+//  @PostMapping("/completeMission")
+//  public ResponseEntity<ItemResponse> completeMission(@RequestBody MissionChangeRequest request){
+//    String username = request.getUsername();
+//    long gameId = request.getGameId();
+//    long missionId = request.getMissionId();
+//    inGameService.completeMission(gameId, username, missionId);
+//    Item item = inGameService.getItem(gameId, username);
+//    return ResponseEntity.status(ResponseEnum.SUCCESS.getCode()).body(ItemResponse.of(item));
+//  }
+
   @Transactional
-  @PostMapping("/completeMission")
-  public ResponseEntity<ItemResponse> completeMission(@RequestBody MissionChangeRequest request){
+  @PostMapping("/imageMission")
+  public ResponseEntity<ItemResponse> imageMission(@RequestParam("file") MultipartFile file,
+      @RequestBody MissionChangeRequest request){
     String username = request.getUsername();
     long gameId = request.getGameId();
     long missionId = request.getMissionId();
-    inGameService.completeMission(gameId, username, missionId);
-    Item item = inGameService.getItem(gameId, username);
-    return ResponseEntity.status(ResponseEnum.SUCCESS.getCode()).body(ItemResponse.of(item));
+    Mission mission = inGameService.getMissionById(missionId);
+    boolean success = false;
+    try {
+      if (mission == null){
+        throw new IOException();
+      }
+      if (mission.getCategory() == 1) {
+        success = imageService.checkText(file, mission);
+      } else if (mission.getCategory() == 2) {
+        success = imageService.checkObjects(file, mission);
+      } else if (mission.getCategory() == 3) {
+        success = imageService.checkColours(file, mission);
+      }
+      if (success){
+        inGameService.completeMission(gameId, username, missionId);
+        Item item = inGameService.getItem(gameId, username);
+        return ResponseEntity.status(ResponseEnum.SUCCESS.getCode()).body(ItemResponse.of(item));
+      }
+      return ResponseEntity.status(ResponseEnum.FAIL.getCode()).body(null);
+      } catch (IOException e) {
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+    }
   }
 
   @Transactional

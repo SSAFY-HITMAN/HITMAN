@@ -1,5 +1,6 @@
 package com.boricori.controller;
 
+import com.boricori.dto.request.User.CheckDupRequest;
 import com.boricori.dto.request.User.UserLoginRequest;
 import com.boricori.dto.request.User.UserSignupRequest;
 import com.boricori.dto.request.User.UserUpdateRequest;
@@ -78,6 +79,23 @@ public class UserController {
       return ResponseEntity.status(ResponseEnum.SUCCESS.getCode()).body(UserResponse.of(user));
     }
     return ResponseEntity.status(ResponseEnum.FAIL.getCode()).body(null);
+  }
+
+  @PostMapping("isDuplicate")
+  public ResponseEntity<String> isDuplicate(@RequestBody CheckDupRequest request){
+    String type = request.getType();
+    String value = request.getValue();
+    boolean isDup = false;
+    if (type.equals("email")){
+      isDup = userService.isDupEmail(value);
+    }else if (type.equals("username")){
+      isDup = userService.isDupUsername(value);
+    }
+    if (isDup){
+      return ResponseEntity.status(ResponseEnum.FAIL.getCode()).body(null);
+    }else{
+      return ResponseEntity.status(ResponseEnum.SUCCESS.getCode()).body(null);
+    }
   }
 
 
