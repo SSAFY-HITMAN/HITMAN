@@ -17,10 +17,12 @@ import {
   CarouselItem,
 } from "@/components/ui/Carousel.jsx";
 import { Button } from "@/components/ui/Button";
-import GiveUpButton from "@/components/GiveUpGameButton";
 import GameRuleDialog from "@/components/GameRuleDialog";
 
 import catchButton from "@/assets/gameplay-icon/catch-button.png";
+import camchattingIcon from "@assets/material-icon/camchatting-icon.svg";
+import itemIcon from "@assets/material-icon/item-icon.svg";
+import giveUpIcon from "@/assets/material-icon/giveup-icon.svg";
 
 //====================================================================
 
@@ -38,7 +40,7 @@ const GamePlay = () => {
   const { gameStatus } = useContext(GameContext);
   const { fetch, timeUntilStart } = useStartGame();
   const { startSendingGPS } = useSendGPS();
-  const { isAbleToCatchTarget, handleOnClickCatchTarget } = useCatchTarget();
+  const { isAbleToCatchTarget, handleCatchTarget } = useCatchTarget();
   const { connect, disconnect } = useGameWebSocket();
 
   const [camChatting, setCamChatting] = useState(false); // camChatting 상태 초기화
@@ -278,7 +280,7 @@ const GamePlay = () => {
             onClick={() => setIsDialogOpen(true)}
             className="shadow-3d h-14 w-32 bg-gradient-to-r from-teal-400 to-blue-700 font-bold"
           >
-            게임 규칙 요약
+            게임 규칙
           </Button>
           <GameRuleDialog
             isOpen={isDialogOpen}
@@ -289,7 +291,6 @@ const GamePlay = () => {
       </div>
       {camChatting ? (
         <>
-          <GameTime />
           <div>
             {/* ==================   비디오 시작!  ===================*/}
             {session !== undefined ? (
@@ -332,36 +333,35 @@ const GamePlay = () => {
           </div>
         </>
       ) : (
-        <>
+        <div className="item-center flex-col justify-center">
           <MapComponent />
-          <div className="flex justify-between">
-            <div />
-            <div />
+          <div className="item-center flex justify-center">
             <img
               src={catchButton}
-              alt="catch button"
-              onClick={handleOnClickCatchTarget}
-              className={`w-60 ${isAbleToCatchTarget ? "" : "cursor-not-allowed opacity-50"}`}
+              alt="catch-button"
+              onClick={handleCatchTarget}
+              className={`mr-2 w-60 ${isAbleToCatchTarget ? "" : "cursor-not-allowed opacity-40"}`}
             />
-            <div id="mini-buttons" className="mx-3 flex flex-col">
-              <Button
-                id="item-button"
-                className="m-1 h-[8vh] w-[8vh] rounded-full border-2 border-black bg-white text-black"
-              >
-                Item
+            <div id="mini-buttons" className="flex flex-col">
+              <Button className="m-2 h-16 w-16 flex-col rounded-full border-black bg-white text-black">
+                <img src={itemIcon} alt="item" className="opacity-70" />
+                <div>item</div>
               </Button>
               <Button
-                id="camchatting-button"
                 onClick={toggleCamChatting}
-                className="m-1 h-[8vh] w-[8vh] rounded-full border-2 border-black bg-white text-black"
+                className="m-2 h-16 w-16 flex-col rounded-full border-black bg-white text-black"
               >
-                Cam
+                <img src={camchattingIcon} alt="chat" className="opacity-70" />
+                <div>chat</div>
               </Button>
-              <GiveUpButton />
+              <button
+                className={`m-2 flex h-16 w-16 items-center justify-center rounded-full bg-rose-500 transition-colors duration-300`}
+              >
+                <img src={giveUpIcon} alt="Give Up" className="w-12" />
+              </button>
             </div>
-            <div />
           </div>
-        </>
+        </div>
       )}
     </>
   );

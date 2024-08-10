@@ -17,7 +17,7 @@ export default defineConfig({
         theme_color: "#04479C",
         description: "앱 설명",
         dir: "auto",
-        display: "standalone",
+        display: "fullscreen",
         icons: [
           {
             src: "/icon-192x192.png",
