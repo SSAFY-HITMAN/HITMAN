@@ -8,8 +8,8 @@ const useBullet = () => {
   const [isCooldown, setIsCooldown] = useState(false); // 재사용 대기시간 여부
   const COOLDOWN = 3000; // 재발사 시간 3초
 
-  const getBullet = () => {
-    setBullet(prev => prev + 1);
+  const getBullet = (n) => {
+    setBullet(prev => prev + n);
   };
 
   const shootBullet = () => {
@@ -22,7 +22,7 @@ const useBullet = () => {
     }
   };
 
-  return { bullet, isCooldown, setBullet, getBullet, shootBullet };
+  return { bullet, isCooldown, getBullet, shootBullet };
 };
 
 export default useBullet;

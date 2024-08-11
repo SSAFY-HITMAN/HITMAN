@@ -15,7 +15,7 @@ const useStartGame = () => {
     setMissionList,
     setItemList,
   } = useContext(GameContext);
-  const { setBullet } = useBullet();
+  const { getBullet } = useBullet();
   const [timeUntilStart, setTimeUntilStart] = useState(null);
 
   // 미션 및 아이템 목록 업데이트 함수
@@ -77,13 +77,13 @@ const useStartGame = () => {
           lng: parseFloat(metadata.gameInfo.centerLng).toFixed(5),
         };
         const newTargetId = metadata.targetName;
-        const newBullet = metadata.bullets;
+        const newBullet = parseInt(metadata.bullets, 10);
 
         // 상태 업데이트
         setAreaRadius(newAreaRadius);
         setAreaCenter(newAreaCenter);
         setTargetId(newTargetId);
-        setBullet(newBullet);
+        getBullet(newBullet);
 
         sessionStorage.setItem("areaRadius", newAreaRadius);
         sessionStorage.setItem("areaCenter", newAreaCenter);
