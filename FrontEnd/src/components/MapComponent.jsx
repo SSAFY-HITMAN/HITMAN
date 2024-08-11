@@ -32,7 +32,7 @@ const MapComponent = () => {
             src={crosshair}
             alt="Crosshair"
             onClick={handleOnClickCenter}
-            className="border-1 shadow-3d absolute right-[1%] top-[1%] z-20 h-12 w-12 rounded-lg border-black bg-gradient-to-r from-amber-300 to-amber-500"
+            className="border-1 absolute right-[1%] top-[1%] z-20 h-12 w-12 rounded-lg border-black bg-gradient-to-r from-amber-300 to-amber-500 shadow-3d"
           />
         </div>
       </div>

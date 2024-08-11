@@ -14,14 +14,7 @@ const approximateDistance = (lat1, lng1, lat2, lng2) => {
   const x = dLng * Math.cos(avgLatRad);
   const distance = Math.sqrt(dLat * dLat + x * x) * R;
 
-  return distance.toFixed(1); // 거리의 소수점 이하 1자리까지, 미터 단위
-};
-
-const coordToFixed = (getLat, getLng) => {
-  return {
-    lat: getLat.toFixed(5), // 거리 연산에 위/경도의 소수점 5자리까지 사용
-    lng: getLng.toFixed(5), // 거리 연산에 위/경도의 소수점 5자리까지 사용
-  };
+  return parseFloat(distance.toFixed(1)); // 거리의 소수점 이하 1자리까지, 미터 단위
 };
 
 export const GameContext = createContext();
@@ -31,10 +24,11 @@ export const GameProvider = ({ children }) => {
     return sessionStorage.getItem("gameRoomId") || "";
   }); // 게임 방 번호
   const [gameRoomUsers, setGameRoomUsers] = useState([]); // 참여자 목록
+  const [isGameRoomLoading, setIsGameRoomLoading] = useState(false); // Room.jsx에서 로딩 스피너 사용
   const [gameStatus, setGameStatus] = useState(() => {
     const savedGameStatus = sessionStorage.getItem("gameStatus");
     return savedGameStatus === "true";
-  }); // 게임방 플레이 상태 (웹소켓 메시지에 따라 true로 전환되고, 이후 게임 종료 조건에 따라 false로 전환)
+  }); // 게임방 플레이 상태
   const [isAlive, setIsAlive] = useState(() => {
     const savedIsAlive = sessionStorage.getItem("isAlive");
     return savedIsAlive === "true";
@@ -73,10 +67,6 @@ export const GameProvider = ({ children }) => {
   const myLocationRef = useRef(myLocation);
   const targetLocationRef = useRef(targetLocation);
   const areaCenterRef = useRef(areaCenter);
-
-  useEffect(() => {
-    myLocationRef.current = myLocation;
-  }, [myLocation]);
 
   useEffect(() => {
     targetLocationRef.current = targetLocation;
@@ -193,6 +183,8 @@ export const GameProvider = ({ children }) => {
         setTargetId,
         gameStatus,
         setGameStatus,
+        isGameRoomLoading,
+        setIsGameRoomLoading,
         isAlive,
         setIsAlive,
         myLocation,

@@ -1,4 +1,4 @@
-import { useState, useCallback, useContext } from "react";
+import { useState, useContext } from "react";
 import { GameContext } from "@/context/GameContext";
 import axiosInstance from "@/api/axiosInstance";
 
@@ -16,7 +16,7 @@ const useStartGame = () => {
   } = useContext(GameContext);
   const [timeUntilStart, setTimeUntilStart] = useState(null);
 
-  const fetch = useCallback(async () => {
+  const fetch = async () => {
     try {
       const response = await axiosInstance.get(`/in-game/init/${gameRoomId}`);
 
@@ -70,6 +70,8 @@ const useStartGame = () => {
               setTimeUntilStart(0);
               setGameStatus(true); // 대기 시간이 끝나면 게임 상태 변경
               setIsAlive(true);
+              sessionStorage.setItem("gameStatus", true);
+              sessionStorage.setItem("isAlive", true);
             } else {
               setTimeUntilStart(updatedTimeUntilStart);
             }
@@ -86,7 +88,7 @@ const useStartGame = () => {
     } catch {
       alert("요청을 보내는 중 문제가 발생했습니다.");
     }
-  }, []);
+  };
 
   return { fetch, timeUntilStart };
 };

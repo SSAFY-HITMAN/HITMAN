@@ -52,15 +52,12 @@ const GamePlay = () => {
 
   useEffect(() => {
     connect();
+    fetch();
 
     return () => {
       disconnect();
     };
   }, []);
-
-  useEffect(() => {
-    fetch();
-  }, [fetch]);
 
   useEffect(() => {
     if (gameStatus) {
@@ -278,7 +275,7 @@ const GamePlay = () => {
         <div id="game-rule-dialog" className="m-4">
           <Button
             onClick={() => setIsDialogOpen(true)}
-            className="shadow-3d h-14 w-32 bg-gradient-to-r from-teal-400 to-blue-700 font-bold"
+            className="h-14 w-32 bg-gradient-to-r from-teal-400 to-blue-700 font-bold shadow-3d"
           >
             게임 규칙
           </Button>

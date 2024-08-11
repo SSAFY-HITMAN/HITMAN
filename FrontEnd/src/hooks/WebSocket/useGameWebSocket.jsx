@@ -71,7 +71,7 @@ const useGameWebSocket = () => {
       case "alert":
         handleAlertDegree(msg.alertDegree);
         break;
-      case "end":
+      case "end": // 게임 종료 조건(인원수)
         setGameStatus(false);
         endGame();
         break;
@@ -89,7 +89,7 @@ const useGameWebSocket = () => {
         setAreaRadius(newAreaRadius);
         sessionStorage.setItem("areaRadius", newAreaRadius);
         break;
-      case "4":
+      case "4": // 게임 시간 소진으로 종료
         setGameStatus(false);
         endGame();
         break;

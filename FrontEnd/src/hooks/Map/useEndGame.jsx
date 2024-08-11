@@ -5,16 +5,17 @@ const useEndGame = () => {
   const gameRoomId = sessionStorage.getItem("gameRoomId");
 
   const removeSessionStorageList = [
-    "gameStatus",
-    "isAlive",
     "gameRoomId",
-    "areaCenter",
+    "remainingPlayTime",
+    "isChief",
     "areaRadius",
     "targetId",
-    "remainingTime",
+    "areaCenter",
     "startTime",
+    "remainingTime",
     "gamePlayTime",
-    "remainingPlayTime",
+    "gameStatus",
+    "isAlive",
   ];
 
   const endGame = () => {
