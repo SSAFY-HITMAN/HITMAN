@@ -27,7 +27,7 @@ const useStartGame = () => {
   // 게임 시작 시간 처리 함수 별도 분리
   const handleStartGameTime = newStartTime => {
     const startTime = new Date(newStartTime).getTime();
-    const currentTime = new Date().getTime();
+    const currentTime = new Date().getTime() - (9 * 60 * 60 * 1000);
     const initialTimeUntilStart = startTime - currentTime; // 게임 시작까지 남은 시간, ms 단위
     console.log(`startTime: ${startTime}`);
     console.log(`currentTime: ${currentTime}`);
