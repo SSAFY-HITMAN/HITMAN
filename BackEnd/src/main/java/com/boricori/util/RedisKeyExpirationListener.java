@@ -44,7 +44,7 @@ public class RedisKeyExpirationListener implements MessageListener {
       if (!alertDegree.equals(GAME_ENDED)){
         String jsonData = String.format("{\"msgType\":\"alert\", \"alertDegree\":\"%s\"}", alertDegree);
         messageService.processAlertMessage(gameRoomId, jsonData);
-      }else{ // timeout
+      }else{ // timeoute
         GameResult gameResult = inGameService.gameTimeout(Long.parseLong(gameRoomId));
         messageService.endGameScore(gameResult);
       }
@@ -61,6 +61,8 @@ public class RedisKeyExpirationListener implements MessageListener {
         GameResult res = inGameService.finishGameAndHandleLastTwoPlayers(roomId);
         messageService.endGameScore(res);
       }else{
+        int playersLeft = GameManager.catchableList.get(roomId).size;
+        messageService.playersCount(roomId, playersLeft);
         messageService.changeTarget(hunter.data.getUsername(), hunter.next.data.getUsername(), roomId);
       }
     }

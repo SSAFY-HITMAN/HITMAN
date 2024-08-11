@@ -144,10 +144,12 @@ public class InGameController {
     messageService.notifyStatus(targetNode.data.getUsername(), gameId);
     User user = userService.findByUsername(username);
     inGameService.catchTarget(user, targetNode.data, gameId);
-
     if (gameManager.isLastTwo(gameId)) {
       GameResult res = inGameService.finishGameAndHandleLastTwoPlayers(gameId);
       messageService.endGameScore(res);
+    }else{
+      int playersLeft = GameManager.catchableList.get(gameId).size;
+      messageService.playersCount(gameId, playersLeft);
     }
   }
 
@@ -192,6 +194,20 @@ public class InGameController {
 
     }catch (NotAPlayerException e){
       return ResponseEntity.status(ResponseEnum.NOT_ACCEPTABLE.getCode()).body(null);
+    }
+  }
+
+  @PatchMapping("/eliminate")
+  public void eliminateUser(@RequestBody InGameRequest request){
+    long gameId = request.getGameId();
+    String username = request.getUsername();
+    inGameService.killUser(username, gameId);
+    Node<User> hunter = gameManager.removeTarget(gameId, username);
+    if (gameManager.isLastTwo(gameId)) {
+      GameResult res = inGameService.finishGameAndHandleLastTwoPlayers(gameId);
+      messageService.endGameScore(res);
+    }else{
+      messageService.changeTarget(hunter.data.getUsername(), hunter.next.data.getUsername(), gameId);
     }
   }
 

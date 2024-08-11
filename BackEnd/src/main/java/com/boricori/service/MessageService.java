@@ -58,4 +58,9 @@ public class MessageService {
       System.out.println(e.getMessage());
     }
   }
+
+  public void playersCount(long gameId, int playersLeft) {
+    String jsonPayload = String.format("{\"msgType\":\"playerCount\", \"count\":\"%d\"}", playersLeft);
+    messagingTemplate.convertAndSend(String.format("/topic/play/%d", gameId), jsonPayload);
+  }
 }
