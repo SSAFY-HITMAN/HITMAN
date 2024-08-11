@@ -72,38 +72,38 @@ public class ParticipantController {
 
   }
 
-  @PatchMapping("/{playId}/{userName}/die")
-  @Operation(summary = "게임 참여자가 죽을 시", description = "게임 참여자의 죽음을 반영합니다.")
-  @ApiResponses(value = {
-      @ApiResponse(responseCode = "200", description = "OK"),
-  })
-  public ResponseEntity<?> patchParticipantDie(
-      @PathVariable("playId") String playId, @PathVariable("userName") String userName) {
-
-    return ResponseEntity.ok(200);
-  }
-
-  @PatchMapping("/{playId}/{userName}/clear")
-  @Operation(summary = "게임 참여자가 미션을 완료할 시", description = "게임 참여자가 미션을 성공하면, 미션 완료 횟수를 하나 증가시킵니다.")
-  @ApiResponses(value = {
-      @ApiResponse(responseCode = "200", description = "OK"),
-  })
-  public ResponseEntity<?> patchParticipantClear(
-      @PathVariable("playId") String playId, @PathVariable("userName") String userName) {
-
-    return ResponseEntity.ok(200);
-  }
-
-  @PatchMapping("/{playId}/{userName}/kill")
-  @Operation(summary = "상대를 잡았을 시", description = "게임 참여자가 상대를 잡은 횟수를 하나 증가시킵니다.")
-  @ApiResponses(value = {
-      @ApiResponse(responseCode = "200", description = "OK"),
-  })
-  public ResponseEntity<?> patchParticipantKill(
-      @PathVariable("playId") String playId, @PathVariable("userName") String userName) {
-
-    return ResponseEntity.ok(200);
-  }
+//  @PatchMapping("/{playId}/{userName}/die")
+//  @Operation(summary = "게임 참여자가 죽을 시", description = "게임 참여자의 죽음을 반영합니다.")
+//  @ApiResponses(value = {
+//      @ApiResponse(responseCode = "200", description = "OK"),
+//  })
+//  public ResponseEntity<?> patchParticipantDie(
+//      @PathVariable("playId") String playId, @PathVariable("userName") String userName) {
+//
+//    return ResponseEntity.ok(200);
+//  }
+//
+//  @PatchMapping("/{playId}/{userName}/clear")
+//  @Operation(summary = "게임 참여자가 미션을 완료할 시", description = "게임 참여자가 미션을 성공하면, 미션 완료 횟수를 하나 증가시킵니다.")
+//  @ApiResponses(value = {
+//      @ApiResponse(responseCode = "200", description = "OK"),
+//  })
+//  public ResponseEntity<?> patchParticipantClear(
+//      @PathVariable("playId") String playId, @PathVariable("userName") String userName) {
+//
+//    return ResponseEntity.ok(200);
+//  }
+//
+//  @PatchMapping("/{playId}/{userName}/kill")
+//  @Operation(summary = "상대를 잡았을 시", description = "게임 참여자가 상대를 잡은 횟수를 하나 증가시킵니다.")
+//  @ApiResponses(value = {
+//      @ApiResponse(responseCode = "200", description = "OK"),
+//  })
+//  public ResponseEntity<?> patchParticipantKill(
+//      @PathVariable("playId") String playId, @PathVariable("userName") String userName) {
+//
+//    return ResponseEntity.ok(200);
+//  }
 
 //  @GetMapping("{id}/enter")
 //  @Operation(summary = "게임 참여 요청", description = "게임 시작 후 게임 참여자로 저장합니다.")

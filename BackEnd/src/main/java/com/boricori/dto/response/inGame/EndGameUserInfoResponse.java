@@ -17,12 +17,15 @@ public class EndGameUserInfoResponse {
     private int missionComplete;
     @Schema(description = "킬 수")
     private int kills;
+    @Schema(description = "스코어 점수")
+    private int score;
 
     @QueryProjection
     @Builder
-    public EndGameUserInfoResponse(String userName, int missionComplete, int kills) {
+    public EndGameUserInfoResponse(String userName, int missionComplete, int kills, int score) {
         this.userName = userName;
         this.missionComplete = missionComplete;
         this.kills = kills;
+        this.score = score;
     }
 }

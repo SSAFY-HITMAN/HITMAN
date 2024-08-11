@@ -40,6 +40,8 @@ public class GameParticipants {
   private int kills;
   @ColumnDefault("0")
   private int bullets;
+  @ColumnDefault("0")
+  private int score;
 
   @Builder
   public GameParticipants(GameRoom gameRoom, User user) {

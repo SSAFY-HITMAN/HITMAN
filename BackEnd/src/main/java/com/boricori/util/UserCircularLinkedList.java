@@ -74,5 +74,21 @@ public class UserCircularLinkedList extends CircularLinkedList {
 
     return usernameList;
   }
+
+  public Node<User> removeTarget(String username) {
+    Node<User> currNode = tail.next; // 시작 노드
+
+    do {
+      if (currNode.next.data.getUsername().equals(username)) {
+        Node<User> target = currNode.next;
+        currNode.next = target.next;
+        size--;
+        return currNode;
+      }
+      currNode = currNode.next;
+    } while (currNode != tail.next); // 한 바퀴 다 돌면 종료
+
+    return null;
+  }
 }
 

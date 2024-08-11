@@ -53,4 +53,12 @@ public class UserRepositoryImpl {
     return hasText(userName) ? user.username.eq(userName) : null;
   }
 
+  public void addUserScore(Long userId, int scoreToAdd) {
+    queryFactory
+            .update(user)
+            .set(user.scores, user.scores.add(scoreToAdd))  // 현재 점수에 새로운 점수를 더함
+            .where(user.userId.eq(userId))
+            .execute();
+  }
+
 }

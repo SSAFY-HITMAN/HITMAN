@@ -1,30 +1,27 @@
 package com.boricori.util;
 
+import com.boricori.dto.GameResult;
+import com.boricori.entity.User;
+import com.boricori.game.GameManager;
 import com.boricori.service.InGameService;
 import com.boricori.service.MessageService;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.TimeUnit;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.connection.Message;
 import org.springframework.data.redis.connection.MessageListener;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.kafka.support.SendResult;
 import org.springframework.stereotype.Component;
 
 @Component
 public class RedisKeyExpirationListener implements MessageListener {
 
-  private final static int GAME_ENDED = 4;
-
-  @Autowired
-  private RedisTemplate<String, String> redisTemplate;
+  private final static String GAME_ENDED = "4";
 
   @Autowired
   private MessageService messageService;
 
   @Autowired
   private InGameService inGameService;
+
+  GameManager gameManager = GameManager.getGameManager();
 
   @Override
   public void onMessage(Message message, byte[] pattern) {
@@ -39,16 +36,28 @@ public class RedisKeyExpirationListener implements MessageListener {
       }
       String gameRoomId = parts[0];
       String alertDegree = parts[1];
-      // kafka의 topic: game-alert에 보내놓기
-      String jsonData = String.format("{\"msgType\":\"alert\", \"alertDegree\":\"%s\"}", alertDegree);
-      messageService.processAlertMessage(gameRoomId, jsonData);
+      if (!alertDegree.equals(GAME_ENDED)){
+        String jsonData = String.format("{\"msgType\":\"alert\", \"alertDegree\":\"%s\"}", alertDegree);
+        messageService.processAlertMessage(gameRoomId, jsonData);
+      }else{ // timeout
+        GameResult gameResult = inGameService.gameTimeout(Long.parseLong(gameRoomId));
+        messageService.endGameScore(gameResult);
+      }
+
     }
     else if (parts.length == 3){
       System.out.println("LEFT: " + expiredKey);
       String username = parts[0];
       long roomId = Long.parseLong(parts[1]);
       inGameService.killUser(username, roomId);
-      // 해당 유저 쫓던 유저의 타겟이 바뀌는 로직 구현 필요함
+      // 해당 유저 쫓던 유저의 타겟이 바뀌는 로직
+      Node<User> hunter = gameManager.removeTarget(roomId, username);
+      if (gameManager.isLastTwo(roomId)) {
+        GameResult res = inGameService.finishGameAndHandleLastTwoPlayers(roomId);
+        messageService.endGameScore(res);
+      }else{
+        messageService.changeTarget(hunter.data.getUsername(), hunter.next.data.getUsername(), roomId);
+      }
     }
     else {
       System.err.println("Invalid key format: " + expiredKey);

@@ -1,14 +1,12 @@
 package com.boricori.service;
 
 
+import com.boricori.dto.GameResult;
+import com.boricori.dto.request.inGame.UpdatePlayerScoreRequest;
 import com.boricori.dto.response.inGame.EndGameUserInfoResponse;
-import com.boricori.entity.GameParticipants;
-import com.boricori.entity.InGameItems;
-import com.boricori.entity.InGameMissions;
-import com.boricori.entity.Item;
-import com.boricori.entity.Mission;
-import com.boricori.entity.User;
+import com.boricori.entity.*;
 import com.boricori.exception.NotAPlayerException;
+import com.boricori.game.GameManager;
 import com.boricori.repository.GameRoomRepo.GameRoomRepository;
 import com.boricori.repository.ParticipantRepo.ParticipantRepositoryImpl;
 import com.boricori.repository.inGameRepo.InGameItemsRepository;
@@ -21,6 +19,9 @@ import com.boricori.repository.inGameRepo.MissionRepositoryImpl;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+
+import com.boricori.repository.userRepo.UserRepositoryImpl;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -47,7 +48,11 @@ public class InGameServiceImpl implements InGameService{
   @Autowired
   private GameRoomRepository gameRoomRepository;
   @Autowired
+  private UserRepositoryImpl userRepository;
+  @Autowired
   private RedisTemplate<String, String> redisTemplate;
+
+  private GameManager gameManager = GameManager.getGameManager();
 
   @Override
   public List<Mission> assignMissions(String username, Long gameId) {
@@ -122,21 +127,6 @@ public class InGameServiceImpl implements InGameService{
   }
 
   @Override
-  public GameParticipants getUserInfo(Long gameId, String username){
-      return participantRepository.getByUsername(username, gameId);
-  }
-
-  @Override
-  public List<EndGameUserInfoResponse> getDrawEndGameUsersInfo(Long gameId, String usernameA, String usernameB) {
-    return participantRepository.getDrawEndGameUsersInfo(gameId, usernameA, usernameB);
-  }
-
-  @Override
-  public List<EndGameUserInfoResponse> getWinEndGameUsersInfo(Long gameId, String usernameA) {
-    return participantRepository.getWinEndGameUsersInfo(gameId, usernameA);
-  }
-
-  @Override
   public void stopPlaying(String username, String roomId) {
     redisTemplate.opsForValue().set((username + "-" + roomId + "-left"), "leave", 60, TimeUnit.SECONDS);
   }
@@ -154,5 +144,79 @@ public class InGameServiceImpl implements InGameService{
   @Override
   public Mission getMissionById(long missionId) {
     return missionRepository.findById(missionId).orElse(null);
+  }
+
+  @Override
+  public void addGamePlayerScore(long gameId) {
+    List<String> users = gameManager.EndGameUserInfo(gameId);
+    UpdatePlayerScoreRequest userA = participantRepository.getTwoUserInfo(users.get(0), gameId);
+    UpdatePlayerScoreRequest userB = participantRepository.getTwoUserInfo(users.get(1), gameId);
+
+    int scoreA = 2000;
+    int scoreB = 1000;
+
+    if (userA.getKills() == userB.getKills()) {
+      if (userA.getMissionComplete() == userB.getMissionComplete()) {
+        scoreB = 2000; // 두 사용자 모두 2000점
+      } else if (userA.getMissionComplete() < userB.getMissionComplete()) {
+        scoreA = 1000;
+        scoreB = 2000;
+      }
+    } else if (userA.getKills() < userB.getKills()) {
+      scoreA = 1000;
+      scoreB = 2000;
+    }
+
+    participantRepository.updateUserScore(userA.getUserId(), scoreA);
+    participantRepository.updateUserScore(userB.getUserId(), scoreB);
+
+    updatePlayersScore(gameId);
+  }
+
+
+  private void updatePlayersScore(long gameId) {
+    List<GameParticipants> playersInfo = participantRepository.getPlayersInfo(gameId);
+    for (GameParticipants player : playersInfo) {
+      userRepository.addUserScore(player.getUser().getUserId(), player.getScore());
+    }
+  }
+
+  @Override
+  public GameResult finishGameAndHandleLastTwoPlayers(long gameId){
+    finishGame(gameId);
+    List<String> users = gameManager.EndGameUserInfo(gameId);
+    GameParticipants userA = participantRepository.getByUsername(users.get(0), gameId);
+    GameParticipants userB = participantRepository.getByUsername(users.get(1), gameId);
+    String winner = determineWinner(userA, userB);
+    String winner2 = null;
+    if (winner == null){
+      winner = userA.getUser().getUsername();
+      winner2 = userB.getUser().getUsername();
+    }
+    List<EndGameUserInfoResponse> usersInfo = participantRepository.getEndGamePlayersInfo(gameId);
+    return new GameResult(gameId, winner, winner2, usersInfo);
+  }
+
+
+
+  private String determineWinner(GameParticipants userA, GameParticipants userB) {
+    if (userA.getScore() == userB.getScore()) {
+      return null;
+    }
+    return userA.getScore() > userB.getScore() ? userA.getUser().getUsername() : userB.getUser().getUsername();
+  }
+
+  // redis expired = 4 일 때, 타임아웃 종료
+  @Override
+  public GameResult gameTimeout(long gameId){
+    finishGame(gameId);
+    List<EndGameUserInfoResponse> res = participantRepository.getEndGamePlayersInfo(gameId);
+    return new GameResult(gameId, null, null, res);
+  }
+
+  @Override
+  @Transactional
+  public void finishGame(long gameId){
+    gameRoomRepository.findById(gameId).ifPresent(GameRoom::finish);
   }
 }

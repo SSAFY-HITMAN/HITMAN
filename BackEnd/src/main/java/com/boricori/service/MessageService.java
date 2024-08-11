@@ -1,5 +1,6 @@
 package com.boricori.service;
 
+import com.boricori.dto.GameResult;
 import com.boricori.dto.response.gameroom.end.EndGameResponse;
 import com.boricori.dto.response.inGame.EndGameUserInfoResponse;
 import com.boricori.entity.GameRoom;
@@ -19,7 +20,7 @@ public class MessageService {
 
   private final GameManager gameManager = GameManager.getGameManager();
 
-  private final ObjectMapper mapper = new ObjectMapper();
+  private static final ObjectMapper mapper = new ObjectMapper();
 
 
 
@@ -50,9 +51,18 @@ public class MessageService {
     messagingTemplate.convertAndSend(String.format("/topic/play/%d", gameId), jsonPayload);
   }
 
-  public void endGameScore(long gameId, String winner, List<EndGameUserInfoResponse> usersInfo) throws JsonProcessingException {
-    String rankJson = mapper.writeValueAsString(usersInfo);
-    String jsonPayload = String.format("{\"msgType\":\"end\", \"winner\":\"%s\", \"rank\":\"%s\"}", winner);
-    messagingTemplate.convertAndSend(String.format("/topic/room/%d", gameId), jsonPayload);
+  public void endGameScore(GameResult result) {
+    try {
+      String toJSON = mapper.writeValueAsString(result);
+      String jsonPayload = String.format("{\"msgType\":\"end\", \"data\":\"%s\"}", toJSON);
+      messagingTemplate.convertAndSend(String.format("/topic/play/%d", result.getGameId()), jsonPayload);
+    } catch (JsonProcessingException e) {
+      System.out.println(e.getMessage());
+    }
+  }
+
+  public void playersCount(long gameId, int playersLeft) {
+    String jsonPayload = String.format("{\"msgType\":\"playerCount\", \"count\":\"%d\"}", playersLeft);
+    messagingTemplate.convertAndSend(String.format("/topic/play/%d", gameId), jsonPayload);
   }
 }
