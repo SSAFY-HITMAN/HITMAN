@@ -35,6 +35,7 @@ import OvVideo from "@/hooks/WebRTC/OvVideo.jsx";
 const APPLICATION_SERVER_URL =
   process.env.NODE_ENV === "production" ? "" : "http://localhost:8080/";
 
+let count = 1;
 const GamePlay = () => {
   //===========================   GPS   ============================
   const { gameStatus } = useContext(GameContext);
@@ -91,10 +92,32 @@ const GamePlay = () => {
   }, [session]);
 
   const handleMainVideoStream = stream => {
+    console.log("current main stream manager ", mainStreamManager)
     if (mainStreamManager !== stream) {
       setMainStreamManager(stream);
+      console.log("=====> publisher : ", publisher)
+      console.log("====> subscribers : ", subscribers)
     }
   };
+
+  const handleButtonClick = async () => {
+    
+    console.log("you clicked ", count, " times!" )
+
+    count ++;
+  }
+
+
+  const leaveSession = () => {
+    if (session) {
+      session.disconnect();
+    }
+    session(undefined);
+    setSubscribers([]);
+    setMainStreamManager(undefined);
+    setPublisher(undefined);
+  }
+
 
   const deleteSubscriber = streamManager => {
     setSubscribers(prevSubscribers =>
@@ -105,70 +128,104 @@ const GamePlay = () => {
   const joinSession = useCallback(async () => {
     const OV = new OpenVidu();
 
+    OV.enableProdMode();
+  
     console.log("joiSession");
-    // 브라우저 감지 우회
     OV.isBrowserSupported = function () {
-      return true; // 무조건 브라우저가 지원되는 것으로 간주
+      return true;
     };
-
+  
     OV.checkSystemRequirements = function () {
-      return true; // 시스템 요구사항을 무시하고 통과시키기
+      return true;
     };
+  
+    // const newSession = OV.initSession(paramGameRoomId);
 
+    // let newSession;
+
+    // const OVSessionIdStored = localStorage.getItem("OVSessionID");
+    // console.log("OVID:", OVSessionIdStored);
+    
+    // if (OVSessionIdStored && OVSessionIdStored != "undefined") {
+    //   // OVSessionIdStored가 null 또는 빈 문자열이 아닌 경우 기존 세션을 사용
+    //   console.log("기존 세션을 사용합니다.");
+    //   newSession = OV.initSession(OVSessionIdStored);
+    // } else {
+    //   // OVSessionIdStored가 null 또는 빈 문자열일 때 새로운 세션을 생성
+    //   console.log("OV Session 재생성");
+    //   newSession = OV.initSession();
+    //   console.log("newSession", newSession.options);    
+    //   localStorage.setItem("OVSessionID", newSession.sessionId);
+    // }
+    
     const newSession = OV.initSession();
-
-    // 이벤트 리스너 중복 등록 방지를 위한 확인
+  
     if (!session) {
-      newSession.on("streamCreated", event => {
+      newSession.on("streamCreated", (event) => {
         const subscriber = newSession.subscribe(event.stream, undefined);
         setSubscribers(prevSubscribers => [...prevSubscribers, subscriber]);
         console.log("Updated subscribers: ", subscribers);
       });
-
-      newSession.on("streamDestroyed", event => {
+  
+      newSession.on("streamDestroyed", (event) => {
         deleteSubscriber(event.stream.streamManager);
       });
-
-      newSession.on("exception", exception => {
+  
+      newSession.on("exception", (exception) => {
         console.warn(exception);
+        console.log("===============WARN!!!=============")
       });
-
-      setSession(newSession); // session 상태를 업데이트
+      
+      newSession.on("sessionDisconnected", async(event) => {
+        console.log("=====> sessionDisconnected! ")
+      })
+  
+      setSession(newSession);
     }
-
+  
     const token = await getToken();
-
+  
     try {
       await newSession.connect(token, { clientData: username });
-
-      const newPublisher = await OV.initPublisherAsync(undefined, {
-        audioSource: undefined,
-        videoSource: undefined,
-        publishAudio: false,
-        publishVideo: true,
-        resolution: "640x480",
-        frameRate: 30,
-        insertMode: "APPEND",
-        mirror: false,
-      });
-
-      await newSession.publish(newPublisher);
-
-      const devices = await OV.getDevices();
-      const videoDevices = devices.filter(
-        device => device.kind === "videoinput"
-      );
-      const currentVideoDeviceId = newPublisher.stream
-        .getMediaStream()
-        .getVideoTracks()[0]
-        .getSettings().deviceId;
-      const currentVideoDevice = videoDevices.find(
-        device => device.deviceId === currentVideoDeviceId
-      );
-
-      setCurrentVideoDevice(currentVideoDevice);
-      setMainStreamManager(newPublisher);
-      setPublisher(newPublisher);
+      console.log("connectToken")
+      // 권한 요청 부분 추가
+      try {
+        await navigator.mediaDevices.getUserMedia({ video: true, audio: audioEnabled }); // 권한 요청
+        console.log("Permissions granted!");
+  
+        const newPublisher = await OV.initPublisherAsync(undefined, {
+          audioSource: audioEnabled ? undefined : false,
+          videoSource: undefined,
+          publishAudio: audioEnabled,
+          publishVideo: true,
+          resolution: "640x480",
+          frameRate: 30,
+          insertMode: "APPEND",
+          mirror: false,
+        });
+  
+        await newSession.publish(newPublisher);
+  
+        const devices = await OV.getDevices();
+        const videoDevices = devices.filter(
+          (device) => device.kind === "videoinput"
+        );
+        const currentVideoDeviceId = newPublisher.stream
+          .getMediaStream()
+          .getVideoTracks()[0]
+          .getSettings().deviceId;
+        const currentVideoDevice = videoDevices.find(
+          (device) => device.deviceId === currentVideoDeviceId
+        );
+  
+        setCurrentVideoDevice(currentVideoDevice);
+        setMainStreamManager(newPublisher);
+        setPublisher(newPublisher);
+      } catch (permissionError) {
+        console.error("Permission denied:", permissionError);
+        alert("카메라 및 마이크 권한이 필요합니다. 브라우저 설정에서 권한을 허용해 주세요.");
+      }
+  
     } catch (error) {
       console.log(
         "There was an error connecting to the session:",
@@ -179,24 +236,13 @@ const GamePlay = () => {
   }, [username, session, subscribers]);
 
   useEffect(() => {
-    const initSession = async () => {
-      if (!session) {
+    const initSession = async() => {
+      if(!session){
         await joinSession();
       }
     };
     initSession();
-  }, []);
-
-  // const leaveSession = useCallback(() => {
-  //   if (session) {
-  //       session.disconnect();
-  //   }
-
-  //   setSession(undefined);
-  //   setSubscribers([]);
-  //   setMainStreamManager(undefined);
-  //   setPublisher(undefined);
-  // }, [session, gameRoomId, username]);
+  }, [])
 
   const switchCamera = useCallback(async () => {
     if (!currentVideoDevice || !session) return;
@@ -270,7 +316,12 @@ const GamePlay = () => {
         </div>
       )}
 
-      <GameHeader />
+      {/* publisher 의 카메라 인자 전달 */}
+      <GameHeader 
+        publisher={publisher}
+        handleMainVideoStream={handleMainVideoStream}
+      />
+      
       <div className="flex items-center justify-center">
         <div id="game-rule-dialog" className="m-4">
           <Button
@@ -291,7 +342,7 @@ const GamePlay = () => {
           <div>
             {/* ==================   비디오 시작!  ===================*/}
             {session !== undefined ? (
-              <div id="session">
+              <div>
                 {/* <h1 id="session-title">{mySessionId}</h1> */}
                 {/* <div style={{overflow: "hidden"}}> */}
                 {mainStreamManager === undefined ? (
@@ -299,8 +350,8 @@ const GamePlay = () => {
                     <UserVideoComponent streamManager={mainStreamManager} />
                   </div>
                 ) : null}
-                {/* </div> */}
-                {/* <div>
+                {/* </div> 
+                <div>
                   {publisher === undefined ? (
                     <div 
                       onClick={() => handleMainVideoStream(publisher)}
@@ -308,23 +359,37 @@ const GamePlay = () => {
                       <UserVideoComponent streamManager={publisher} />
                     </div>
                   ) : null}
-                </div> */}
+                </div>
+                */}
 
                 <Carousel opts={{ align: "start" }}>
                   <CarouselContent>
-                    {subscribers.map((sub, index) => (
-                      <CarouselItem
-                        key={sub.id}
-                        className="stream-container col-md-6 col-xs-6"
-                      >
-                        <div onClick={() => handleMainVideoStream(sub)}>
-                          <span>{sub.id}</span>
-                          <UserVideoComponent streamManager={sub} />
-                        </div>
-                      </CarouselItem>
-                    ))}
+                    {subscribers
+                      .filter(sub => sub !== publisher)  // publisher와 동일한 객체 필터링
+                      .map((sub, index) => (
+                        <CarouselItem key={sub.id} className="stream-container">
+                            <UserVideoComponent 
+                                streamManager={sub} 
+                                currentUserNickname={username} // username 전달
+                            />
+                        </CarouselItem>
+                      ))
+                    }
                   </CarouselContent>
                 </Carousel>
+                <div>
+                  {subscribers.map((subscriber, idx) => {
+                    const clientData = JSON.parse(subscriber.stream.connection.data).clientData;
+                    return (
+                      <Button 
+                        key={idx}
+                        onClick={handleButtonClick}
+                      >
+                        {clientData}
+                      </Button>
+                    );
+                  })}        
+                  </div>
               </div>
             ) : null}
           </div>
