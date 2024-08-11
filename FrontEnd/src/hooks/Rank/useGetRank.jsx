@@ -4,24 +4,48 @@ import axiosInstance from "@/api/axiosInstance";
 const useGetRank = () => {
   const [rankingList, setRankingList] = useState([
     {
-      id: "Bill Rizer",
+      id: "강해린",
       score: 1050,
     },
     {
-      id: "Genbei Yagy",
+      id: "다니엘",
+      score: 100,
+    },
+    {
+      id: "김민지",
       score: 90,
     },
     {
-      id: "Lancy Neo",
+      id: "하니",
       score: 80,
     },
     {
-      id: "Konami",
+      id: "이혜인",
       score: 70,
     },
     {
-      id: "한국인",
+      id: "카리나",
+      score: 60,
+    },
+    {
+      id: "윈터",
       score: 50,
+    },
+    {
+      id: "닝닝",
+      score: 40,
+    },
+    {
+      id: "지젤",
+      score: 30,
+    },
+    {
+      id: "안유진",
+      score: 20,
+    },
+    {
+      id: "장원영",
+      score: 20,
     },
   ]);
 
