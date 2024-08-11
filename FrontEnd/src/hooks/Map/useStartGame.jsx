@@ -68,7 +68,7 @@ const useStartGame = () => {
       if (response.status == 200) {
         console.log("데이터 정상 수신");
         const metadata = response.data;
-        console.log(`metadata: ${metadata}`);
+        console.log(`metadata: ${JSON.stringify(metadata)}`);
 
         // 반경, 중심, 타겟 닉네임 수신
         const newAreaRadius = parseInt(metadata.gameInfo.mapSize, 10);

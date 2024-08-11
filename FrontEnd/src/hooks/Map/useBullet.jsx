@@ -22,7 +22,7 @@ const useBullet = () => {
     }
   };
 
-  return { bullet, isCooldown, getBullet, shootBullet };
+  return { bullet, isCooldown, setBullet, getBullet, shootBullet };
 };
 
 export default useBullet;
