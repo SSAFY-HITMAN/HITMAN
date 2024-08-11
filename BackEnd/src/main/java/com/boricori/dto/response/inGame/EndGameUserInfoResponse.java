@@ -18,6 +18,7 @@ public class EndGameUserInfoResponse {
     @Schema(description = "킬 수")
     private int kills;
 
+
     @QueryProjection
     @Builder
     public EndGameUserInfoResponse(String userName, int missionComplete, int kills) {

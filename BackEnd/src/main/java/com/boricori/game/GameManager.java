@@ -27,6 +27,10 @@ public class GameManager {
     return catchableList.get(gameId).killTarget(username);
   }
 
+  public Node<User> removeTarget(long gameId, String username){
+    return catchableList.get(gameId).removeTarget(username);
+  }
+
   public boolean isLastTwo(long gameId){
     return catchableList.get(gameId).size() < 3;
   }

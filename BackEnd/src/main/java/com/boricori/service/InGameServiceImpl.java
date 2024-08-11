@@ -1,14 +1,17 @@
 package com.boricori.service;
 
 
+import com.boricori.dto.GameResult;
 import com.boricori.dto.response.inGame.EndGameUserInfoResponse;
 import com.boricori.entity.GameParticipants;
+import com.boricori.entity.GameRoom;
 import com.boricori.entity.InGameItems;
 import com.boricori.entity.InGameMissions;
 import com.boricori.entity.Item;
 import com.boricori.entity.Mission;
 import com.boricori.entity.User;
 import com.boricori.exception.NotAPlayerException;
+import com.boricori.game.GameManager;
 import com.boricori.repository.GameRoomRepo.GameRoomRepository;
 import com.boricori.repository.ParticipantRepo.ParticipantRepositoryImpl;
 import com.boricori.repository.inGameRepo.InGameItemsRepository;
@@ -49,6 +52,8 @@ public class InGameServiceImpl implements InGameService{
   private GameRoomRepository gameRoomRepository;
   @Autowired
   private RedisTemplate<String, String> redisTemplate;
+
+  private GameManager gameManager = GameManager.getGameManager();
 
   @Override
   public List<Mission> assignMissions(String username, Long gameId) {
@@ -157,4 +162,54 @@ public class InGameServiceImpl implements InGameService{
   public Mission getMissionById(long missionId) {
     return missionRepository.findById(missionId).orElse(null);
   }
+
+  @Override
+  public GameResult finishGameAndHandleLastTwoPlayers(long gameId){
+    finishGame(gameId);
+    List<String> users = gameManager.EndGameUserInfo(gameId);
+    GameParticipants userA = getUserInfo(gameId, users.get(0));
+    GameParticipants userB = getUserInfo(gameId, users.get(1));
+    String winner = determineWinner(userA, userB);
+    String winner2 = null;
+    if (winner == null){
+      winner = userA.getUser().getUsername();
+      winner2 = userB.getUser().getUsername();
+    }
+    List<EndGameUserInfoResponse> usersInfo;
+    if (userA.getKills() == userB.getKills() && userA.getMissionComplete() == userB.getMissionComplete()) {
+      usersInfo = getDrawEndGameUsersInfo(gameId, userA.getUser().getUsername(), userB.getUser().getUsername());
+    } else {
+      usersInfo = getWinEndGameUsersInfo(gameId, winner);
+    }
+    return new GameResult(gameId, winner, winner2, usersInfo);
+  }
+
+  private String determineWinner(GameParticipants userA, GameParticipants userB) {
+    if (userA.getKills() == userB.getKills()) {
+      if (userA.getMissionComplete() > userB.getMissionComplete()) {
+        return userA.getUser().getUsername();
+      } else if (userA.getMissionComplete() < userB.getMissionComplete()) {
+        return userB.getUser().getUsername();
+      } else {
+        return null; // 무승부
+      }
+    } else {
+      return userA.getKills() > userB.getKills() ? userA.getUser().getUsername() : userB.getUser().getUsername();
+    }
+  }
+
+  // redis expired = 4 일 때, 타임아웃 종료
+  @Override
+  public GameResult gameTimeout(long gameId){
+    finishGame(gameId);
+    List<EndGameUserInfoResponse> res = participantRepository.listByScore(gameId);
+    return new GameResult(gameId, null, null, res);
+  }
+
+  @Override
+  @Transactional
+  public void finishGame(long gameId){
+    gameRoomRepository.findById(gameId).ifPresent(GameRoom::finish);
+  }
+
 }

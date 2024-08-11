@@ -1,5 +1,6 @@
 package com.boricori.service;
 
+import com.boricori.dto.GameResult;
 import com.boricori.dto.request.inGame.MissionChangeRequest;
 import com.boricori.dto.request.inGame.UseItemRequest;
 import com.boricori.dto.response.inGame.EndGameUserInfoResponse;
@@ -42,4 +43,11 @@ public interface InGameService {
   void killUser(String username, long roomId);
 
   Mission getMissionById(long missionId);
+
+  GameResult finishGameAndHandleLastTwoPlayers(long gameId);
+
+  void finishGame(long gameId);
+
+  // redis expired = 4 일 때, 타임아웃 종료
+  GameResult gameTimeout(long gameId);
 }

@@ -1,5 +1,6 @@
 package com.boricori.controller;
 
+import com.boricori.dto.GameResult;
 import com.boricori.dto.request.gameroom.EndGameRoomRequest;
 import com.boricori.dto.request.inGame.InGameRequest;
 import com.boricori.dto.request.inGame.MissionChangeRequest;
@@ -135,51 +136,18 @@ public class InGameController {
   @Transactional
   @PostMapping("/catchTarget")
   public void catchTarget(@RequestBody InGameRequest request) {
-    try {
-      String username = request.getUsername();
-      long gameId = request.getGameId();
-      Node<User> targetNode = gameManager.killTarget(gameId, username);
-      Node<User> newTarget = targetNode.next;
-      messageService.changeTarget(username, newTarget.data.getUsername(), gameId);
-      messageService.notifyStatus(targetNode.data.getUsername(), gameId);
-      User user = userService.findByUsername(username);
-      inGameService.catchTarget(user, targetNode.data, gameId);
+    String username = request.getUsername();
+    long gameId = request.getGameId();
+    Node<User> targetNode = gameManager.killTarget(gameId, username);
+    Node<User> newTarget = targetNode.next;
+    messageService.changeTarget(username, newTarget.data.getUsername(), gameId);
+    messageService.notifyStatus(targetNode.data.getUsername(), gameId);
+    User user = userService.findByUsername(username);
+    inGameService.catchTarget(user, targetNode.data, gameId);
 
-      if (gameManager.isLastTwo(gameId)) {
-        handleLastTwoPlayers(gameId);
-      }
-    } catch (JsonProcessingException e) {
-      e.printStackTrace(); // 예외 처리 (필요한 경우 로그로 대체 가능)
-    }
-  }
-
-  private void handleLastTwoPlayers(long gameId) throws JsonProcessingException {
-    List<String> users = gameManager.EndGameUserInfo(gameId);
-    GameParticipants userA = inGameService.getUserInfo(gameId, users.get(0));
-    GameParticipants userB = inGameService.getUserInfo(gameId, users.get(1));
-    String winner = determineWinner(userA, userB);
-
-    List<EndGameUserInfoResponse> usersInfo = new ArrayList<>();
-    if (userA.getKills() == userB.getKills() && userA.getMissionComplete() == userB.getMissionComplete()) {
-      usersInfo = inGameService.getDrawEndGameUsersInfo(gameId, userA.getUser().getUsername(), userB.getUser().getUsername());
-    } else {
-      usersInfo = inGameService.getWinEndGameUsersInfo(gameId, winner);
-    }
-
-    messageService.endGameScore(gameId, winner, usersInfo);
-  }
-
-  private String determineWinner(GameParticipants userA, GameParticipants userB) {
-    if (userA.getKills() == userB.getKills()) {
-      if (userA.getMissionComplete() > userB.getMissionComplete()) {
-        return userA.getUser().getUsername();
-      } else if (userA.getMissionComplete() < userB.getMissionComplete()) {
-        return userB.getUser().getUsername();
-      } else {
-        return userA.getUser().getUsername() + " " + userB.getUser().getUsername(); // 무승부
-      }
-    } else {
-      return userA.getKills() > userB.getKills() ? userA.getUser().getUsername() : userB.getUser().getUsername();
+    if (gameManager.isLastTwo(gameId)) {
+      GameResult res = inGameService.finishGameAndHandleLastTwoPlayers(gameId);
+      messageService.endGameScore(res);
     }
   }
 

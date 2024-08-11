@@ -65,7 +65,12 @@ public class GameRoom {
   }
 
   public void startGameTime(){
-    this.startTime = LocalDateTime.now();
+    this.startTime = LocalDateTime.now().plusSeconds(63);
+  }
+
+  public void finish(){
+    endTime = LocalDateTime.now();
+    isActivated = false;
   }
 
   public void setCenter(String centerLat, String centerLng) {

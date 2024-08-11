@@ -74,15 +74,14 @@ public class ParticipantRepositoryImpl {
   public List<EndGameUserInfoResponse> getDrawEndGameUsersInfo(Long roomId, String userA, String userB) {
     return queryFactory
             .select(new QEndGameUserInfoResponse(
-                    user.username,
+                    participants.user.username,
                     participants.missionComplete,
                     participants.kills
             ))
             .from(participants)
-            .join(participants.user, user)
             .where(participants.gameRoom.id.eq(roomId)
-                    .and(user.username.ne(userA))
-                    .and(user.username.ne(userB))) // userA와 userB가 아닌 경우만 포함
+                    .and(participants.user.username.ne(userA))
+                    .and(participants.user.username.ne(userB))) // userA와 userB가 아닌 경우만 포함
             .orderBy(participants.kills.desc(), participants.missionComplete.desc())
             .fetch();
   }
@@ -91,15 +90,28 @@ public class ParticipantRepositoryImpl {
   public List<EndGameUserInfoResponse> getWinEndGameUsersInfo(Long roomId, String username) {
     return queryFactory
             .select(new QEndGameUserInfoResponse(
-                    user.username,
+                    participants.user.username,
                     participants.missionComplete,
                     participants.kills
             ))
             .from(participants)
-            .join(participants.user, user)
             .where(participants.gameRoom.id.eq(roomId)
-                    .and(user.username.ne(username))) // username이 같지 않은 경우만 포함
+                    .and(participants.user.username.ne(username))) // username이 같지 않은 경우만 포함
             .orderBy(participants.kills.desc(), participants.missionComplete.desc())
             .fetch();
+  }
+
+  // 점수제로 수정예정
+  public List<EndGameUserInfoResponse> listByScore(long gameId) {
+    return queryFactory
+        .select(new QEndGameUserInfoResponse(
+            participants.user.username,
+            participants.missionComplete,
+            participants.kills
+        ))
+        .from(participants)
+        .where(participants.gameRoom.id.eq(gameId))// username이 같지 않은 경우만 포함
+        .orderBy(participants.kills.desc(), participants.missionComplete.desc())
+        .fetch();
   }
 }

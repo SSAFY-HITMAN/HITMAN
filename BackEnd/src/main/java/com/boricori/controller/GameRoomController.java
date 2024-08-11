@@ -133,7 +133,7 @@ public class GameRoomController {
     int interval = gameRoom.getGameTime() * 60 / 4;
     for (int t = 1; t < 5; t++) {
       redisTemplate.opsForValue()
-          .set(String.format("%d-%d", gameRoom.getId(), t), String.valueOf(t), 3 + interval * t,
+          .set(String.format("%d-%d", gameRoom.getId(), t), "alert", 63 + interval * t,
               TimeUnit.SECONDS);
     }
     messageService.readyGame(gameRoom.getId(), gameRoom);
