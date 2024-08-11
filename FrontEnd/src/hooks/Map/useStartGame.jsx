@@ -37,7 +37,7 @@ const useStartGame = () => {
     // 대기 시간 동안 1초마다 남은 시간 계산
     if (initialTimeUntilStart > 0) {
       const intervalId = setInterval(() => {
-        const updatedTimeUntilStart = startTime - new Date().getTime();
+        const updatedTimeUntilStart = startTime - new Date().getTime() + (9 * 60 * 60 * 1000);
 
         // 대기 시간이 끝났다면
         if (updatedTimeUntilStart <= 0) {

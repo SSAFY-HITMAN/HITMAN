@@ -43,7 +43,7 @@ const GameTime = () => {
   // 타이머 업데이트 함수
   const updateTimer = () => {
     const start = new Date(startTime).getTime();
-    const now = Date.now();
+    const now = Date.now() - (9 * 60 * 60 * 1000);
     const elapsedTime = Math.floor((now - start) / 1000); // 경과 시간
     const newRemainingPlayTime = gamePlayTime - elapsedTime; // 남은 시간
 
