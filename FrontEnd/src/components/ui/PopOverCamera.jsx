@@ -26,3 +26,5 @@ const PopOverCamera = ({ open, publisher, handleMainVideoStream }) => {
 };
 
 export default PopOverCamera;
+
+

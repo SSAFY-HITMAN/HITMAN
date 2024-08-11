@@ -34,7 +34,7 @@ import "../hooks/WebRTC/CamChatting.css";
 import OvVideo from "@/hooks/WebRTC/OvVideo.jsx";
 
 const APPLICATION_SERVER_URL =
-  process.env.NODE_ENV === "production" ? "" : "http://localhost:8080/";
+  process.env.NODE_ENV === "production" ? "https://i11b205.p.ssafy.io/api" : "http://localhost:8080/";
 
 let count = 1;
 const GamePlay = () => {
