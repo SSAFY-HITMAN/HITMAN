@@ -5,27 +5,22 @@ const useGetRank = () => {
   const [rankingList, setRankingList] = useState([
     {
       id: "Bill Rizer",
-      rank: 1,
-      score: 100,
+      score: 1050,
     },
     {
       id: "Genbei Yagy",
-      rank: 2,
       score: 90,
     },
     {
       id: "Lancy Neo",
-      rank: 3,
       score: 80,
     },
     {
       id: "Konami",
-      rank: 4,
       score: 70,
     },
     {
       id: "한국인",
-      rank: 5,
       score: 50,
     },
   ]);

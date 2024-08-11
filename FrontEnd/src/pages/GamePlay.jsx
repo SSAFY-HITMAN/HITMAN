@@ -10,6 +10,7 @@ import useStartGame from "@/hooks/Map/useStartGame";
 import useSendGPS from "@/hooks/Map/useSendGPS";
 import GameTime from "@/components/GameTime";
 import useCatchTarget from "@/hooks/Map/useCatchTarget";
+import useBullet from "@/hooks/Map/useBullet";
 
 import {
   Carousel,
@@ -43,6 +44,7 @@ const GamePlay = () => {
   const { startSendingGPS } = useSendGPS();
   const { isAbleToCatchTarget, handleCatchTarget } = useCatchTarget();
   const { connect, disconnect } = useGameWebSocket();
+  const { bullet, isCooldown, shootBullet } = useBullet();
 
   const [camChatting, setCamChatting] = useState(false); // camChatting 상태 초기화
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -348,8 +350,11 @@ const GamePlay = () => {
             <img
               src={catchButton}
               alt="catch-button"
-              onClick={handleCatchTarget}
-              className={`mr-4 h-[28vh] w-[28vh] ${isAbleToCatchTarget ? "" : "cursor-not-allowed opacity-40"}`}
+              onClick={() => {
+                shootBullet();
+                handleCatchTarget();
+              }}
+              className={`mr-4 h-[28vh] w-[28vh] ${bullet && !isCooldown && isAbleToCatchTarget ? "" : "cursor-not-allowed opacity-40"}`}
             />
             <div id="mini-buttons" className="flex flex-col">
               <Button className="m-2 h-[7vh] w-[7vh] flex-col rounded-full border-black bg-gradient-to-r from-lime-200 to-teal-400 text-black">

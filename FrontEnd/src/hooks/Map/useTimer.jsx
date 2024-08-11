@@ -20,15 +20,15 @@ const useTimer = () => {
   useEffect(() => {
     if (remainingTime == 0) {
       // 타이머 종료로 인한 사망 처리
-      setIsAlive(false);
-      sessionStorage.setItem("isAlive", false);
-
-      // axios
       (async () => {
         try {
-          await axiosInstance.patch(
-            `/participants/${gameRoomId}/${username}/die`
-          );
+          await axiosInstance.patch(`/in-game/eliminate`, {
+            username: username,
+            gameId: gameRoomId,
+          });
+
+          setIsAlive(false);
+          sessionStorage.setItem("isAlive", false);
           console.log(`Timeout: Play ${username}`);
         } catch {
           // axios 요청 실패 시 부분 입력

@@ -28,9 +28,6 @@ const RankPageTable = ({ rankingList }) => {
               className="my-1 h-[10vh] w-[90%] rounded-lg border-2 border-black"
             >
               <div id="player-result" className="flex h-[100%]">
-                <div id="player-profile" className="m-2 w-[25%] border-2">
-                  <img src="" alt="profile-image" />
-                </div>
                 <div className="mx-4 flex w-[65%] flex-col">
                   <div
                     id="player-id"
@@ -42,14 +39,22 @@ const RankPageTable = ({ rankingList }) => {
                     id="player-score"
                     className="text-l h-[35%] text-center font-bold"
                   >
-                    {user.score}
+                    🎖️ {user.score.toLocaleString()}
                   </div>
                 </div>
                 <div
                   id="player-rank"
-                  className="m-2 flex h-[80%] w-[15%] items-center justify-center rounded-lg border-2"
+                  className={`m-2 flex h-[80%] w-[15%] items-center justify-center rounded-lg text-3xl font-bold ${
+                    idx + 1 === 1
+                      ? "bg-gradient-to-br from-yellow-200 to-yellow-600 text-white" // 금메달
+                      : idx + 1 === 2
+                        ? "bg-gradient-to-br from-gray-200 to-gray-600 text-white" // 은메달
+                        : idx + 1 === 3
+                          ? "bg-gradient-to-br from-yellow-600 to-yellow-900 text-white" // 동메달
+                          : ""
+                  }`}
                 >
-                  <span className="text-2xl font-bold">{user.rank}</span>
+                  {idx + 1}
                 </div>
               </div>
             </Card>

@@ -5,7 +5,14 @@ import useEndGame from "@/hooks/Map/useEndGame";
 import { GameContext } from "@/context/GameContext";
 
 const useGameWebSocket = () => {
-  const { areaRadius, setGameStatus, setTargetId } = useContext(GameContext);
+  const {
+    areaRadius,
+    setGameStatus,
+    setTargetId,
+    setIsAlive,
+    setPlayerCount,
+    username,
+  } = useContext(GameContext);
   const { endGame } = useEndGame();
   const { gameRoomId, setAreaRadius } = useContext(GameContext);
   const stompClient = useRef(null);
@@ -58,14 +65,20 @@ const useGameWebSocket = () => {
 
   const handleAlertMessage = msg => {
     switch (msg.msgType) {
-      case "target":
+      case "changeTarget":
         // 타겟이 죽거나 나가서 변동사항 발생 시
         const hunter = msg.hunter;
-        const username = localStorage.getItem("username");
         if (hunter === username) {
           const newTargetId = msg.target;
           setTargetId(newTargetId);
           sessionStorage.setItem("targetId", newTargetId);
+        }
+        break;
+      case "caught":
+        // 잡힘 알림
+        if (username === msg.user) {
+          setIsAlive(false);
+          sessionStorage.setItem("setIsAlive", false);
         }
         break;
       case "alert":
@@ -73,7 +86,12 @@ const useGameWebSocket = () => {
         break;
       case "end": // 게임 종료 조건(인원수)
         setGameStatus(false);
-        endGame();
+        const data = msg.data;
+        endGame(data);
+        break;
+      case "playerCount":
+        const count = parseInt(msg.count, 10);
+        setPlayerCount(count);
         break;
       default:
         break;
@@ -88,10 +106,6 @@ const useGameWebSocket = () => {
         const newAreaRadius = areaRadiusRef.current * 0.75;
         setAreaRadius(newAreaRadius);
         sessionStorage.setItem("areaRadius", newAreaRadius);
-        break;
-      case "4": // 게임 시간 소진으로 종료
-        setGameStatus(false);
-        endGame();
         break;
       default:
         break;
