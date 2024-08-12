@@ -54,13 +54,7 @@ public class UserServiceImpl implements UserService {
 
   @Override
   public List<RankDtoResponse> findAllRank(){
-    List<User> RankAll = userRepo.findAllByOrderByScoresAsc();
-    List<RankDtoResponse> rankList = new ArrayList<>();
-    for (int i=0; i<RankAll.size(); i++) {
-      rankList.add(new RankDtoResponse(i+1, RankAll.get(i)));
-    }
-
-    return rankList;
+    return userRepoImpl.findAllRank();
   }
 
   public UserLoginResponse login(UserLoginRequest request, HttpServletResponse response) {

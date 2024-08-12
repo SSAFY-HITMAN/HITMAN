@@ -1,0 +1,33 @@
+.video-container {
+    position: relative;
+    aspect-ratio: 16/10;
+    border-radius: 2rem;
+    /* overflow: hidden; */
+}
+
+.video-container video {
+    height: 100%;
+}
+
+.video-container .participant-data {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.participant-data p {
+    background: #f8f8f8;
+    margin: 0;
+    padding: 0 5px;
+    color: #777777;
+    font-weight: bold;
+    border-bottom-right-radius: 5px;
+}
+
+
+/* Media Queries 비디오 아래 위로 검은 공간 */
+/* @media screen and (max-width: 960px) {
+    .video-container {
+        aspect-ratio: 10/16;
+    }
+} */

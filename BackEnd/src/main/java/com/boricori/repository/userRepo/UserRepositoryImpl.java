@@ -4,6 +4,8 @@ import static com.boricori.entity.QUser.user;
 import static org.springframework.util.StringUtils.hasText;
 
 import com.boricori.dto.request.gameroom.PlayerInfoRequest;
+import com.boricori.dto.response.User.QRankDtoResponse;
+import com.boricori.dto.response.User.RankDtoResponse;
 import com.boricori.entity.GameRoom;
 import com.boricori.entity.User;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -61,4 +63,13 @@ public class UserRepositoryImpl {
             .execute();
   }
 
+  public List<RankDtoResponse> findAllRank() {
+    return queryFactory
+            .select(new QRankDtoResponse(
+                    user.username,
+                    user.scores))
+            .from(user)
+            .orderBy(user.scores.asc())
+            .fetch();
+  }
 }

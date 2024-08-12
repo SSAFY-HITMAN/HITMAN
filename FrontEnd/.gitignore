@@ -23,6 +23,12 @@ dist-ssr
 *.sln
 *.sw?
 
-
 # Contentlayer
 .contentlayer
+
+# env
+.env
+.env.local
+
+# PWA service worker
+dev-dist/

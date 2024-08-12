@@ -1,11 +1,15 @@
 {
-  "name": "____temp_name____",
-  "short_name": "____temp_short_name____",
-  "description": "__________temp_description__________",
-  "theme_color": "#ffffff",
-  "background_color": "#ffffff",
+  "name": "RunTail",
+  "short_name": "RunTail",
+  "description": "catch the tail",
+  "theme_color": "#25B4BB",
+  "background_color": "#80EDF4",
   "display": "fullscreen",
   "icons": [
+    {
+      "src": "app-icon.png",
+      "type": "image/png"
+    },
     {
       "src": "icon-192x192.png",
       "sizes": "192x192",
