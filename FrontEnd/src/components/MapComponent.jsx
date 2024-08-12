@@ -25,14 +25,14 @@ const MapComponent = () => {
           <div
             id="map"
             ref={mapRef}
-            className="z-10 h-[45vh] w-full rounded-lg border-2 border-black"
+            className="z-10 h-[45vh] w-full rounded-lg"
           />
           <img
             id="map-center-button"
             src={crosshair}
             alt="Crosshair"
             onClick={handleOnClickCenter}
-            className="border-1 shadow-3d absolute right-[1%] top-[1%] z-20 h-12 w-12 rounded-lg border-black bg-gradient-to-r from-amber-300 to-amber-500"
+            className="border-1 absolute right-[3%] top-[3%] z-20 h-12 w-12 rounded-lg border-black bg-gradient-to-r from-amber-300 to-amber-500 shadow-3d"
           />
         </div>
       </div>

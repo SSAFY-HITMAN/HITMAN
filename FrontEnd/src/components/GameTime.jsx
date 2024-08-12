@@ -1,3 +1,5 @@
+import { useContext } from "react";
+import { GameContext } from "@/context/GameContext";
 import React, { useState, useEffect, useRef } from "react";
 
 const SESSION_STORAGE_KEYS = {
@@ -7,6 +9,8 @@ const SESSION_STORAGE_KEYS = {
 };
 
 const GameTime = () => {
+  const { setGameStatus, setIsAlive } = useContext(GameContext);
+
   // 초기화
   const gamePlayTime =
     parseInt(sessionStorage.getItem(SESSION_STORAGE_KEYS.GAME_PLAY_TIME), 10) *
@@ -42,6 +46,14 @@ const GameTime = () => {
     const now = Date.now();
     const elapsedTime = Math.floor((now - start) / 1000); // 경과 시간
     const newRemainingPlayTime = gamePlayTime - elapsedTime; // 남은 시간
+
+    // 대기시간 1분 경과 시 gameStatus, isAlive 변경
+    if (elapsedTime == 60) {
+      setGameStatus(true);
+      setIsAlive(true);
+      sessionStorage.setItem("gameStatus", true);
+      sessionStorage.setItem("isAlive", true);
+    }
 
     if (newRemainingPlayTime <= 0) {
       // 남은 시간이 0이 되면 타이머 정지하고 남은 시간을 0으로 설정
