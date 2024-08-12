@@ -14,6 +14,8 @@ const useStartGame = () => {
     setIsAlive,
     setMissionList,
     setItemList,
+    setBlockScreen,
+    setBlockGPS
   } = useContext(GameContext);
   const { getBullet } = useBullet();
   const [timeUntilStart, setTimeUntilStart] = useState(null);
@@ -112,7 +114,34 @@ const useStartGame = () => {
     }
   };
 
-  return { fetch, timeUntilStart };
+  const checkItemEffect = () => {
+    const expirationTime = parseInt(sessionStorage.getItem('effectExpirationTime'), 10);
+    const currentTime = Date.now();
+  if (expirationTime) {
+    if (currentTime < expirationTime) {
+      const effect = sessionStorage.getItem("itemInEffect");
+      // Effect is still active
+      const remainingTime = expirationTime - currentTime;
+      if (effect === "blockScreen"){
+        setBlockScreen(true);
+      }else if (effect === "blockGPS"){
+        setBlockGPS(true);
+      }
+      // Set a timer to clear the effect when it expires
+      setTimeout(clearEffect, remainingTime);
+    } else {
+      // Effect has expired
+      clearEffect(); // Clear the effect immediately if expired
+    }
+  }
+  }
+
+  const clearEffect = () => {
+    setBlockScreen(false);
+    setBlockGPS(false);
+  }
+
+  return { fetch, timeUntilStart, checkItemEffect };
 };
 
 export default useStartGame;

@@ -42,7 +42,7 @@ let count = 1;
 const GamePlay = () => {
   //===========================   GPS   ============================
   const { gameStatus } = useContext(GameContext);
-  const { fetch, timeUntilStart } = useStartGame();
+  const { fetch, timeUntilStart, checkItemEffect } = useStartGame();
   const { startSendingGPS } = useSendGPS();
   const { isAbleToCatchTarget, handleOnClickCatchTarget } = useCatchTarget();
   const { connect, disconnect } = useGameWebSocket();
@@ -58,6 +58,8 @@ const GamePlay = () => {
   useEffect(() => {
     connect();
     fetch();
+    checkItemEffect();
+
 
     return () => {
       disconnect();

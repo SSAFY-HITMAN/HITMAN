@@ -67,6 +67,9 @@ export const GameProvider = ({ children }) => {
   const username = localStorage.getItem("username"); // sendGPS 함수에서 활용 (useFirebase.jsx)
   // 로그인 시 setItem 대상이 sessionStorage로 변경되면 이 부분도 같이 변경되어야 함
 
+const [blockGPS, setBlockGPS] = useState(false);
+const [blockScreen, setBlockScreen] = useState(false);
+
   const GET_POSITION_COUNT = 5;
 
   const myLocationRef = useRef(myLocation);
@@ -211,6 +214,10 @@ export const GameProvider = ({ children }) => {
         playerCount,
         setPlayerCount,
         username,
+        blockGPS,
+        setBlockGPS,
+        blockScreen,
+        setBlockScreen
       }}
     >
       {children}

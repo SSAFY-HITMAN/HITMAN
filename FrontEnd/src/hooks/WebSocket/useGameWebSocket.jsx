@@ -12,6 +12,8 @@ const useGameWebSocket = () => {
     setIsAlive,
     setPlayerCount,
     username,
+    setBlockGPS,
+    setBlockScreen
   } = useContext(GameContext);
   const { endGame } = useEndGame();
   const { gameRoomId, setAreaRadius } = useContext(GameContext);
@@ -93,6 +95,12 @@ const useGameWebSocket = () => {
         const count = parseInt(msg.count, 10);
         setPlayerCount(count);
         break;
+      case "useItem":
+        const effect = msg.effect;
+        const affected = msg.username;
+        if (username === affected) {
+            handleItemEffect(effect);
+        }
       default:
         break;
     }
@@ -111,6 +119,21 @@ const useGameWebSocket = () => {
         break;
     }
   };
+
+  const handleItemEffect = (effect) => {
+    sessionStorage.setItem("effectStartTime", Date.now());
+    sessionStorage.setItem('effectExpirationTime', Date.now() + 30 * 1000);
+    if (effect === "blockScreen"){
+      sessionStorage.setItem("itemInEffect", "blockScreen");
+      alert("방해 폭탄 공격")
+      setBlockScreen(true); // 렌더링 해줘야함
+
+    }else if (effect === "blockGPS"){
+      sessionStorage.setItem("itemInEffect", "blockGPS");
+      alert("스텔스 망토 작동")
+      setBlockGPS(true); // 렌더링 해줘야함
+    }
+  }
 
   return { connect, disconnect };
 };
