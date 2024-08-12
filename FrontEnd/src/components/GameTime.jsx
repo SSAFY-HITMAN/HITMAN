@@ -98,7 +98,6 @@ const GameTime = () => {
     } else {
       console.log("clearInterval: GameTime.jsx");
       clearInterval(interval);
-      clearInterval(intervalIdRef.current);
     }
 
     return () => {
