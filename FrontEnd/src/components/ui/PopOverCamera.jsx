@@ -29,13 +29,13 @@ const PopOverCamera = ({ open, publisher, handleMainVideoStream }) => {
     }
 
     return (
-        <div className="relative" style={{ width: '400%' }}>
-            <div className="relative w-full h-64 bg-gray-100 rounded-lg overflow-hidden mb-4">
+        <div className="relative w-full">
+            <div className="relative w-full h-64 bg-gray-100 rounded-lg overflow-hidden mb-4 flex justify-center items-center">
                 {publisher && (
                     <div 
                         ref={videoRef} 
-                        className="absolute inset-0 flex items-center justify-center"
-                        style={{ objectFit: 'cover' }}
+                        className="flex justify-center items-center"
+                        style={{ objectFit: 'cover' , width:'320px',  zIndex: 500}}
                         onClick={() => handleMainVideoStream(publisher)}
                     >
                         <UserVideoComponent streamManager={publisher} />
