@@ -1,4 +1,4 @@
-import { useState, useContext } from "react";
+import { useState, useEffect, useContext } from "react";
 import { GameContext } from "@/context/GameContext";
 
 const ITEM_IDS = {

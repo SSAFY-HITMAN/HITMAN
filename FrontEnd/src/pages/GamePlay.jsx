@@ -51,7 +51,7 @@ import OvVideo from "@/hooks/WebRTC/OvVideo.jsx";
 import { BASE_URL } from "@/constants/baseURL";
 
 const APPLICATION_SERVER_URL =
-  process.env.NODE_ENV === "production" ? BASE_URL : "http://localhost:8080/";
+  process.env.NODE_ENV === "production" ? BASE_URL : "http://localhost:8080/cam/";
 
 let count = 1;
 const GamePlay = () => {
@@ -246,21 +246,21 @@ const GamePlay = () => {
         setMainStreamManager(newPublisher);
         setPublisher(newPublisher);
 
-        // WebSocket 연결 설정
-        ws.current = new WebSocket("ws://localhost:8080/ChattingServer");
-        ws.current.onopen = () => {
-          console.log("WebSocket connection established");
-        };
-        ws.current.onmessage = event => {
-          const message = JSON.parse(event.data);
-          console.log("Received message:", message);
-        };
-        ws.current.onclose = () => {
-          console.log("WebSocket connection closed");
-        };
-        ws.current.onerror = error => {
-          console.log("WebSocket error:", error);
-        };
+        // // WebSocket 연결 설정
+        // ws.current = new WebSocket("ws://localhost:8080/ChattingServer");
+        // ws.current.onopen = () => {
+        //   console.log("WebSocket connection established");
+        // };
+        // ws.current.onmessage = event => {
+        //   const message = JSON.parse(event.data);
+        //   console.log("Received message:", message);
+        // };
+        // ws.current.onclose = () => {
+        //   console.log("WebSocket connection closed");
+        // };
+        // ws.current.onerror = error => {
+        //   console.log("WebSocket error:", error);
+        // };
       } catch (permissionError) {
         console.error("Permission denied:", permissionError);
         alert(
