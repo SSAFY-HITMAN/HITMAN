@@ -91,6 +91,11 @@ export const GameProvider = ({ children }) => {
   const areaCenterRef = useRef(areaCenter);
 
   useEffect(() => {
+    myLocationRef.current = myLocation;
+    console.log(`myLocation: ${myLocationRef.current.lat} ${myLocationRef.current.lng}`);
+  }, [myLocation]);
+
+  useEffect(() => {
     targetLocationRef.current = targetLocation;
   }, [targetLocation]);
 
@@ -108,7 +113,6 @@ export const GameProvider = ({ children }) => {
     };
 
     setMyLocation(newLocation);
-    // myLocationRef.current = newLocation;
 
     if (areaCenterRef.current) {
       const myDist = approximateDistance(
