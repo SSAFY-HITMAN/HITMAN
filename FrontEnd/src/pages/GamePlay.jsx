@@ -1,4 +1,4 @@
-import React, { useEffect, useContext, useState, useCallback } from "react";
+import React, { useRef, useEffect, useContext, useState, useCallback } from "react";
 import { useParams } from "react-router-dom";
 
 import GameHeader from "@/components/GameHeader";
@@ -78,9 +78,19 @@ const GamePlay = () => {
   const [subscribers, setSubscribers] = useState([]);
   const [currentVideoDevice, setCurrentVideoDevice] = useState(undefined);
   const audioEnabled = false;
+  const ws = useRef(null)
 
   const username = localStorage.getItem("username"); // 추가
   const { gameRoomId: paramGameRoomId } = useParams(); // 추가
+
+  const privateRoom = useRef("");
+  const fromUser = useRef("");
+  const toUser = useRef("");
+
+  useEffect(() => {
+    console.log(`toUser : ${toUser.current}`);
+    console.log(`fromUser : ${fromUser.current}`);
+  }, [toUser, fromUser]);
 
   useEffect(() => {
     const handleBeforeUnload = () => {
@@ -103,10 +113,31 @@ const GamePlay = () => {
     }
   };
 
-  const handleButtonClick = async () => {
-    console.log("you clicked ", count, " times!");
+  const handleButtonClick = async (receiver) => {
+    console.log("====> session : ", session);
+    const publisherName = publisher.stream.connection.data;
+    const parsedData = JSON.parse(publisherName)
+    const parsedPublisherName = parsedData.clientData;
+    console.log(parsedPublisherName);
 
-    count++;
+    if (ws.current && ws.current.readyState === WebSocket.OPEN) {
+      try {
+
+        const message = {
+          type: 'offer',
+          fromUser: parsedPublisherName,
+          toUser: receiver,
+          curRoom: paramGameRoomId,
+          privateRoom: 'Room' + Math.floor(Math.random() * 1000)
+        };
+        ws.current.send(`click:${JSON.stringify(message)}`);
+        console.log('Sent offer:', message);
+      } catch (error) {
+        console.error('Error creating or sending offer:', error);
+      }
+    } else {
+      console.error('WebSocket is not open.');
+    }
   };
 
   const leaveSession = () => {
@@ -138,25 +169,6 @@ const GamePlay = () => {
     OV.checkSystemRequirements = function () {
       return true;
     };
-
-    // const newSession = OV.initSession(paramGameRoomId);
-
-    // let newSession;
-
-    // const OVSessionIdStored = localStorage.getItem("OVSessionID");
-    // console.log("OVID:", OVSessionIdStored);
-
-    // if (OVSessionIdStored && OVSessionIdStored != "undefined") {
-    //   // OVSessionIdStored가 null 또는 빈 문자열이 아닌 경우 기존 세션을 사용
-    //   console.log("기존 세션을 사용합니다.");
-    //   newSession = OV.initSession(OVSessionIdStored);
-    // } else {
-    //   // OVSessionIdStored가 null 또는 빈 문자열일 때 새로운 세션을 생성
-    //   console.log("OV Session 재생성");
-    //   newSession = OV.initSession();
-    //   console.log("newSession", newSession.options);
-    //   localStorage.setItem("OVSessionID", newSession.sessionId);
-    // }
 
     const newSession = OV.initSession();
 
@@ -224,6 +236,25 @@ const GamePlay = () => {
         setCurrentVideoDevice(currentVideoDevice);
         setMainStreamManager(newPublisher);
         setPublisher(newPublisher);
+
+        //================== WebSocket 연결 설정 ==========================
+        ws.current = new WebSocket('ws://localhost:8080/ChattingServer');
+        ws.current.onopen = () => {
+            console.log('WebSocket connection established');
+        };
+        ws.current.onmessage = (event) => {
+            const message = JSON.parse(event.data);
+            console.log('Received message:', message);
+        };
+        ws.current.onclose = () => {
+            console.log('WebSocket connection closed');
+        };
+        ws.current.onerror = (error) => {
+            console.log('WebSocket error:', error);
+        };
+        //================== WebSocket 연결 설정 ==========================
+
+
       } catch (permissionError) {
         console.error("Permission denied:", permissionError);
         alert(
@@ -448,7 +479,7 @@ const GamePlay = () => {
                       <div className="flex justify-center">
                         <Button 
                           key={idx}
-                          onClick={handleButtonClick} 
+                          onClick={handleButtonClick(clientData)} 
                         >
                           {clientData}
                         </Button>
