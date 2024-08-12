@@ -4,6 +4,7 @@ import axiosInstance from "@/api/axiosInstance";
 
 import { Button } from "@components/ui/Button";
 import { Input } from "@components/ui/Input";
+import GoBackButton from "@/components/GoBackButton";
 
 const RoomNumber = () => {
   const navigate = useNavigate();
@@ -35,7 +36,8 @@ const RoomNumber = () => {
   };
 
   return (
-    <div className="m-4 flex h-screen flex-col items-center justify-center">
+    <div className="relative flex h-screen flex-col items-center justify-center">
+      <GoBackButton to="/home" />
       <h1 className="mb-4 text-3xl font-bold">방 코드 입력</h1>
       <p className="mb-12">방장이 알려주는 방 코드를 입력해 입장하세요.</p>
       <Input

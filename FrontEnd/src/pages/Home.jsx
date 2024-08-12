@@ -11,6 +11,7 @@ import plusIcon from "@assets/material-icon/plus-icon.svg";
 import qrcodeIcon from "@assets/material-icon/qrcode-icon.svg";
 import trophyIcon from "@assets/material-icon/trophy-icon.svg";
 import profileIcon from "@assets/material-icon/profile-icon.svg";
+import ProfileDialog from "@/components/ProfileDialog";
 
 const ActionButton = ({ onClick, icon, color, label }) => {
   return (
@@ -28,7 +29,8 @@ const ActionButton = ({ onClick, icon, color, label }) => {
 
 const Home = () => {
   const navigate = useNavigate();
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isGameSettingDialogOpen, setIsGameSettingDialogOpen] = useState(false);
+  const [isProfileDialogOpen, setIsProfileDialogOpen] = useState(false);
   const [isQrReaderOpen, setIsQrReaderOpen] = useState(false);
 
   const username = localStorage.getItem("username");
@@ -78,25 +80,25 @@ const Home = () => {
   };
 
   return (
-    <div className="h-screen bg-theme-color-2">
+    <div className="bg-theme-color-2 h-screen">
       <div className="flex h-screen flex-col items-center justify-center">
         <img
           src={titleImage}
           alt="titleImage"
-          className="animate-fade-in mb-8 w-80"
+          className="mb-8 w-80 animate-fade-in"
         />
         <div>
           <span className="mb-4 mr-4 font-bold">{username} 님 환영합니다.</span>
           <Button
             onClick={handleLogout}
-            className="shadow-3d mb-20 bg-rose-500 font-bold"
+            className="mb-20 bg-rose-500 font-bold shadow-3d"
           >
             로그아웃
           </Button>
         </div>
         <div className="grid grid-cols-2 gap-8">
           <ActionButton
-            onClick={() => setIsDialogOpen(true)}
+            onClick={() => setIsGameSettingDialogOpen(true)}
             icon={plusIcon}
             color="bg-gradient-to-r from-amber-300 to-amber-600"
             label="방 만들기"
@@ -114,16 +116,24 @@ const Home = () => {
             label="순위"
           />
           <ActionButton
-            onClick={() => navigate("/profile")}
+            onClick={() => setIsProfileDialogOpen(true)}
             icon={profileIcon}
             color="bg-gradient-to-r from-indigo-300 to-indigo-600"
             label="내 정보"
           />
         </div>
+
         <GameSettingDialog
-          isOpen={isDialogOpen}
-          onClose={() => setIsDialogOpen(false)}
+          isOpen={isGameSettingDialogOpen}
+          onClose={() => setIsGameSettingDialogOpen(false)}
         />
+        <ProfileDialog
+          isOpen={isProfileDialogOpen}
+          onClose={() => setIsProfileDialogOpen(false)}
+          url="/user/myProfile"
+          isMyProfile="true"
+        />
+
         {isQrReaderOpen && (
           <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-70">
             <div className="flex flex-col items-center justify-center p-4">
@@ -145,7 +155,7 @@ const Home = () => {
               />
               <Button
                 onClick={() => setIsQrReaderOpen(false)}
-                className="shadow-3d mb-8 w-20 bg-rose-500 font-bold"
+                className="mb-8 w-20 bg-rose-500 font-bold shadow-3d"
               >
                 닫기
               </Button>

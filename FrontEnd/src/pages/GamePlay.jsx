@@ -380,7 +380,7 @@ const GamePlay = () => {
           <div className="relative h-[45vh] w-full rounded-lg bg-white">
             <Button
               onClick={() => setCamChatting(false)}
-              className="border-1 absolute left-[3%] top-[3%] z-20 h-12 w-20 rounded-lg border-black bg-gradient-to-r from-emerald-300 to-emerald-500 font-bold text-white shadow-3d"
+              className="border-1 absolute right-[3%] top-[3%] z-20 h-12 w-20 rounded-lg border-black bg-gradient-to-r from-emerald-300 to-emerald-500 font-bold text-white shadow-3d"
             >
               ← 지도
             </Button>

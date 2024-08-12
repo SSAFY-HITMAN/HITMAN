@@ -55,14 +55,16 @@ const Room = () => {
         onClose={() => setIsDialogOpen(false)}
       />
       {/* 게임시작 버튼은 방장만 보여주기 */}
-      {isChief && !isGameRoomLoading && (
-        <Button
-          className="absolute right-12 top-8 h-12 w-32 animate-gradient-move bg-gradient-rainbow bg-[length:200%_200%] font-bold shadow-3d"
-          onClick={handleStartGame}
-        >
-          게임 시작
-        </Button>
-      )}
+      {
+        /*isChief && !isGameRoomLoading*/ true && (
+          <Button
+            className="absolute right-12 top-8 h-12 w-32 animate-gradient-move bg-gradient-rainbow bg-[length:200%_200%] font-bold shadow-3d"
+            onClick={handleStartGame}
+          >
+            게임 시작
+          </Button>
+        )
+      }
 
       {/* 나머지 요소들은 flex로 배치 */}
       <div className="mt-12 flex flex-col items-center justify-center">
@@ -73,11 +75,11 @@ const Room = () => {
               color="#fff900"
               size={70}
               speedMultiplier={2}
-              className="mb-8"
+              className="mb-8 animate-bounce"
             />
-            <div className="mb-12 text-center text-xl leading-loose">
-              잠시 후 게임이 시작됩니다. <br />
-              원하는 위치로 이동해주세요!
+            <div className="mb-12 animate-pulse text-center text-xl leading-loose">
+              방장이 게임을 시작했습니다.
+              <br />곧 게임이 시작됩니다!
             </div>
           </>
         ) : isChief ? (
