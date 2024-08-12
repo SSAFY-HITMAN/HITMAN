@@ -7,11 +7,12 @@ const useSendGPS = () => {
   const { myLocation, distance, areaRadius, username } =
     useContext(GameContext);
   const { sendGPS } = useFirebase();
-  const { decreaseTime } = useTimer();
+  const { remainingTime, decreaseTime } = useTimer();
 
   const locationRef = useRef(myLocation);
   const distanceRef = useRef(distance);
   const areaRadiusRef = useRef(areaRadius);
+  const remainingTimeRef = useRef(remainingTime);
 
   useEffect(() => {
     locationRef.current = myLocation;
@@ -25,11 +26,18 @@ const useSendGPS = () => {
     areaRadiusRef.current = areaRadius;
   }, [areaRadius]);
 
+  useEffect(() => {
+    remainingTimeRef.current = remainingTime;
+  }, [remainingTime]);
+
   const startSendingGPS = useCallback(() => {
     const locationInterval = setInterval(() => {
       sendGPS(username, locationRef.current.lat, locationRef.current.lng); // 1초마다 위치 전송
 
-      if (distanceRef.current > areaRadiusRef.current) {
+      if (
+        remainingTimeRef.current > 0 &&
+        distanceRef.current > areaRadiusRef.current
+      ) {
         decreaseTime(); // 1초마다 영역 이탈 여부 체크해 시간 감소
       }
     }, 1000);

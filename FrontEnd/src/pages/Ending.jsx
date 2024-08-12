@@ -9,7 +9,15 @@ const Ending = () => {
   return (
     <div className="flex flex-col items-center">
       <EndPageRankTable />
-      <Button onClick={() => navigate("/home")}>홈으로 돌아가기 ▶</Button>
+      <Button
+        onClick={() => {
+          const itemsToRemove = ["winner1", "winner2", "result"];
+          itemsToRemove.forEach(item => sessionStorage.removeItem(item));
+          navigate("/home");
+        }}
+      >
+        홈으로 돌아가기 ▶
+      </Button>
     </div>
   );
 };

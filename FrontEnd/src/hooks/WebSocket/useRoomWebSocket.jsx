@@ -1,13 +1,12 @@
 import { useRef, useContext } from "react";
 import { WS_BASE_URL } from "@/constants/baseURL";
 import Stomp from "stompjs";
-import useReadyGame from "@/hooks/Map/useReadyGame";
 import { GameContext } from "@/context/GameContext";
 import { useNavigate } from "react-router-dom";
 
 const useRoomWebSocket = () => {
-  const { gameRoomId, setGameRoomUsers } = useContext(GameContext);
-  const { setIsLoading } = useReadyGame();
+  const { gameRoomId, setGameRoomUsers, setIsGameRoomLoading } =
+    useContext(GameContext);
   const navigate = useNavigate();
   const stompClient = useRef(null);
 
@@ -58,7 +57,7 @@ const useRoomWebSocket = () => {
         setGameRoomUsers(msg.users);
         break;
       case "ready":
-        setIsLoading(true);
+        setIsGameRoomLoading(true);
         break;
       case "start":
         if (gameRoomId) {

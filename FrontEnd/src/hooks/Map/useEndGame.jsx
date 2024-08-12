@@ -5,22 +5,29 @@ const useEndGame = () => {
   const gameRoomId = sessionStorage.getItem("gameRoomId");
 
   const removeSessionStorageList = [
-    "gameStatus",
-    "isAlive",
     "gameRoomId",
-    "areaCenter",
+    "remainingPlayTime",
+    "isChief",
     "areaRadius",
     "targetId",
-    "remainingTime",
+    "areaCenter",
     "startTime",
+    "remainingTime",
     "gamePlayTime",
-    "remainingPlayTime",
+    "gameStatus",
+    "isAlive",
+    "countPlayer",
+    "bullets",
   ];
 
-  const endGame = () => {
+  const endGame = data => {
     removeSessionStorageList.forEach(value => {
       sessionStorage.removeItem(value);
     });
+
+    sessionStorage.setItem("winner1", data.winner1);
+    sessionStorage.setItem("winner2", data.winner2);
+    sessionStorage.setItem("result", JSON.stringfy(data.result));
 
     navigate(`/ending/${gameRoomId}`);
   };

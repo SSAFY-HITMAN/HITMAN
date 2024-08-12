@@ -1,26 +1,9 @@
 import { Card } from "@/components/ui/Card";
 
 const EndPageRankTable = () => {
-  // 랭킹 관련 로직 추가
-  // 임시 목록
-  const rankingList = [
-    {
-      id: "Bill Rizer",
-      rank: 1,
-    },
-    {
-      id: "Genbei Yagy",
-      rank: 2,
-    },
-    {
-      id: "Lancy Neo",
-      rank: 3,
-    },
-    {
-      id: "Konami",
-      rank: 4,
-    },
-  ];
+  const winner1 = sessionStorage.getItem("winner1");
+  const winner2 = sessionStorage.getItem("winner2");
+  const rankingList = JSON.parse(sessionStorage.getItem("result")) || [];
 
   return (
     <div>
@@ -32,32 +15,62 @@ const EndPageRankTable = () => {
               key={idx}
               className="my-1 w-[90%] rounded-lg border-2 border-black"
             >
-              {user.rank === 1 && (
-                <h1 id="winner" className="text-center text-3xl font-bold">
-                  Winner!
+              {(user.userName === winner1 || user.userName === winner2) && (
+                <h1
+                  id="winner"
+                  className="flex justify-center text-center text-3xl font-bold"
+                >
+                  🏆
+                  <div className="bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 bg-clip-text text-transparent">
+                    Winner!
+                  </div>
                 </h1>
               )}
               <div id="player-result" className="flex h-[10vh]">
-                <div id="player-profile" className="m-2 border-2 w-[30%]">
-                  <img
-                    src=""
-                    alt="profile-image"
-                  />
-                </div>
-                <div
-                  id="player-name"
-                  className="mx-4 flex w-[65%] items-center justify-center text-2xl font-bold"
-                >
-                  {user.id}
-                </div>
-                {user.rank !== 1 && (
+                {user.userName !== winner1 && user.userName !== winner2 ? (
                   <div
-                    id="player-rank"
-                    className="m-2 flex flex-col justify-center text-2xl font-bold"
+                    id="player-rank-other"
+                    className={`m-2 flex w-[10%] flex-col justify-center text-center text-2xl font-bold ${
+                      idx + 1 === 2
+                        ? "rounded-full bg-gray-400 text-white" // 은메달
+                        : idx + 1 === 3
+                          ? "rounded-full bg-yellow-800 text-white" // 동메달
+                          : ""
+                    }`}
                   >
-                    {user.rank}
+                    {idx + 1}
+                  </div>
+                ) : (
+                  <div
+                    id="player-rank-winner"
+                    className="m-2 flex w-[10%] flex-col justify-center text-center text-2xl font-bold"
+                  >
+                    {/* {idx + 1} */}
                   </div>
                 )}
+                <div
+                  id="player-name"
+                  className="mx-4 flex w-[45%] items-center justify-center text-xl font-bold"
+                >
+                  {user.userName}
+                </div>
+                <div
+                  id="player-kill-missions"
+                  className="flex w-[25%] flex-col justify-center text-center text-xl font-bold"
+                >
+                  <div>
+                    <span className="mr-1">💀</span> {user.kills}
+                  </div>
+                  <div>
+                    <span className="mr-1">⭐</span> {user.missionComplete}
+                  </div>
+                </div>
+                <div
+                  id="player-game-info"
+                  className="text-l mx-1 flex w-[20%] flex-col items-center justify-center text-xl font-bold"
+                >
+                  <div id="player-plus-score">+{user.score}</div>
+                </div>
               </div>
             </Card>
           ))}

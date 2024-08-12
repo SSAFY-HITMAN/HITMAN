@@ -1,9 +1,12 @@
 package com.boricori.repository.ParticipantRepo;
 
+import com.boricori.dto.request.inGame.QUpdatePlayerScoreRequest;
+import com.boricori.dto.request.inGame.UpdatePlayerScoreRequest;
 import com.boricori.dto.response.inGame.EndGameUserInfoResponse;
 import com.boricori.dto.response.inGame.QEndGameUserInfoResponse;
 import com.boricori.entity.GameParticipants;
 import com.boricori.entity.GameRoom;
+import com.boricori.entity.InGameItems;
 import com.boricori.entity.QGameParticipants;
 import com.boricori.entity.QUser;
 import com.boricori.entity.User;
@@ -42,20 +45,6 @@ public class ParticipantRepositoryImpl {
         .fetchOne();
   }
 
-  public long addKills(User user) {
-    return queryFactory.update(participants)
-        .set(participants.kills, participants.kills.add(1))
-        .where(participants.user.userId.eq(user.getUserId()))
-        .execute();
-  }
-
-  public long changeStatus(User target, long gameId) {
-    return queryFactory.update(participants)
-        .set(participants.alive, false)
-        .where(participants.user.userId.eq(target.getUserId()).and(participants.gameRoom.id.eq(gameId)))
-        .execute();
-  }
-
   public long changeStatusByName(String username, long gameId) {
     return queryFactory.update(participants)
         .set(participants.alive, false)
@@ -71,35 +60,45 @@ public class ParticipantRepositoryImpl {
         .fetchOne();
   }
 
-  public List<EndGameUserInfoResponse> getDrawEndGameUsersInfo(Long roomId, String userA, String userB) {
+  public List<EndGameUserInfoResponse> getEndGamePlayersInfo(Long roomId) {
     return queryFactory
             .select(new QEndGameUserInfoResponse(
-                    user.username,
+                    participants.user.username,
                     participants.missionComplete,
-                    participants.kills
+                    participants.kills,
+                    participants.score
             ))
             .from(participants)
             .join(participants.user, user)
-            .where(participants.gameRoom.id.eq(roomId)
-                    .and(user.username.ne(userA))
-                    .and(user.username.ne(userB))) // userA와 userB가 아닌 경우만 포함
-            .orderBy(participants.kills.desc(), participants.missionComplete.desc())
+            .where(participants.gameRoom.id.eq(roomId))
+            .orderBy(participants.score.desc())
             .fetch();
   }
-
-
-  public List<EndGameUserInfoResponse> getWinEndGameUsersInfo(Long roomId, String username) {
+  
+  public UpdatePlayerScoreRequest getTwoUserInfo(String username, Long roomId){
     return queryFactory
-            .select(new QEndGameUserInfoResponse(
-                    user.username,
+            .select(new QUpdatePlayerScoreRequest(
+                    participants.user.userId,
                     participants.missionComplete,
-                    participants.kills
-            ))
+                    participants.kills))
             .from(participants)
-            .join(participants.user, user)
-            .where(participants.gameRoom.id.eq(roomId)
-                    .and(user.username.ne(username))) // username이 같지 않은 경우만 포함
-            .orderBy(participants.kills.desc(), participants.missionComplete.desc())
+            .where(participants.user.username.eq(username)
+                    .and(participants.gameRoom.id.eq(roomId)))
+            .fetchOne();
+  }
+
+  public void updateUserScore(Long userId, int score) {
+    queryFactory.update(participants)
+            .set(participants.score, participants.score.add(score))
+            .where(participants.user.userId.eq(userId))
+            .execute();
+  }
+
+  public List<GameParticipants> getPlayersInfo(Long roomId){
+    return queryFactory
+            .selectFrom(participants)
+            .where(participants.gameRoom.id.eq(roomId))
             .fetch();
   }
+
 }

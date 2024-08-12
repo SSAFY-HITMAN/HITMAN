@@ -31,11 +31,11 @@ public class UserCircularLinkedList extends CircularLinkedList {
     }
   }
 
-  public Node<User> getByUsername(String username) {
+  public Node<User> identifyTarget(String username) {
     Node<User> currNode = tail.next; // 시작 노드
     do {
       if (currNode.data.getUsername().equals(username)) {
-        return currNode;
+        return currNode.next;
       }
       currNode = currNode.next;
     } while (currNode != tail.next); // 한 바퀴 다 돌면 종료
@@ -43,7 +43,7 @@ public class UserCircularLinkedList extends CircularLinkedList {
     return null;
   }
 
-  public Node<User> killTarget(String username){
+  public Node<User> removeTargetForUser(String username){
 
     Node<User> currNode = tail.next; // 시작 노드
 
@@ -73,6 +73,34 @@ public class UserCircularLinkedList extends CircularLinkedList {
     } while (currNode != tail.next);
 
     return usernameList;
+  }
+
+  public Node<User> identifyHunter(String username) {
+    Node<User> currNode = tail.next; // 시작 노드
+    do {
+      if (currNode.next.data.getUsername().equals(username)) {
+        return currNode;
+      }
+      currNode = currNode.next;
+    } while (currNode != tail.next); // 한 바퀴 다 돌면 종료
+
+    return null;
+  }
+
+  public Node<User> removePlayerAndReturnHunter(String username) {
+    Node<User> currNode = tail.next; // 시작 노드
+
+    do {
+      if (currNode.next.data.getUsername().equals(username)) {
+        Node<User> target = currNode.next;
+        currNode.next = target.next;
+        size--;
+        return currNode;
+      }
+      currNode = currNode.next;
+    } while (currNode != tail.next); // 한 바퀴 다 돌면 종료
+
+    return null;
   }
 }
 

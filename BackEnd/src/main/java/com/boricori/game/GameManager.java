@@ -19,12 +19,28 @@ public class GameManager {
     return gameManager;
   }
 
-  public Node<User> getByUsername(long gameId, String username){
-      return catchableList.get(gameId).getByUsername(username);
+  public int numPlayers(long gameId){
+    return catchableList.get(gameId).size;
   }
 
-  public Node<User> killTarget(long gameId, String username) {
-    return catchableList.get(gameId).killTarget(username);
+
+  public Node<User> identifyTarget(long gameId, String username){
+    return catchableList.get(gameId).identifyTarget(username);
+  }
+
+  public Node<User> catchTargetForUser(long gameId, String username) {
+    return catchableList.get(gameId).removeTargetForUser(username);
+  }
+
+
+  public Node<User> identifyHunter(long gameId, String username) {
+    return catchableList.get(gameId).identifyHunter(username);
+  }
+
+
+  public Node<User> removePlayerAndReturnHunter(long gameId, String username){
+    return catchableList.get(gameId).removePlayerAndReturnHunter(username);
+
   }
 
   public boolean isLastTwo(long gameId){

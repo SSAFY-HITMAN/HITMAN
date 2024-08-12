@@ -4,6 +4,8 @@ import static com.boricori.entity.QUser.user;
 import static org.springframework.util.StringUtils.hasText;
 
 import com.boricori.dto.request.gameroom.PlayerInfoRequest;
+import com.boricori.dto.response.User.QRankDtoResponse;
+import com.boricori.dto.response.User.RankDtoResponse;
 import com.boricori.entity.GameRoom;
 import com.boricori.entity.User;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -51,6 +53,24 @@ public class UserRepositoryImpl {
 
   private BooleanExpression userNameEq(String userName) {
     return hasText(userName) ? user.username.eq(userName) : null;
+  }
+
+  public void addUserScore(Long userId, int scoreToAdd) {
+    queryFactory
+            .update(user)
+            .set(user.scores, user.scores.add(scoreToAdd))  // 현재 점수에 새로운 점수를 더함
+            .where(user.userId.eq(userId))
+            .execute();
+  }
+
+  public List<RankDtoResponse> findAllRank() {
+    return queryFactory
+            .select(new QRankDtoResponse(
+                    user.username,
+                    user.scores))
+            .from(user)
+            .orderBy(user.scores.asc())
+            .fetch();
   }
 
 }

@@ -14,14 +14,7 @@ const approximateDistance = (lat1, lng1, lat2, lng2) => {
   const x = dLng * Math.cos(avgLatRad);
   const distance = Math.sqrt(dLat * dLat + x * x) * R;
 
-  return distance.toFixed(1); // 거리의 소수점 이하 1자리까지, 미터 단위
-};
-
-const coordToFixed = (getLat, getLng) => {
-  return {
-    lat: getLat.toFixed(5), // 거리 연산에 위/경도의 소수점 5자리까지 사용
-    lng: getLng.toFixed(5), // 거리 연산에 위/경도의 소수점 5자리까지 사용
-  };
+  return parseFloat(distance.toFixed(1)); // 거리의 소수점 이하 1자리까지, 미터 단위
 };
 
 export const GameContext = createContext();
@@ -31,10 +24,11 @@ export const GameProvider = ({ children }) => {
     return sessionStorage.getItem("gameRoomId") || "";
   }); // 게임 방 번호
   const [gameRoomUsers, setGameRoomUsers] = useState([]); // 참여자 목록
+  const [isGameRoomLoading, setIsGameRoomLoading] = useState(false); // Room.jsx에서 로딩 스피너 사용
   const [gameStatus, setGameStatus] = useState(() => {
     const savedGameStatus = sessionStorage.getItem("gameStatus");
     return savedGameStatus === "true";
-  }); // 게임방 플레이 상태 (웹소켓 메시지에 따라 true로 전환되고, 이후 게임 종료 조건에 따라 false로 전환)
+  }); // 게임방 플레이 상태
   const [isAlive, setIsAlive] = useState(() => {
     const savedIsAlive = sessionStorage.getItem("isAlive");
     return savedIsAlive === "true";
@@ -63,8 +57,13 @@ export const GameProvider = ({ children }) => {
   const [distToTarget, setDistToTarget] = useState(null); // 사용자와 타겟 간 거리
   const [missionList, setMissionList] = useState([
     { id: 1, name: "미션 이름", description: "미션 내용" }, // 임시 데이터
+    { id: 2, name: "ddd", description: "hahaha"},
   ]); // 미션 목록
   const [itemList, setItemList] = useState([]);
+  const [playerCount, setPlayerCount] = useState(() => {
+    const savedPlayerCount = sessionStorage.getItem("playerCount");
+    return savedPlayerCount !== null ? parseInt(savedPlayerCount, 10) : null;
+  });
   const username = localStorage.getItem("username"); // sendGPS 함수에서 활용 (useFirebase.jsx)
   // 로그인 시 setItem 대상이 sessionStorage로 변경되면 이 부분도 같이 변경되어야 함
 
@@ -73,10 +72,6 @@ export const GameProvider = ({ children }) => {
   const myLocationRef = useRef(myLocation);
   const targetLocationRef = useRef(targetLocation);
   const areaCenterRef = useRef(areaCenter);
-
-  useEffect(() => {
-    myLocationRef.current = myLocation;
-  }, [myLocation]);
 
   useEffect(() => {
     targetLocationRef.current = targetLocation;
@@ -96,7 +91,7 @@ export const GameProvider = ({ children }) => {
     };
 
     setMyLocation(newLocation);
-    myLocationRef.current = newLocation;
+    // myLocationRef.current = newLocation;
 
     if (areaCenterRef.current) {
       const myDist = approximateDistance(
@@ -193,6 +188,8 @@ export const GameProvider = ({ children }) => {
         setTargetId,
         gameStatus,
         setGameStatus,
+        isGameRoomLoading,
+        setIsGameRoomLoading,
         isAlive,
         setIsAlive,
         myLocation,
@@ -211,6 +208,8 @@ export const GameProvider = ({ children }) => {
         setMissionList,
         itemList,
         setItemList,
+        playerCount,
+        setPlayerCount,
         username,
       }}
     >

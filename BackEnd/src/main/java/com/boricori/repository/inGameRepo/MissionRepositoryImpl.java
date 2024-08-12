@@ -16,10 +16,10 @@ public class MissionRepositoryImpl {
 
   private final JPAQueryFactory jpaQueryFactory;
 
-  public List<Mission> getMissions() {
+  public List<Mission> getMissions(int currPlayers) {
     return jpaQueryFactory.selectFrom(mission)
         .orderBy(Expressions.numberTemplate(Double.class, "function('rand')").asc())
-        .limit(5) //몇개를 뽑아올건지
+        .limit(currPlayers-1) //몇개를 뽑아올건지
         .fetch();
   }
 

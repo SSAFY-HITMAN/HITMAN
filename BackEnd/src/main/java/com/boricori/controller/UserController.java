@@ -81,7 +81,7 @@ public class UserController {
     return ResponseEntity.status(ResponseEnum.FAIL.getCode()).body(null);
   }
 
-  @PostMapping("isDuplicate")
+  @PostMapping("/isDuplicate")
   public ResponseEntity<String> isDuplicate(@RequestBody CheckDupRequest request){
     String type = request.getType();
     String value = request.getValue();
@@ -104,18 +104,16 @@ public class UserController {
   public void logout(){
   }
 
-  @GetMapping("/ranks/{userEmail}")
+  @GetMapping("/ranks")
   @Operation(summary = "순위검색", description = "전체 유저 중 순위 출력")
   @ApiResponses(value = {
-      @ApiResponse(responseCode = "200", description = "회원별 순위 리턴"),
-      @ApiResponse(responseCode = "400", description = "표시할 내용 없음"),
+          @ApiResponse(responseCode = "200", description = "회원별 순위 리턴"),
+          @ApiResponse(responseCode = "400", description = "표시할 내용 없음"),
   })
-  public ResponseEntity<?> getRanks(@PathVariable String userEmail){
+  public ResponseEntity<?> getRanks(){
     try{
-      int score = userService.findUserScore(userEmail);
       List<RankDtoResponse> allRank = userService.findAllRank();
-      RankResponse rankInfo = new RankResponse(score, allRank);
-      return ResponseEntity.status(200).body(rankInfo);
+      return ResponseEntity.status(200).body(allRank);
     }catch (Exception e){
       return ResponseEntity.status(400).body("Error fetching ranks");
     }
@@ -133,7 +131,7 @@ public class UserController {
     return null;
   }
 
-  @PatchMapping("updateProfile")
+  @PatchMapping("/updateProfile")
   @Operation(summary = "회원정보 수정", description = "현재 로그인 된 유저의 정보 수정")
   @ApiResponses(value = {
       @ApiResponse(responseCode = "200", description = "정보 수정 성공")
