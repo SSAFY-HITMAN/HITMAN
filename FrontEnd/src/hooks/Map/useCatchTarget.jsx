@@ -3,11 +3,35 @@ import { GameContext } from "@/context/GameContext";
 import axiosInstance from "@/api/axiosInstance";
 
 const useCatchTarget = () => {
-  const DISTANCE_TO_CATCH = 5; // 잡기 버튼이 활성화되기 위한 타겟과의 거리
-  const { gameRoomId, isAlive, distToTarget, username } =
-    useContext(GameContext);
+  const {
+    gameRoomId,
+    isAlive,
+    distToTarget,
+    username,
+    distToCatch,
+    setDistToCatch,
+    DISTANCE_TO_CATCH,
+    DISTANCE_ENHANCED_BULLET,
+  } = useContext(GameContext);
   const [isAbleToCatchTarget, setIsAbleToCatchTarget] = useState(false);
   const catchTimeoutRef = useRef(null);
+
+  const handleUseEnhancedBullet = () => {
+    sessionStorage.setItem("effectStartTime", Date.now());
+    sessionStorage.setItem("effectExpirationTime", Date.now() + 30 * 1000);
+    sessionStorage.setItem("itemInEffect", "enhancedBullet");
+    setDistToCatch(DISTANCE_ENHANCED_BULLET);
+    alert("강화 총알 사용");
+    setTimeout(() => {
+      setDistToCatch(DISTANCE_TO_CATCH);
+      const itemInEffect = sessionStorage.getItem("itemInEffect");
+      if (itemInEffect === "enhancedBullet") {
+        sessionStorage.removeItem("effectStartTime");
+        sessionStorage.removeItem("effectExpirationTime");
+        sessionStorage.removeItem("itemInEffect");
+      }
+    }, 30 * 1000);
+  };
 
   const handleOnClickCatchTarget = async () => {
     try {
@@ -25,21 +49,20 @@ const useCatchTarget = () => {
   };
 
   useEffect(() => {
-    if (distToTarget > DISTANCE_TO_CATCH) return;
+    if (!isAlive || distToTarget > distToCatch) return;
 
     // locationing이 튀는 현상 때문에 잡기 버튼이 불필요하게 활성화 상태가 변화하는 것을 보정하기 위함
     // 한번 활성화되면 GPS가 튀어 상대가 범위를 벗어나더라도 2초간은 버튼 클릭을 할 수 있도록 함
     const countCatchTimeout = () => {
-      if (isAlive && distToTarget >= 0) {
-        setIsAbleToCatchTarget(true);
-        catchTimeoutRef.current = setTimeout(() => {
-          setIsAbleToCatchTarget(false);
-          catchTimeoutRef.current = null;
-        }, 2000);
-      }
+      setIsAbleToCatchTarget(true);
+      catchTimeoutRef.current = setTimeout(() => {
+        setIsAbleToCatchTarget(false);
+        catchTimeoutRef.current = null;
+      }, 2000);
     };
 
-    if (isAlive && distToTarget <= DISTANCE_TO_CATCH) {
+    // 타겟과 거리가 가까울 때 이미 타이머가 설정되어 있다면 갱신
+    if (distToTarget <= distToCatch) {
       if (catchTimeoutRef.current !== null) {
         clearTimeout(catchTimeoutRef.current);
       }
@@ -51,9 +74,13 @@ const useCatchTarget = () => {
         clearTimeout(catchTimeoutRef.current);
       }
     };
-  }, [distToTarget, isAlive]);
+  }, [distToTarget, distToCatch, isAlive]);
 
-  return { isAbleToCatchTarget, handleOnClickCatchTarget };
+  return {
+    isAbleToCatchTarget,
+    handleOnClickCatchTarget,
+    handleUseEnhancedBullet,
+  };
 };
 
 export default useCatchTarget;

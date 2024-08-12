@@ -12,8 +12,9 @@ const useGameWebSocket = () => {
     setIsAlive,
     setPlayerCount,
     username,
+    setToOffChatting,
     setBlockGPS,
-    setBlockScreen
+    setBlockScreen,
   } = useContext(GameContext);
   const { endGame } = useEndGame();
   const { gameRoomId, setAreaRadius } = useContext(GameContext);
@@ -26,7 +27,7 @@ const useGameWebSocket = () => {
 
   const connect = () => {
     // WebSocket 연결 생성
-    console.log("test")
+    console.log("test");
     console.log(`${WS_BASE_URL}/gameRoom/${gameRoomId}`);
     const socket = new WebSocket(`${WS_BASE_URL}/gameRoom/${gameRoomId}`);
     stompClient.current = Stomp.over(socket);
@@ -90,6 +91,7 @@ const useGameWebSocket = () => {
         break;
       case "end": // 게임 종료 조건(인원수)
         setGameStatus(false);
+        setToOffChatting(true); // 종료 시 true로 변환
         const data = JSON.parse(msg.data);
         endGame(data);
         break;
@@ -101,8 +103,9 @@ const useGameWebSocket = () => {
         const effect = msg.effect;
         const affected = msg.username;
         if (username === affected) {
-            handleItemEffect(effect);
+          handleItemEffect(effect);
         }
+        break;
       default:
         break;
     }
@@ -122,20 +125,19 @@ const useGameWebSocket = () => {
     }
   };
 
-  const handleItemEffect = (effect) => {
+  const handleItemEffect = effect => {
     sessionStorage.setItem("effectStartTime", Date.now());
-    sessionStorage.setItem('effectExpirationTime', Date.now() + 30 * 1000);
-    if (effect === "blockScreen"){
+    sessionStorage.setItem("effectExpirationTime", Date.now() + 30 * 1000);
+    if (effect === "blockScreen") {
       sessionStorage.setItem("itemInEffect", "blockScreen");
-      alert("방해 폭탄 공격")
-      setBlockScreen(true); // 렌더링 해줘야함
-
-    }else if (effect === "blockGPS"){
+      alert("방해 폭탄 공격");
+      setBlockScreen(true); // GamePlay.jsx
+    } else if (effect === "blockGPS") {
       sessionStorage.setItem("itemInEffect", "blockGPS");
-      alert("스텔스 망토 작동")
-      setBlockGPS(true); // 렌더링 해줘야함
+      alert("스텔스 망토 작동");
+      setBlockGPS(true); // useTargetMarker.jsx
     }
-  }
+  };
 
   return { connect, disconnect };
 };

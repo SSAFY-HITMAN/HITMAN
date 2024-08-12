@@ -38,9 +38,9 @@ const GameTime = () => {
     const elapsedTime = Math.floor((now - start) / 1000); // 경과 시간
     const newRemainingPlayTime = gamePlayTime - elapsedTime; // 남은 시간
 
-    console.log(`start: ${start}, ${typeof start}`);
-    console.log(`GameTime.jsx - updateTimer - start: ${start}`);
-    console.log(`GameTime.jsx - updateTimer - now: ${now}`);
+    // console.log(`start: ${start}, ${typeof start}`);
+    // console.log(`GameTime.jsx - updateTimer - start: ${start}`);
+    // console.log(`GameTime.jsx - updateTimer - now: ${now}`);
 
     // 대기시간 1분 경과 시 gameStatus, isAlive 변경
     if (elapsedTime >= 60) {

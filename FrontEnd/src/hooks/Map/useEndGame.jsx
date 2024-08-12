@@ -18,6 +18,9 @@ const useEndGame = () => {
     "isAlive",
     "countPlayer",
     "bullets",
+    "effectStartTime",
+    "effectExpirationTime",
+    "itemInEffect",
   ];
 
   const endGame = data => {

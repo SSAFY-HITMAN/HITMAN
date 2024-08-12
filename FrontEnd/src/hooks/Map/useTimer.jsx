@@ -29,7 +29,7 @@ const useTimer = () => {
 
           setIsAlive(false);
           sessionStorage.setItem("isAlive", false);
-          console.log(`Timeout: Play ${username}`);
+          console.log(`Timeout: Player ${username}`);
         } catch {
           // axios 요청 실패 시 부분 입력
           console.error("Failed to send death status");
