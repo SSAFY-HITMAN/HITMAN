@@ -6,6 +6,7 @@ import com.boricori.dto.response.inGame.EndGameUserInfoResponse;
 import com.boricori.dto.response.inGame.QEndGameUserInfoResponse;
 import com.boricori.entity.GameParticipants;
 import com.boricori.entity.GameRoom;
+import com.boricori.entity.InGameItems;
 import com.boricori.entity.QGameParticipants;
 import com.boricori.entity.QUser;
 import com.boricori.entity.User;
@@ -42,20 +43,6 @@ public class ParticipantRepositoryImpl {
         .where(participants.user.username.eq(username)
         .and(participants.gameRoom.id.eq(roomId)))
         .fetchOne();
-  }
-
-  public long addKills(User user) {
-    return queryFactory.update(participants)
-        .set(participants.kills, participants.kills.add(1))
-        .where(participants.user.userId.eq(user.getUserId()))
-        .execute();
-  }
-
-  public long changeStatus(User target, long gameId) {
-    return queryFactory.update(participants)
-        .set(participants.alive, false)
-        .where(participants.user.userId.eq(target.getUserId()).and(participants.gameRoom.id.eq(gameId)))
-        .execute();
   }
 
   public long changeStatusByName(String username, long gameId) {
@@ -113,4 +100,5 @@ public class ParticipantRepositoryImpl {
             .where(participants.gameRoom.id.eq(roomId))
             .fetch();
   }
+
 }

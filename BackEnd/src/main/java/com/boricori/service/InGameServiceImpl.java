@@ -1,6 +1,7 @@
 package com.boricori.service;
 
 
+import com.boricori.dto.ItemCount;
 import com.boricori.dto.GameResult;
 import com.boricori.dto.request.inGame.UpdatePlayerScoreRequest;
 import com.boricori.dto.response.inGame.EndGameUserInfoResponse;
@@ -18,6 +19,7 @@ import com.boricori.repository.inGameRepo.MissionRepository;
 import com.boricori.repository.inGameRepo.MissionRepositoryImpl;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 import com.boricori.repository.userRepo.UserRepositoryImpl;
@@ -25,6 +27,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class InGameServiceImpl implements InGameService{
@@ -66,6 +69,7 @@ public class InGameServiceImpl implements InGameService{
   }
 
   @Override
+  @Transactional
   public Mission changeMission(Long gameId, String username, long missionId) {
     Mission newMission =  missionRepositoryImpl.changeMission(missionId);
     GameParticipants player = participantRepository.getByUsername(username, gameId);
@@ -77,34 +81,51 @@ public class InGameServiceImpl implements InGameService{
   }
 
   @Override
-  public void completeMission(Long gameId, String username, long missionId) {
+  @Transactional
+  public GameParticipants completeMission(Long gameId, String username, long missionId) {
     GameParticipants player = participantRepository.getByUsername(username, gameId);
+    player.getBullet();
     inGameRepositoryImpl.updateMission(missionId, player);
+    return player;
   }
 
   @Override
-  public Item getItem(Long gameId, String username) {
+  @Transactional
+  public Item getItem(GameParticipants player) {
     Item item = itemRepositoryImpl.getItem();
-    GameParticipants player = participantRepository.getByUsername(username, gameId);
-    inGameItemsRepository.save(InGameItems.builder().item(item).user(player).build());
+    Optional<InGameItems> currCount = inGameItemsRepository.findByUserAndItem(player, item);
+    if (currCount.isPresent()){
+      currCount.get().incrementCount();
+    }else{
+      inGameItemsRepository.save(InGameItems.builder().item(item).user(player).count(1).build());
+    }
     return item;
   }
 
   @Override
+  @Transactional
   public void useItem(Long gameId, String username, long itemId) {
     GameParticipants player = participantRepository.getByUsername(username, gameId);
-    inGameRepositoryImpl.useItem(player, itemId);
+    InGameItems item = inGameRepositoryImpl.getActivatedItem(player, itemId);
+    if (null != item) {
+      item.useItem();
+    }
+    // else 오류 처리 해야함
   }
 
   @Override
   public void catchTarget(User user, User target, long gameId) {
-    participantRepository.changeStatus(target, gameId);
-    participantRepository.addKills(user);
-    GameParticipants participant = participantRepository.getByUsername(user.getUsername(), gameId);
-    List<Item> unusedItems = inGameRepositoryImpl.getUserItems(target);
-    List<InGameItems> igItems = new ArrayList<>();
-    unusedItems.forEach(item -> igItems.add(new InGameItems(participant, item)));
-    inGameItemsRepository.saveAll(igItems);
+    GameParticipants hunterP = participantRepository.getByUsername(user.getUsername(), gameId);
+    GameParticipants targetP = participantRepository.getByUsername(target.getUsername(), gameId);
+    targetP.eliminate();
+    hunterP.kill();
+    hunterP.addBullets(targetP.getBullets());
+    List<InGameItems> unusedItems = inGameRepositoryImpl.targetItemsCount(targetP);
+    if (null != unusedItems && !unusedItems.isEmpty()){
+      for (InGameItems igItem : unusedItems) {
+        inGameRepositoryImpl.addItems(hunterP, igItem);
+      }
+    }
   }
 
   @Override
@@ -122,8 +143,8 @@ public class InGameServiceImpl implements InGameService{
   }
 
   @Override
-  public List<Item> getItems(GameParticipants player) {
-    return inGameRepositoryImpl.getItems(player);
+  public List<ItemCount> getPlayerItems(GameParticipants player){
+    return inGameRepositoryImpl.getPlayersItems(player);
   }
 
   @Override

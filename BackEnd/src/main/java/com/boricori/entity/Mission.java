@@ -18,7 +18,6 @@ public class Mission {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "mission_id")
   private Long id;
-
   private int category;
   private String target;
   private String alt;

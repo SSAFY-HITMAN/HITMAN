@@ -10,5 +10,5 @@ public class UseItemRequest {
   @Schema(description = "게임방 번호")
   private long gameId;
   @Schema(description = "아이템 번호")
-  private Long itemId;
+  private long itemId;
 }

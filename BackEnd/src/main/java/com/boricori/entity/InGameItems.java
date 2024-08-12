@@ -27,17 +27,21 @@ public class InGameItems {
     @JoinColumn(name = "item_id")
     private Item item;
 
-    private boolean used;
+    private int count;
 
     @Builder
-    public InGameItems(GameParticipants user, Item item){
+    public InGameItems(GameParticipants user, Item item, int count){
       this.user = user;
       this.item = item;
-      used = false;
+      this.count = count;
     }
 
     public void useItem(){
-      used = !used;
+      count--;
+    }
+
+    public void incrementCount(){
+      count++;
     }
 
 }

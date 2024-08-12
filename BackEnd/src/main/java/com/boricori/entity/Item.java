@@ -17,14 +17,9 @@ import lombok.NoArgsConstructor;
 public class Item {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "item_id")
   private Long id;
-
   private String name;
   private String description;
-
-  @Enumerated(EnumType.STRING)
-  private ItemCategory category;
 
 }
