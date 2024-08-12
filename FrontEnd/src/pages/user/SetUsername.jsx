@@ -60,7 +60,7 @@ const SetUsername = () => {
       </div>
       <Button
         type="submit"
-        className="shadow-3d mb-8 w-60 bg-gradient-to-r from-purple-600 to-teal-300 font-bold"
+        className="mb-8 w-60 bg-gradient-to-r from-purple-600 to-teal-300 font-bold shadow-3d"
         onClick={handleSignup}
       >
         회원가입
@@ -72,7 +72,7 @@ const SetUsername = () => {
             <DialogDescription>
               <Button
                 onClick={() => navigate("/login")}
-                className="mt-4 w-40 bg-theme-color-1 font-bold"
+                className="bg-theme-color-1 mt-4 w-40 font-bold"
               >
                 로그인 하러가기
               </Button>
