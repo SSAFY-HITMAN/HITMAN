@@ -22,8 +22,8 @@ const GameHeader = ({ publisher, handleMainVideoStream }) => {
 
   const missions = [
     { id: 1, name: "미션 이름", description: "미션 내용" }, // 임시 데이터
-    { id: 2, name: "ddd", description: "hahaha"},
-  ]
+    { id: 2, name: "ddd", description: "hahaha" },
+  ];
 
   //================= 카메라 미션 =========================
 
@@ -105,14 +105,12 @@ const GameHeader = ({ publisher, handleMainVideoStream }) => {
                   </div>
                 </DropdownMenuItem>
               </Popover.Trigger>
-              
-              <Popover.Content
-                style={{zIndex: 9999 }}
-              >
-                <PopOverCamera 
-                  open={openCamera === mission.id}  // 현재 열린 팝업이 해당 미션인지 확인
-                  publisher={publisher}  // publisher 전달
-                  handleMainVideoStream={handleMainVideoStream}  // handleMainVideoStream 전달
+
+              <Popover.Content style={{ zIndex: 9999 }}>
+                <PopOverCamera
+                  open={openCamera === mission.id} // 현재 열린 팝업이 해당 미션인지 확인
+                  publisher={publisher} // publisher 전달
+                  handleMainVideoStream={handleMainVideoStream} // handleMainVideoStream 전달
                 />
               </Popover.Content>
             </Popover.Root>
