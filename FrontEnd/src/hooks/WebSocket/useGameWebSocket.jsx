@@ -74,7 +74,7 @@ const useGameWebSocket = () => {
           sessionStorage.setItem("targetId", newTargetId);
         }
         break;
-      case "caught":
+      case "eliminated":
         // 잡힘 알림
         if (username === msg.user) {
           setIsAlive(false);

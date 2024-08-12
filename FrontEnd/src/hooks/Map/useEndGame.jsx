@@ -17,7 +17,7 @@ const useEndGame = () => {
     "gameStatus",
     "isAlive",
     "countPlayer",
-    "bullet",
+    "bullets",
   ];
 
   const endGame = data => {

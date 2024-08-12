@@ -17,6 +17,8 @@ const useStartGame = () => {
   } = useContext(GameContext);
   const { getBullet } = useBullet();
   const [timeUntilStart, setTimeUntilStart] = useState(null);
+  const [gameplayTime, setGamePlayTime] = useState(null);
+  const [startTime, setStartTime] = useState(null);
 
   // 미션 및 아이템 목록 업데이트 함수
   const updateMissionAndItems = (missions, items) => {
@@ -26,8 +28,12 @@ const useStartGame = () => {
 
   // 게임 시작 시간 처리 함수 별도 분리
   const handleStartGameTime = newStartTime => {
-    const startTime = new Date(newStartTime).getTime();
-    const currentTime = new Date().getTime() - (9 * 60 * 60 * 1000);
+    const startTimeValue =
+      new Date(newStartTime).getTime() + 9 * 60 * 60 * 1000;
+    setStartTime(startTimeValue);
+    sessionStorage.setItem("startTime", startTimeValue);
+
+    const currentTime = new Date().getTime();
     const initialTimeUntilStart = startTime - currentTime; // 게임 시작까지 남은 시간, ms 단위
     console.log(`startTime: ${startTime}`);
     console.log(`currentTime: ${currentTime}`);
@@ -37,7 +43,7 @@ const useStartGame = () => {
     // 대기 시간 동안 1초마다 남은 시간 계산
     if (initialTimeUntilStart > 0) {
       const intervalId = setInterval(() => {
-        const updatedTimeUntilStart = startTime - new Date().getTime() + (9 * 60 * 60 * 1000);
+        const updatedTimeUntilStart = startTime - new Date().getTime();
 
         // 대기 시간이 끝났다면
         if (updatedTimeUntilStart <= 0) {
@@ -77,18 +83,24 @@ const useStartGame = () => {
           lng: parseFloat(metadata.gameInfo.centerLng).toFixed(5),
         };
         const newTargetId = metadata.targetName;
+        const newGamePlayTime = parseInt(metadata.gameInfo.time, 10) * 60; // 초 단위
         const newBullet = parseInt(metadata.bullets, 10);
+
+        console.log(`newGamePlayTime: ${newGamePlayTime}`);
+        console.log(`newBullet: ${newBullet}`);
 
         // 상태 업데이트
         setAreaRadius(newAreaRadius);
         setAreaCenter(newAreaCenter);
         setTargetId(newTargetId);
+        setGamePlayTime(newGamePlayTime);
         getBullet(newBullet);
 
         sessionStorage.setItem("areaRadius", newAreaRadius);
         sessionStorage.setItem("areaCenter", newAreaCenter);
         sessionStorage.setItem("targetId", newTargetId);
-        sessionStorage.setItem("bullet", newBullet);
+        sessionStorage.setItem("gamePlayTime", newGamePlayTime);
+        sessionStorage.setItem("bullets", newBullet);
 
         // 미션 및 아이템 업데이트
         updateMissionAndItems(metadata.myMissions, metadata.myItems);
@@ -104,7 +116,7 @@ const useStartGame = () => {
     }
   };
 
-  return { fetch, timeUntilStart };
+  return { fetch, timeUntilStart, startTime, gameplayTime };
 };
 
 export default useStartGame;
