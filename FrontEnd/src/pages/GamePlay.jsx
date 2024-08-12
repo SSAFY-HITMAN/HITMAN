@@ -436,15 +436,23 @@ const GamePlay = () => {
                       ))}
                   </CarouselContent>
                 </Carousel>
-                <div>
+                <div className="m-4">
                   {subscribers.map((subscriber, idx) => {
                     const clientData = JSON.parse(
                       subscriber.stream.connection.data
                     ).clientData;
                     return (
-                      <Button key={idx} onClick={handleButtonClick}>
-                        {clientData}
-                      </Button>
+                      // <Button key={idx} onClick={handleButtonClick}>
+                      //   {clientData}
+                      // </Button>
+                      <div className="flex justify-center">
+                        <Button 
+                          key={idx}
+                          onClick={handleButtonClick} 
+                        >
+                          {clientData}
+                        </Button>
+                      </div>
                     );
                   })}
                 </div>
