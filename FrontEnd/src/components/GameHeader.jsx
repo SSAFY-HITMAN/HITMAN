@@ -21,10 +21,10 @@ const GameHeader = ({ publisher, handleMainVideoStream }) => {
   const [isSpread, setIsSpread] = useState(null);
   const { targetId, missionList } = useContext(GameContext);
 
-  // const missions = [
-  //   { id: 1, name: "미션 이름", description: "미션 내용" }, // 임시 데이터
-  //   { id: 2, name: "ddd", description: "hahaha"},
-  // ]
+  const missions = [
+    { id: 1, name: "미션 이름", description: "미션 내용" }, // 임시 데이터
+    { id: 2, name: "ddd", description: "hahaha"},
+  ]
 
 //================= 카메라 미션 =========================
 
@@ -57,7 +57,7 @@ const GameHeader = ({ publisher, handleMainVideoStream }) => {
         </DropdownMenuTrigger>
 
         <DropdownMenuContent className="w-80">
-          {missionList.map((mission) => (
+          {missions.map((mission) => (
             <Popover.Root
               key={mission.id}
               open={openCamera === mission.id}
