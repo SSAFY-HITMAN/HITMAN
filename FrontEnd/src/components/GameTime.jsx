@@ -5,9 +5,18 @@ import React, { useState, useEffect, useRef } from "react";
 
 const GameTime = () => {
   const { setGameStatus, setIsAlive } = useContext(GameContext);
-  const { startTime, gamePlayTime } = useStartGame();
+  // const { startTime, gamePlayTime } = useStartGame();
+  console.log(
+    `sessionStorage - startTime: ${sessionStorage.getItem("startTime")}`
+  );
+  console.log(
+    `sessionStorage - gamePlayTime: ${sessionStorage.getItem("gamePlayTime")}`
+  );
+
+  const startTime = sessionStorage.getItem("startTime");
+  const gamePlayTime = parseInt(sessionStorage.getItem("gamePlayTime"));
   console.log(`GameTime.jsx - startTime: ${startTime}`);
-  console.log(`GameTime.jsx - gamePlayaTime: ${gamePlayTime}`);
+  console.log(`GameTime.jsx - gamePlayTime: ${gamePlayTime}`);
 
   // 남은 시간 초기화
   const initializeRemainingPlayTime = () => {
