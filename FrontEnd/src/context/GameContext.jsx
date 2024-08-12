@@ -34,11 +34,12 @@ export const GameProvider = ({ children }) => {
     return savedIsAlive === "true";
   }); // 플레이어의 생존 상태 (게임 시작 시 true로 전환되고 sessionStorage에 저장됨)
   const [areaCenter, setAreaCenter] = useState(() => {
-    const savedCenter = sessionStorage.getItem("areaCenter");
+    const savedCenter = sessionStorage.getItem("areaCenter"); // 기본적으로 String
     if (savedCenter) {
+      const parsedCenter = JSON.parse(savedCenter);
       return {
-        lat: savedCenter.lat,
-        lng: savedCenter.lng,
+        lat: parseFloat(parsedCenter.lat),
+        lng: parseFloat(parsedCenter.lng),
       };
     }
     return { lat: 0, lng: 0 };
@@ -91,6 +92,11 @@ export const GameProvider = ({ children }) => {
   const areaCenterRef = useRef(areaCenter);
 
   useEffect(() => {
+    myLocationRef.current = myLocation;
+    console.log(`myLocation: ${myLocationRef.current.lat} ${myLocationRef.current.lng}`);
+  }, [myLocation]);
+
+  useEffect(() => {
     targetLocationRef.current = targetLocation;
   }, [targetLocation]);
 
@@ -108,7 +114,6 @@ export const GameProvider = ({ children }) => {
     };
 
     setMyLocation(newLocation);
-    // myLocationRef.current = newLocation;
 
     if (areaCenterRef.current) {
       const myDist = approximateDistance(

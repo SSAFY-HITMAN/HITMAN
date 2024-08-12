@@ -58,10 +58,10 @@ const GameHeader = ({ publisher, handleMainVideoStream }) => {
         <DropdownMenuContent className="w-80">
           {missionList.map(mission => (
             <Popover.Root
-              key={mission.id}
-              open={openCamera === mission.id}
+              key={mission.missionId}
+              open={openCamera === mission.missionId}
               onOpenChange={() =>
-                setOpenCamera(openCamera === mission.id ? null : mission.id)
+                setOpenCamera(openCamera === mission.missionId ? null : mission.missionId)
               }
             >
               <Popover.Trigger asChild>
@@ -75,16 +75,16 @@ const GameHeader = ({ publisher, handleMainVideoStream }) => {
                 >
                   <div>
                     {
-                      mission.category === "1" ? (
+                      mission.category === 1 ? (
                         <span>
                           📜 &nbsp; &nbsp; "{mission.target}" 또는 "
                           {mission.alt}" 촬영하기
                         </span>
-                      ) : mission.category === "2" ? (
+                      ) : mission.category === 2 ? (
                         <span>
                           📜 &nbsp; &nbsp; "{mission.target}" 촬영하기
                         </span>
-                      ) : mission.category === "3" ? (
+                      ) : mission.category === 3 ? (
                         <span>
                           📜 &nbsp; &nbsp; 비슷한 색 찾기:
                           <span
@@ -108,7 +108,7 @@ const GameHeader = ({ publisher, handleMainVideoStream }) => {
 
               <Popover.Content style={{ zIndex: 9999 }}>
                 <PopOverCamera
-                  open={openCamera === mission.id} // 현재 열린 팝업이 해당 미션인지 확인
+                  open={openCamera === mission.missionId} // 현재 열린 팝업이 해당 미션인지 확인
                   publisher={publisher} // publisher 전달
                   handleMainVideoStream={handleMainVideoStream} // handleMainVideoStream 전달
                 />

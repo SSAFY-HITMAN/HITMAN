@@ -11,6 +11,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/Dialog";
+import GoBackButton from "@/components/GoBackButton";
 
 import { BASE_URL } from "@/constants/baseURL";
 import loginTitle from "@/assets/login-title.png";
@@ -45,6 +46,7 @@ const Signup = () => {
 
   return (
     <div className="flex h-screen flex-col items-center justify-center">
+      <GoBackButton to="/login" />
       <img src={loginTitle} className="mb-12 w-96" />
       <div className="w-60 text-black">
         <Input
@@ -71,7 +73,7 @@ const Signup = () => {
       </div>
       <Button
         type="submit"
-        className="shadow-3d mb-8 w-60 bg-gradient-to-r from-purple-600 to-teal-300 font-bold"
+        className="mb-8 w-60 bg-gradient-to-r from-purple-600 to-teal-300 font-bold shadow-3d"
         onClick={handleSignup}
       >
         회원가입
