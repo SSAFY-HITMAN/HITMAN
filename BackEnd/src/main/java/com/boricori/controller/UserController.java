@@ -81,7 +81,7 @@ public class UserController {
     return ResponseEntity.status(ResponseEnum.FAIL.getCode()).body(null);
   }
 
-  @PostMapping("isDuplicate")
+  @PostMapping("/isDuplicate")
   public ResponseEntity<String> isDuplicate(@RequestBody CheckDupRequest request){
     String type = request.getType();
     String value = request.getValue();
@@ -131,7 +131,7 @@ public class UserController {
     return null;
   }
 
-  @PatchMapping("updateProfile")
+  @PatchMapping("/updateProfile")
   @Operation(summary = "회원정보 수정", description = "현재 로그인 된 유저의 정보 수정")
   @ApiResponses(value = {
       @ApiResponse(responseCode = "200", description = "정보 수정 성공")

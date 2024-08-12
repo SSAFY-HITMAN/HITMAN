@@ -162,20 +162,15 @@ public class InGameController {
       }
       // 플레이어가 살아있는 상태. 게임 시작전일수도, 진행중일 수도 있음
       User target = gameManager.identifyTarget(gameId, username).data;
-      List<Mission> playerMissions = inGameService.getMissions(player);
-      List<MissionResponse> myMissions = new ArrayList<>();
+      List<MissionResponse> myMissions = inGameService.getMissions(player);
       List<ItemCount> myItems = null;
 
-      if (playerMissions == null || playerMissions.isEmpty()){
+      if (myMissions == null || myMissions.isEmpty()){
         // 게임 시작 전 초기 설정 단계
-        playerMissions = inGameService.assignMissions(username, gameId);
+        myMissions = inGameService.assignMissions(username, gameId, gameManager.numPlayers(gameId));
       }else {
         // 게임 진행 중이고, 플레이어가 재접속한 상황
         myItems = inGameService.getPlayerItems(player);
-      }
-      for (Mission m : playerMissions){
-        MissionResponse newM = MissionResponse.of(m);
-        myMissions.add(newM);
       }
       return ResponseEntity.status(ResponseEnum.SUCCESS.getCode())
           .body(InitResponse.builder().status("alive").gameInfo(GameInfo.of(game))

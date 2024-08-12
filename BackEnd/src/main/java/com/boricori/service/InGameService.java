@@ -3,6 +3,7 @@ package com.boricori.service;
 
 import com.boricori.dto.ItemCount;
 import com.boricori.dto.GameResult;
+import com.boricori.dto.response.inGame.MissionResponse;
 import com.boricori.entity.GameParticipants;
 import com.boricori.entity.Item;
 import com.boricori.entity.Mission;
@@ -12,7 +13,7 @@ import java.util.List;
 
 public interface InGameService {
 
-  List<Mission> assignMissions(String username, Long gameId);
+  List<MissionResponse> assignMissions(String username, Long gameId, int maxPlayers);
 
   Mission changeMission(Long gameId, String username, long missionId);
 
@@ -26,7 +27,7 @@ public interface InGameService {
 
   GameParticipants checkIfPlayer(String username, long gameId);
 
-  List<Mission> getMissions(GameParticipants player);
+  List<MissionResponse> getMissions(GameParticipants player);
 
   List<ItemCount> getPlayerItems(GameParticipants player);
 

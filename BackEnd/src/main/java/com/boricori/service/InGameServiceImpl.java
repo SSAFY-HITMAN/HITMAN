@@ -5,6 +5,7 @@ import com.boricori.dto.ItemCount;
 import com.boricori.dto.GameResult;
 import com.boricori.dto.request.inGame.UpdatePlayerScoreRequest;
 import com.boricori.dto.response.inGame.EndGameUserInfoResponse;
+import com.boricori.dto.response.inGame.MissionResponse;
 import com.boricori.entity.*;
 import com.boricori.exception.NotAPlayerException;
 import com.boricori.game.GameManager;
@@ -56,14 +57,16 @@ public class InGameServiceImpl implements InGameService{
   private GameManager gameManager = GameManager.getGameManager();
 
   @Override
-  public List<Mission> assignMissions(String username, Long gameId) {
-    List<Mission> missions = missionRepositoryImpl.getMissions();
+  public List<MissionResponse> assignMissions(String username, Long gameId, int currPlayers) {
+    List<Mission> missions = missionRepositoryImpl.getMissions(currPlayers);
     GameParticipants player = participantRepository.getByUsername(username, gameId);
     for (Mission m : missions){
       InGameMissions igm = InGameMissions.builder().missionId(m).user(player).build();
       inGameMissionsRepository.save(igm);
     }
-    return missions;
+    List<MissionResponse> response = new ArrayList<>();
+    missions.forEach(m -> response.add(MissionResponse.of(m)));
+    return response;
   }
 
   @Override
@@ -136,7 +139,7 @@ public class InGameServiceImpl implements InGameService{
   }
 
   @Override
-  public List<Mission> getMissions(GameParticipants player) {
+  public List<MissionResponse> getMissions(GameParticipants player) {
     return inGameRepositoryImpl.getMissions(player);
   }
 

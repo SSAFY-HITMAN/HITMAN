@@ -35,9 +35,9 @@ public class ImageService {
       // 일단 유클리드거리로 계산,
       // 잘 안되면 CIEDE2000로 변경
     String hexCode = mission.getTarget();
-    int red = Integer.valueOf(hexCode.substring(0, 2), 16);
-    int green = Integer.valueOf(hexCode.substring(2, 4), 16);
-    int blue = Integer.valueOf(hexCode.substring(4, 6), 16);
+    int red = Integer.valueOf(hexCode.substring(1, 3), 16);
+    int green = Integer.valueOf(hexCode.substring(3, 5), 16);
+    int blue = Integer.valueOf(hexCode.substring(5, 7), 16);
       for (ColorInfo color : res){
         float score = color.getScore();
         if (score >= 0.1){

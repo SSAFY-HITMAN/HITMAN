@@ -19,6 +19,11 @@ public class GameManager {
     return gameManager;
   }
 
+  public int numPlayers(long gameId){
+    return catchableList.get(gameId).size;
+  }
+
+
   public Node<User> identifyTarget(long gameId, String username){
     return catchableList.get(gameId).identifyTarget(username);
   }

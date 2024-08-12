@@ -2,6 +2,8 @@ package com.boricori.repository.inGameRepo;
 
 import com.boricori.dto.ItemCount;
 import com.boricori.dto.QItemCount;
+import com.boricori.dto.response.inGame.MissionResponse;
+import com.boricori.dto.response.inGame.QMissionResponse;
 import com.boricori.entity.GameParticipants;
 import com.boricori.entity.InGameItems;
 import com.boricori.entity.Mission;
@@ -65,9 +67,13 @@ public class InGameRepositoryImpl {
         .fetch();
   }
 
-  public List<Mission> getMissions(GameParticipants player) {
+  public List<MissionResponse> getMissions(GameParticipants player) {
     return jpaQueryFactory
-        .select(ig_missions.missionId)
+        .select(new QMissionResponse(ig_missions.missionId.id,
+            ig_missions.missionId.category,
+            ig_missions.missionId.target,
+            ig_missions.missionId.alt,
+            ig_missions.done))
         .from(ig_missions)
         .where(ig_missions.user.id.eq(player.getId()))
         .fetch();
