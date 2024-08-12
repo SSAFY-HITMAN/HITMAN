@@ -66,8 +66,9 @@ const GameHeader = ({ publisher, handleMainVideoStream }) => {
               <Popover.Trigger asChild>
                 <DropdownMenuItem
                   onClick={(e) => {
-                    setOpenCamera(openCamera === mission.id ? null : mission.id)
-
+                    // setOpenCamera(openCamera === mission.id ? null : mission.id)
+                    e.preventDefault();
+                    setOpenCamera(mission.id);
                   }}
                 >
                   <div>
