@@ -1,18 +1,21 @@
 import { useState, useEffect, useRef, useContext } from "react";
 import { GameContext } from "@/context/GameContext";
 import axiosInstance from "@/api/axiosInstance";
+import useBullet from "@/hooks/Map/useBullet";
 
 const useCatchTarget = () => {
   const {
     gameRoomId,
     isAlive,
     distToTarget,
+    setItemList,
     username,
     distToCatch,
     setDistToCatch,
     DISTANCE_TO_CATCH,
     DISTANCE_ENHANCED_BULLET,
   } = useContext(GameContext);
+  const { getBulletByCatchTarget } = useBullet();
   const [isAbleToCatchTarget, setIsAbleToCatchTarget] = useState(false);
   const catchTimeoutRef = useRef(null);
 
@@ -33,6 +36,26 @@ const useCatchTarget = () => {
     }, 30 * 1000);
   };
 
+  const handleAdditionalRequest = async () => {
+    try {
+      const additionalResponse = await axiosInstance.get(`/in-game/init/${gameRoomId}`);
+      if (additionalResponse.status == 200) {
+        const metadata = additionalResponse.data;
+
+        // 총알 합산 갱신
+        const newBullet = parseInt(metadata.bullets, 10);
+        getBulletByCatchTarget(newBullet);
+
+        // 아이템 합산 갱신
+        setItemList(metadata.myItems);
+      } else {
+        console.log(`아이템을 가져오는 중 문제가 발생했습니다: ${additionalResponse.status}`);
+      }
+    } catch (error) {
+      console.log(`아이템을 가져오지 못했습니다: ${error}`);
+    }
+  };
+
   const handleOnClickCatchTarget = async () => {
     try {
       // 잡기 관련 로직 추가
@@ -40,8 +63,9 @@ const useCatchTarget = () => {
         username: username,
         gameId: gameRoomId,
       });
-      if (response.status === 200) {
+      if (response.status == 200) {
         alert("Target caught successfully!");
+        await handleAdditionalRequest();
       }
     } catch (error) {
       console.log(error);

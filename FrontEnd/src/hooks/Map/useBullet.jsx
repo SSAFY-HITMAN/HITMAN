@@ -22,7 +22,12 @@ const useBullet = () => {
     }
   };
 
-  return { bullet, isCooldown, getBullet, shootBullet };
+  // catchTarget 시 타겟 총알까지 합산해 가져옴 (BE에서 합산)
+  const getBulletByCatchTarget = n => {
+    setBullet(n);
+  };
+
+  return { bullet, isCooldown, getBullet, shootBullet, getBulletByCatchTarget };
 };
 
 export default useBullet;
