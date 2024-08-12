@@ -95,11 +95,11 @@ public class UserCircularLinkedList extends CircularLinkedList {
         Node<User> target = currNode.next;
         currNode.next = target.next;
         size--;
+        System.out.println(username + " removed, users left: " + toList());
         return currNode;
       }
       currNode = currNode.next;
     } while (currNode != tail.next); // 한 바퀴 다 돌면 종료
-
     return null;
   }
 }

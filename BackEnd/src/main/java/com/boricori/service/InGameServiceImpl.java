@@ -158,6 +158,7 @@ public class InGameServiceImpl implements InGameService{
     redisTemplate.opsForValue().getAndDelete((username + "-" + roomId + "-left"));
   }
 
+  @Transactional
   @Override
   public void eliminateUser(String username, long roomId) {
     participantRepository.changeStatusByName(username, roomId);
@@ -204,9 +205,10 @@ public class InGameServiceImpl implements InGameService{
   }
 
   @Override
-  public GameResult finishGameAndHandleLastTwoPlayers(long gameId){
+  public GameResult finishGameAndHandleLastTwoPlayers(long gameId) throws RuntimeException{
     finishGame(gameId);
     List<String> users = gameManager.EndGameUserInfo(gameId);
+    System.out.println("2 users:" + users);
     GameParticipants userA = participantRepository.getByUsername(users.get(0), gameId);
     GameParticipants userB = participantRepository.getByUsername(users.get(1), gameId);
     String winner = determineWinner(userA, userB);
