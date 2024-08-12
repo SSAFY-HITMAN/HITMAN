@@ -34,8 +34,8 @@ const useStartGame = () => {
     sessionStorage.setItem("startTime", startTimeValue);
 
     const currentTime = new Date().getTime();
-    const initialTimeUntilStart = startTime - currentTime; // 게임 시작까지 남은 시간, ms 단위
-    console.log(`startTime: ${startTime}`);
+    const initialTimeUntilStart = startTimeValue - currentTime; // 게임 시작까지 남은 시간, ms 단위
+    console.log(`startTime: ${startTimeValue}`);
     console.log(`currentTime: ${currentTime}`);
     console.log(`initialTimeUntilStart: ${initialTimeUntilStart}`);
     setTimeUntilStart(initialTimeUntilStart);
@@ -43,7 +43,7 @@ const useStartGame = () => {
     // 대기 시간 동안 1초마다 남은 시간 계산
     if (initialTimeUntilStart > 0) {
       const intervalId = setInterval(() => {
-        const updatedTimeUntilStart = startTime - new Date().getTime();
+        const updatedTimeUntilStart = startTimeValue - new Date().getTime();
 
         // 대기 시간이 끝났다면
         if (updatedTimeUntilStart <= 0) {
