@@ -43,8 +43,6 @@ public class GameParticipants {
   @ColumnDefault("0")
   private int score;
 
-  private int score;
-
   @Builder
   public GameParticipants(GameRoom gameRoom, User user) {
     this.gameRoom = gameRoom;

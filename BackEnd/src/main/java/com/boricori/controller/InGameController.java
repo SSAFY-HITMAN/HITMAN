@@ -126,14 +126,14 @@ public class InGameController {
 
   @Transactional
   @PostMapping("/catchTarget")
-  public void catchTarget(@RequestBody InGameRequest request) {
+  public ResponseEntity<String> catchTarget(@RequestBody InGameRequest request) {
     try {
       String username = request.getUsername();
       long gameId = request.getGameId();
       Node<User> targetNode = gameManager.killTarget(gameId, username);
       Node<User> newTarget = targetNode.next;
       messageService.changeTarget(username, newTarget.data.getUsername(), gameId);
-      messageService.notifyStatus(targetNode.data.getUsername(), gameId);
+      messageService.eliminateUser(targetNode.data.getUsername(), gameId);
       User user = userService.findByUsername(username);
       inGameService.catchTarget(user, targetNode.data, gameId);
 

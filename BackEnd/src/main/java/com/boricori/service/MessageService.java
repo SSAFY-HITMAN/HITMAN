@@ -49,7 +49,9 @@ public class MessageService {
   }
 
   public void useItem(long gameId, String username, String effect) {
-    String jsonPayload = String.format("{\"msgType\":\"useItem\", \"username\":\"%s\", \"effect\":\"%s\"}", username, effect);
+    String jsonPayload = String.format(
+        "{\"msgType\":\"useItem\", \"username\":\"%s\", \"effect\":\"%s\"}", username, effect);
+  }
 
   public void endGameScore(GameResult result) {
     try {

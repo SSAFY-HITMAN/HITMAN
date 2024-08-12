@@ -28,8 +28,10 @@ public class GameManager {
   }
 
 
-  public Node<User> getHunter(long gameId, String username){
+  public Node<User> getHunter(long gameId, String username) {
     return catchableList.get(gameId).getHunter(username);
+  }
+
 
   public Node<User> removeTarget(long gameId, String username){
     return catchableList.get(gameId).removeTarget(username);
