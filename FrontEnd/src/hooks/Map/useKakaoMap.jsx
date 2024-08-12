@@ -22,7 +22,7 @@ const useKakaoMap = () => {
   };
 
   useEffect(() => {
-    if (mapRef.current && !mapInstanceRef.current) {
+    if (mapRef.current && !mapInstanceRef.current && areaCenter) {
       // 지도 초기화
       const options = {
         center: new kakao.maps.LatLng(areaCenter.lat, areaCenter.lng),

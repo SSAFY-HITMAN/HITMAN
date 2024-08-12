@@ -34,11 +34,12 @@ export const GameProvider = ({ children }) => {
     return savedIsAlive === "true";
   }); // 플레이어의 생존 상태 (게임 시작 시 true로 전환되고 sessionStorage에 저장됨)
   const [areaCenter, setAreaCenter] = useState(() => {
-    const savedCenter = sessionStorage.getItem("areaCenter");
+    const savedCenter = sessionStorage.getItem("areaCenter"); // 기본적으로 String
     if (savedCenter) {
+      const parsedCenter = JSON.parse(savedCenter);
       return {
-        lat: savedCenter.lat,
-        lng: savedCenter.lng,
+        lat: parseFloat(parsedCenter.lat),
+        lng: parseFloat(parsedCenter.lng),
       };
     }
     return { lat: 0, lng: 0 };
