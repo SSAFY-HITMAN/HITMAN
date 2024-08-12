@@ -1,12 +1,10 @@
 package com.boricori.controller;
 
 import com.boricori.dto.ItemCount;
-import com.boricori.dto.request.gameroom.EndGameRoomRequest;
 import com.boricori.dto.request.inGame.InGameRequest;
 import com.boricori.dto.request.inGame.MissionChangeRequest;
 import com.boricori.dto.request.inGame.UseItemRequest;
 import com.boricori.dto.response.gameroom.GameInfo;
-import com.boricori.dto.response.inGame.EndGameUserInfoResponse;
 import com.boricori.dto.response.inGame.InitResponse;
 import com.boricori.dto.response.inGame.ItemResponse;
 import com.boricori.dto.response.inGame.MissionResponse;
@@ -16,7 +14,6 @@ import com.boricori.game.GameManager;
 import com.boricori.service.*;
 import com.boricori.util.Node;
 import com.boricori.util.ResponseEnum;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -78,11 +75,10 @@ public class InGameController {
 
   @Transactional
   @PostMapping("/imageMission")
-  public ResponseEntity<ItemResponse> imageMission(@RequestParam("file") MultipartFile file,
-      @RequestBody MissionChangeRequest request){
-    String username = request.getUsername();
-    long gameId = request.getGameId();
-    long missionId = request.getMissionId();
+  public ResponseEntity<ItemResponse> imageMission( @RequestParam("file") MultipartFile file,
+      @RequestParam("username") String username,
+      @RequestParam("gameId") long gameId,
+      @RequestParam("missionId") Long missionId){
     Mission mission = inGameService.getMissionById(missionId);
     boolean success = false;
     try {
@@ -118,7 +114,7 @@ public class InGameController {
     long itemId = request.getItemId();
     inGameService.useItem(gameId, username, itemId);
     if (itemId == 1 || itemId == 2){
-      Node<User> hunter = gameManager.getHunter(gameId, username);
+      Node<User> hunter = gameManager.identifyHunter(gameId, username);
       String effect = itemId == 1 ? "blockGPS" : "blockScreen";
       messageService.useItem(gameId, hunter.data.getUsername(), effect);
     }
@@ -130,7 +126,7 @@ public class InGameController {
     try {
       String username = request.getUsername();
       long gameId = request.getGameId();
-      Node<User> targetNode = gameManager.killTarget(gameId, username);
+      Node<User> targetNode = gameManager.catchTargetForUser(gameId, username);
       Node<User> newTarget = targetNode.next;
       messageService.changeTarget(username, newTarget.data.getUsername(), gameId);
       messageService.eliminateUser(targetNode.data.getUsername(), gameId);
@@ -165,7 +161,7 @@ public class InGameController {
         return ResponseEntity.status(ResponseEnum.SUCCESS.getCode()).body(data);
       }
       // 플레이어가 살아있는 상태. 게임 시작전일수도, 진행중일 수도 있음
-      User target = gameManager.getTarget(gameId, username).data;
+      User target = gameManager.identifyTarget(gameId, username).data;
       List<Mission> playerMissions = inGameService.getMissions(player);
       List<MissionResponse> myMissions = new ArrayList<>();
       List<ItemCount> myItems = null;
@@ -220,8 +216,9 @@ public class InGameController {
   public void eliminateUser(@RequestBody InGameRequest request){
     long gameId = request.getGameId();
     String username = request.getUsername();
-    inGameService.killUser(username, gameId);
-    Node<User> hunter = gameManager.removeTarget(gameId, username);
+    inGameService.eliminateUser(username, gameId);
+    messageService.eliminateUser(username,gameId);
+    Node<User> hunter = gameManager.removePlayerAndReturnHunter(gameId, username);
     if (gameManager.isLastTwo(gameId)) {
       GameResult res = inGameService.finishGameAndHandleLastTwoPlayers(gameId);
       messageService.endGameScore(res);

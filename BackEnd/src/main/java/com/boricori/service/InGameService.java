@@ -2,10 +2,8 @@ package com.boricori.service;
 
 
 import com.boricori.dto.ItemCount;
-import com.boricori.dto.response.inGame.EndGameUserInfoResponse;
 import com.boricori.dto.GameResult;
 import com.boricori.entity.GameParticipants;
-import com.boricori.entity.InGameItems;
 import com.boricori.entity.Item;
 import com.boricori.entity.Mission;
 import com.boricori.entity.User;
@@ -36,7 +34,7 @@ public interface InGameService {
 
   void rejoin(String username, String roomId);
 
-  void killUser(String username, long roomId);
+  void eliminateUser(String username, long roomId);
 
   Mission getMissionById(long missionId);
 

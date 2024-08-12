@@ -156,7 +156,7 @@ public class InGameServiceImpl implements InGameService{
   }
 
   @Override
-  public void killUser(String username, long roomId) {
+  public void eliminateUser(String username, long roomId) {
     participantRepository.changeStatusByName(username, roomId);
   }
 

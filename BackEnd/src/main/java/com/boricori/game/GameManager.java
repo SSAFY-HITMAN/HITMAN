@@ -19,22 +19,22 @@ public class GameManager {
     return gameManager;
   }
 
-  public Node<User> getTarget(long gameId, String username){
-    return catchableList.get(gameId).getTarget(username);
+  public Node<User> identifyTarget(long gameId, String username){
+    return catchableList.get(gameId).identifyTarget(username);
   }
 
-  public Node<User> killTarget(long gameId, String username) {
-    return catchableList.get(gameId).killTarget(username);
-  }
-
-
-  public Node<User> getHunter(long gameId, String username) {
-    return catchableList.get(gameId).getHunter(username);
+  public Node<User> catchTargetForUser(long gameId, String username) {
+    return catchableList.get(gameId).removeTargetForUser(username);
   }
 
 
-  public Node<User> removeTarget(long gameId, String username){
-    return catchableList.get(gameId).removeTarget(username);
+  public Node<User> identifyHunter(long gameId, String username) {
+    return catchableList.get(gameId).identifyHunter(username);
+  }
+
+
+  public Node<User> removePlayerAndReturnHunter(long gameId, String username){
+    return catchableList.get(gameId).removePlayerAndReturnHunter(username);
 
   }
 

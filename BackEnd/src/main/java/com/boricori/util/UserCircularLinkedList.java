@@ -31,7 +31,7 @@ public class UserCircularLinkedList extends CircularLinkedList {
     }
   }
 
-  public Node<User> getTarget(String username) {
+  public Node<User> identifyTarget(String username) {
     Node<User> currNode = tail.next; // 시작 노드
     do {
       if (currNode.data.getUsername().equals(username)) {
@@ -43,7 +43,7 @@ public class UserCircularLinkedList extends CircularLinkedList {
     return null;
   }
 
-  public Node<User> killTarget(String username){
+  public Node<User> removeTargetForUser(String username){
 
     Node<User> currNode = tail.next; // 시작 노드
 
@@ -75,7 +75,7 @@ public class UserCircularLinkedList extends CircularLinkedList {
     return usernameList;
   }
 
-  public Node<User> getHunter(String username) {
+  public Node<User> identifyHunter(String username) {
     Node<User> currNode = tail.next; // 시작 노드
     do {
       if (currNode.next.data.getUsername().equals(username)) {
@@ -87,7 +87,7 @@ public class UserCircularLinkedList extends CircularLinkedList {
     return null;
   }
 
-  public Node<User> removeTarget(String username) {
+  public Node<User> removePlayerAndReturnHunter(String username) {
     Node<User> currNode = tail.next; // 시작 노드
 
     do {
