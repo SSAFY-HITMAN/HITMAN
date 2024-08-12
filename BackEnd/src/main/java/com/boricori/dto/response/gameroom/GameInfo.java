@@ -8,7 +8,7 @@ import lombok.Builder;
 import lombok.Data;
 
 @Data
-public class GameInfoResponse {
+public class GameInfo {
 
   @Schema(description = "방 이름", example = "게임방1")
   private String name;
@@ -28,32 +28,26 @@ public class GameInfoResponse {
   @Schema(description = "중심 경도")
   private String centerLng;
 
-  @Schema(description = "내가 쫓는 사람의 닉네임")
-  private String targetName;
-
-
 
   @Builder
-  public GameInfoResponse(String name, String centerLng, String centerLat,
-      LocalDateTime startTime, int mapSize, int time, String targetName) {
+  public GameInfo(String name, String centerLng, String centerLat,
+      LocalDateTime startTime, int mapSize, int time) {
     this.name = name;
     this.centerLng = centerLng;
     this.centerLat = centerLat;
     this.startTime = startTime;
     this.mapSize = mapSize;
     this.time = time;
-    this.targetName = targetName;
   }
 
-  public static GameInfoResponse of(GameRoom gameRoom, User target) {
-    return GameInfoResponse.builder()
+  public static GameInfo of(GameRoom gameRoom) {
+    return GameInfo.builder()
         .name(gameRoom.getRoomName())
         .centerLat(gameRoom.getCenterLat())
         .centerLng(gameRoom.getCenterLng())
         .startTime(gameRoom.getStartTime())
         .mapSize(gameRoom.getMapSize())
         .time(gameRoom.getGameTime())
-        .targetName(target.getUsername())
         .build();
   }
 }

@@ -18,4 +18,6 @@ public interface UserService {
   UserLoginResponse login(UserLoginRequest request, HttpServletResponse response);
   User findByEmail(String email);
   User findByUsername(String username);
+  boolean isDupEmail(String value);
+  boolean isDupUsername(String value);
 }

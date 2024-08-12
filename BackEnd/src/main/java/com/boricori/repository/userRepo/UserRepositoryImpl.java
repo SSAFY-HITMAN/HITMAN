@@ -4,6 +4,7 @@ import static com.boricori.entity.QUser.user;
 import static org.springframework.util.StringUtils.hasText;
 
 import com.boricori.dto.request.gameroom.PlayerInfoRequest;
+import com.boricori.entity.GameRoom;
 import com.boricori.entity.User;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -15,15 +16,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class UserRepositoryImpl {
 
-  EntityManager em;
-
-  private JPAQueryFactory queryFactory;
-
-  public UserRepositoryImpl(
-      @Autowired EntityManager em) {
-    this.em = em;
-    queryFactory = new JPAQueryFactory(em);
-  }
+    @Autowired
+    JPAQueryFactory queryFactory;
 
   public List<User> getUserList(List<PlayerInfoRequest> playerInfoList) {
     return queryFactory
@@ -57,6 +51,14 @@ public class UserRepositoryImpl {
 
   private BooleanExpression userNameEq(String userName) {
     return hasText(userName) ? user.username.eq(userName) : null;
+  }
+
+  public void addUserScore(Long userId, int scoreToAdd) {
+    queryFactory
+            .update(user)
+            .set(user.scores, user.scores.add(scoreToAdd))  // 현재 점수에 새로운 점수를 더함
+            .where(user.userId.eq(userId))
+            .execute();
   }
 
 }

@@ -40,14 +40,17 @@ public class GameParticipants {
   private int kills;
   @ColumnDefault("0")
   private int bullets;
+  @ColumnDefault("0")
+  private int score;
 
   @Builder
   public GameParticipants(GameRoom gameRoom, User user) {
     this.gameRoom = gameRoom;
     this.user = user;
+    alive = true;
   }
 
-  public void deadUser() {
+  public void eliminate() {
     this.alive = false;
   }
 
@@ -57,10 +60,13 @@ public class GameParticipants {
 
   public void missionCompleted() {
     this.missionComplete++;
+    score += 50;
   }
 
-  public void killedUser() {
+  public void kill() {
     this.kills++;
+    this.bullets--;
+    score += 100;
   }
 
   public void getBullet() {
@@ -68,4 +74,7 @@ public class GameParticipants {
   }
 
 
+  public void addBullets(int bullets) {
+    this.bullets += bullets;
+  }
 }

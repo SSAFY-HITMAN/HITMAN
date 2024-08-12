@@ -52,7 +52,7 @@ public class GameRoom {
     this.roomName = gameRoomRequest.getName();
     this.maxPlayer = gameRoomRequest.getMaxPlayer();
     this.mapSize = gameRoomRequest.getMapSize();
-    this.gameTime = gameRoomRequest.getTime();
+    this.gameTime = gameRoomRequest.getGameTime();
   }
 
   public void setCodeNumber(String code){
@@ -65,7 +65,12 @@ public class GameRoom {
   }
 
   public void startGameTime(){
-    this.startTime = LocalDateTime.now();
+    this.startTime = LocalDateTime.now().plusSeconds(63);
+  }
+
+  public void finish(){
+    endTime = LocalDateTime.now();
+    isActivated = false;
   }
 
   public void setCenter(String centerLat, String centerLng) {

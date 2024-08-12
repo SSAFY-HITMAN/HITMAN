@@ -5,6 +5,7 @@ import com.boricori.entity.GameParticipants;
 import com.boricori.entity.GameRoom;
 import com.boricori.entity.User;
 import com.boricori.repository.ParticipantRepo.ParticipantRepository;
+import com.boricori.repository.ParticipantRepo.ParticipantRepositoryImpl;
 import com.boricori.repository.userRepo.UserRepositoryImpl;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,9 @@ public class ParticipantsServiceImpl implements ParticipantsService {
 
   @Autowired
   private ParticipantRepository participantRepository;
+
+  @Autowired
+  private ParticipantRepositoryImpl participantRepositoryImpl;
 
   @Autowired
   private UserRepositoryImpl userRepositoryImpl;
@@ -37,4 +41,8 @@ public class ParticipantsServiceImpl implements ParticipantsService {
     participantRepository.save(participants);
   }
 
+  @Override
+  public GameRoom getPlaying(String username) {
+    return participantRepositoryImpl.getPlaying(username);
+  }
 }
