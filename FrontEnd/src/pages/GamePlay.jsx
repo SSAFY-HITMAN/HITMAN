@@ -272,7 +272,7 @@ const GamePlay = () => {
 
   const createSession = async sessionId => {
     const response = await axios.post(
-      APPLICATION_SERVER_URL + "sessions",
+      APPLICATION_SERVER_URL + "/sessions",
       { customSessionId: sessionId },
       {
         headers: { "Content-Type": "application/json" },
@@ -283,7 +283,7 @@ const GamePlay = () => {
 
   const createToken = async sessionId => {
     const response = await axios.post(
-      APPLICATION_SERVER_URL + "sessions/" + sessionId + "/connections",
+      APPLICATION_SERVER_URL + "/sessions/" + sessionId + "/connections",
       {},
       {
         headers: { "Content-Type": "application/json" },
