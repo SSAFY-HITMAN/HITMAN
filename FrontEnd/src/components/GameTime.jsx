@@ -98,6 +98,9 @@ const GameTime = () => {
     } else {
       console.log("clearInterval: GameTime.jsx");
       clearInterval(interval);
+      intervalIdRef.current = setInterval(() => {
+        updateTimer(startTime);
+      }, 1000); // 매초 타이머 업데이트
     }
 
     return () => {
