@@ -8,12 +8,6 @@ const GameTime = () => {
   const [startTime, setStartTime] = useState(null);
   const [gamePlayTime, setGamePlayTime] = useState(null);
 
-  // 남은 시간 상태 관리
-  const [remainingPlayTime, setRemainingPlayTime] = useState(
-    initializeRemainingPlayTime
-  );
-  const intervalIdRef = useRef(null);
-
   // 남은 시간 초기화
   const initializeRemainingPlayTime = () => {
     const storedRemainingTime = sessionStorage.getItem("remainingPlayTime");
@@ -21,6 +15,12 @@ const GameTime = () => {
       ? parseInt(storedRemainingTime, 10)
       : gamePlayTime;
   };
+
+  // 남은 시간 상태 관리
+  const [remainingPlayTime, setRemainingPlayTime] = useState(
+    initializeRemainingPlayTime
+  );
+  const intervalIdRef = useRef(null);
 
   // 화면에 표시하는 시간 포맷 함수
   const formatTime = seconds => {
