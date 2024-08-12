@@ -1,22 +1,18 @@
-import { useContext } from "react";
 import { GameContext } from "@/context/GameContext";
-import useStartGame from "@/hooks/Map/useStartGame";
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useContext, useRef } from "react";
 
 const GameTime = () => {
   const { setGameStatus, setIsAlive } = useContext(GameContext);
-  // const { startTime, gamePlayTime } = useStartGame();
-  console.log(
-    `sessionStorage - startTime: ${sessionStorage.getItem("startTime")}`
-  );
-  console.log(
-    `sessionStorage - gamePlayTime: ${sessionStorage.getItem("gamePlayTime")}`
-  );
 
-  const startTime = sessionStorage.getItem("startTime");
-  const gamePlayTime = parseInt(sessionStorage.getItem("gamePlayTime"));
-  console.log(`GameTime.jsx - startTime: ${startTime}`);
-  console.log(`GameTime.jsx - gamePlayTime: ${gamePlayTime}`);
+  // startTime과 gamePlayTime을 state로 관리
+  const [startTime, setStartTime] = useState(null);
+  const [gamePlayTime, setGamePlayTime] = useState(null);
+
+  // 남은 시간 상태 관리
+  const [remainingPlayTime, setRemainingPlayTime] = useState(
+    initializeRemainingPlayTime
+  );
+  const intervalIdRef = useRef(null);
 
   // 남은 시간 초기화
   const initializeRemainingPlayTime = () => {
@@ -26,12 +22,6 @@ const GameTime = () => {
       : gamePlayTime;
   };
 
-  // 남은 시간 상태 관리
-  const [remainingPlayTime, setRemainingPlayTime] = useState(
-    initializeRemainingPlayTime
-  );
-  const intervalIdRef = useRef(null);
-
   // 화면에 표시하는 시간 포맷 함수
   const formatTime = seconds => {
     const minutes = Math.floor(seconds / 60);
@@ -40,11 +30,15 @@ const GameTime = () => {
   };
 
   // 타이머 업데이트 함수
-  const updateTimer = () => {
+  const updateTimer = startTime => {
+    if (!startTime) return;
+
     const start = new Date(startTime).getTime();
     const now = Date.now();
     const elapsedTime = Math.floor((now - start) / 1000); // 경과 시간
     const newRemainingPlayTime = gamePlayTime - elapsedTime; // 남은 시간
+
+    console.log(`start: ${start}, ${typeof start}`);
     console.log(`GameTime.jsx - updateTimer - start: ${start}`);
     console.log(`GameTime.jsx - updateTimer - now: ${now}`);
 
@@ -74,14 +68,38 @@ const GameTime = () => {
   };
 
   useEffect(() => {
-    if (!startTime || !gamePlayTime) return; // 시작 시간이 없으면 타이머를 설정하지 않음
+    // startTime과 gamePlayTime이 없을 때 sessionStorage를 주기적으로 체크
+    const checkSessionStorage = () => {
+      const storedStartTime = sessionStorage.getItem("startTime");
+      const storedGamePlayTime = parseInt(
+        sessionStorage.getItem("gamePlayTime"),
+        10
+      );
 
-    updateTimer(); // 초기 타이머 업데이트
+      if (storedStartTime && storedGamePlayTime) {
+        setStartTime(storedStartTime);
+        setGamePlayTime(storedGamePlayTime);
+      }
+    };
 
-    intervalIdRef.current = setInterval(updateTimer, 1000); // 매초 타이머 업데이트
+    // 1초 간격으로 sessionStorage 확인
+    const interval = setInterval(checkSessionStorage, 1000);
 
-    return () => clearInterval(intervalIdRef.current); // 컴포넌트 unmount 시 interval 정리
-  }, [gamePlayTime, startTime]);
+    // startTime과 gamePlayTime이 설정되면 타이머를 시작
+    if (startTime && gamePlayTime) {
+      clearInterval(interval); // interval 제거
+      updateTimer(startTime); // 초기 타이머 업데이트
+
+      intervalIdRef.current = setInterval(() => {
+        updateTimer(startTime);
+      }, 1000); // 매초 타이머 업데이트
+    }
+
+    return () => {
+      clearInterval(interval); // 컴포넌트 unmount 시 interval 정리
+      clearInterval(intervalIdRef.current); // 기존 타이머 정리
+    };
+  }, [startTime, gamePlayTime]);
 
   return (
     <div className="m-4 flex h-16 w-48 items-center justify-center rounded-lg border-2 border-black bg-white text-4xl font-bold text-black">

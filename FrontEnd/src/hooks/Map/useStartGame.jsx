@@ -17,8 +17,6 @@ const useStartGame = () => {
   } = useContext(GameContext);
   const { getBullet } = useBullet();
   const [timeUntilStart, setTimeUntilStart] = useState(null);
-  const [gameplayTime, setGamePlayTime] = useState(null);
-  const [startTime, setStartTime] = useState(null);
 
   // 미션 및 아이템 목록 업데이트 함수
   const updateMissionAndItems = (missions, items) => {
@@ -30,7 +28,6 @@ const useStartGame = () => {
   const handleStartGameTime = newStartTime => {
     const startTimeValue =
       new Date(newStartTime).getTime() + 9 * 60 * 60 * 1000;
-    setStartTime(startTimeValue);
     sessionStorage.setItem("startTime", startTimeValue);
 
     const currentTime = new Date().getTime();
@@ -93,7 +90,6 @@ const useStartGame = () => {
         setAreaRadius(newAreaRadius);
         setAreaCenter(newAreaCenter);
         setTargetId(newTargetId);
-        setGamePlayTime(newGamePlayTime);
         getBullet(newBullet);
 
         sessionStorage.setItem("areaRadius", newAreaRadius);
@@ -116,7 +112,7 @@ const useStartGame = () => {
     }
   };
 
-  return { fetch, timeUntilStart, startTime, gameplayTime };
+  return { fetch, timeUntilStart };
 };
 
 export default useStartGame;
