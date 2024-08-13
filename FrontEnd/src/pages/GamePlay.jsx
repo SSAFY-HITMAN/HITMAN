@@ -55,11 +55,47 @@ import OvVideo from "@/hooks/WebRTC/OvVideo.jsx";
 import { BASE_URL } from "@/constants/baseURL";
 
 const APPLICATION_SERVER_URL =
-  process.env.NODE_ENV === "production" ? BASE_URL : "http://localhost:8080/cam/";
+  process.env.NODE_ENV === "production"
+    ? BASE_URL
+    : "http://localhost:8080/cam/";
 
 let count = 1;
 const GamePlay = () => {
+  //===========================   ITEM   ============================
+
+  const username = localStorage.getItem("username");
+  const { gameRoomId: gameId } = useContext(GameContext);
+  const { blockGPSCount, blockScreenCount, enhancedBulletCount, useItem } =
+    useItemCount();
+
+  // // 테스트 데이터
+  // const blockGPSCount = 1;
+  // const blockScreenCount = 2;
+  // const enhancedBulletCount = 3;
+
+  const handleUseItem = async itemId => {
+    // alert(`${itemId}번 아이템 사용`); // 테스트
+    try {
+      const response = await axiosInstance.post("/in-game/useItem", {
+        username,
+        gameId,
+        itemId,
+      });
+
+      if (response.status == 200) {
+        useItem(itemId);
+      } else {
+        alert("아이템 사용중 오류가 발생했습니다.");
+      }
+    } catch (err) {
+      alert(
+        "서버와 통신하는 중에 문제가 발생했습니다. 나중에 다시 시도해주세요."
+      );
+    }
+  };
+
   //===========================   GPS   ============================
+
   const { gameStatus, blockScreen, toOffChatting } = useContext(GameContext);
   const { fetch, timeUntilStart, checkItemEffect } = useStartGame();
   const { startSendingGPS } = useSendGPS();
@@ -96,11 +132,6 @@ const GamePlay = () => {
     }
   }, [gameStatus]);
 
-  //===========================   ITEM   ============================
-
-  const { blockGPSCount, blockScreenCount, enhancedBulletCount } =
-    useItemCount();
-
   //===========================   OPENVIDU   ============================
 
   const [session, setSession] = useState(undefined); // 방 생성 관련
@@ -111,8 +142,8 @@ const GamePlay = () => {
   const audioEnabled = false;
 
   const ws = useRef(null);
-  const username = localStorage.getItem("username"); // 추가
   const { gameRoomId: paramGameRoomId } = useParams(); // 추가
+  // username 추출 코드 위로 옮김
 
   useEffect(() => {
     const handleBeforeUnload = () => {
@@ -444,11 +475,11 @@ const GamePlay = () => {
                 {isItemClicked && (
                   <DropdownMenuContent
                     side="left"
-                    className="mr-1 mt-12 h-28 w-60 rounded-2xl bg-lime-100"
+                    className="mr-1 mt-12 h-28 w-60 rounded-2xl bg-white"
                   >
                     <div className="flex flex-row">
                       <DropdownMenuItem
-                        onClick=""
+                        onClick={() => handleUseItem(1)}
                         className={`relative flex flex-col ${blockGPSCount > 0 ? "" : "pointer-events-none cursor-not-allowed opacity-30"}`}
                       >
                         <div className="absolute left-1 top-1 h-6 w-6 rounded-full bg-rose-500 text-center font-semibold text-white">
@@ -461,7 +492,7 @@ const GamePlay = () => {
                         <div className="text-xs font-bold">스텔스 망토</div>
                       </DropdownMenuItem>
                       <DropdownMenuItem
-                        onClick=""
+                        onClick={() => handleUseItem(2)}
                         className={`relative flex flex-col ${blockGPSCount > 0 ? "" : "pointer-events-none cursor-not-allowed opacity-30"}`}
                       >
                         <div className="absolute left-1 top-1 h-6 w-6 rounded-full bg-rose-500 text-center font-semibold text-white">
@@ -471,7 +502,7 @@ const GamePlay = () => {
                         <div className="text-xs font-bold">방해 폭탄</div>
                       </DropdownMenuItem>
                       <DropdownMenuItem
-                        onClick=""
+                        onClick={() => handleUseItem(3)}
                         className={`relative flex flex-col ${blockGPSCount > 0 ? "" : "pointer-events-none cursor-not-allowed opacity-30"}`}
                       >
                         <div className="absolute left-1 top-1 h-6 w-6 rounded-full bg-rose-500 text-center font-semibold text-white">
