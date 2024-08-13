@@ -7,6 +7,7 @@ import React, {
 } from "react";
 import { useParams } from "react-router-dom";
 
+import axiosInstance from "@/api/axiosInstance";
 import GameHeader from "@/components/GameHeader";
 import MapComponent from "@/components/MapComponent";
 import { GameContext } from "@/context/GameContext";
@@ -493,7 +494,7 @@ const GamePlay = () => {
                       </DropdownMenuItem>
                       <DropdownMenuItem
                         onClick={() => handleUseItem(2)}
-                        className={`relative flex flex-col ${blockGPSCount > 0 ? "" : "pointer-events-none cursor-not-allowed opacity-30"}`}
+                        className={`relative flex flex-col ${blockScreenCount > 0 ? "" : "pointer-events-none cursor-not-allowed opacity-30"}`}
                       >
                         <div className="absolute left-1 top-1 h-6 w-6 rounded-full bg-rose-500 text-center font-semibold text-white">
                           {blockScreenCount}
@@ -503,7 +504,7 @@ const GamePlay = () => {
                       </DropdownMenuItem>
                       <DropdownMenuItem
                         onClick={() => handleUseItem(3)}
-                        className={`relative flex flex-col ${blockGPSCount > 0 ? "" : "pointer-events-none cursor-not-allowed opacity-30"}`}
+                        className={`relative flex flex-col ${enhancedBulletCount > 0 ? "" : "pointer-events-none cursor-not-allowed opacity-30"}`}
                       >
                         <div className="absolute left-1 top-1 h-6 w-6 rounded-full bg-rose-500 text-center font-semibold text-white">
                           {enhancedBulletCount}
