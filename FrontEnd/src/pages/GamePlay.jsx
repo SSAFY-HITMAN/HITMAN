@@ -394,20 +394,27 @@ const GamePlay = () => {
   return (
     <>
       {timeUntilStart > 0 && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-75 text-3xl text-white">
+        <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black bg-opacity-75 text-center text-3xl leading-relaxed text-white">
           게임 시작까지
-          <br /> {Math.max(0, Math.ceil(timeUntilStart / 1000))}초<br />
-          남았습니다.
+          <div className="text-rose-500">
+            {Math.max(0, Math.ceil(timeUntilStart / 1000))} 초
+          </div>
+          남았습니다 <span className="h-16 w-16 animate-spin">🕛</span>
         </div>
       )}
 
       {/* blockScreen 아이템 화면 오버레이 부분 */}
       <div
-        className={`fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-75 text-3xl text-white ${blockScreen ? "visible" : "hidden"}`}
+        className={`fixed inset-0 z-50 flex flex-col items-center justify-center bg-black bg-opacity-75 text-center text-3xl leading-relaxed ${blockScreen ? "visible" : "hidden"}`}
       >
-        방해 폭탄을
+        내 타겟이 나에게
+        <div>
+          <span className="text-rose-500">방해 폭탄</span>을 쐈습니다 !
+        </div>
         <br />
-        맞았습니다!
+        <div>화면을 30초 동안</div>
+        사용할 수 없습니다
+        <span className="h-12 w-16 animate-spin">😵</span>
       </div>
 
       {/* publisher 의 카메라 인자 전달 */}

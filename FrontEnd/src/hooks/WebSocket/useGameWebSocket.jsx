@@ -83,7 +83,9 @@ const useGameWebSocket = () => {
         // 잡힘 알림
         if (username === msg.user) {
           setIsAlive(false);
+          setTargetId(null);
           sessionStorage.setItem("setIsAlive", false);
+          sessionStorage.removeItem("targetId");
         }
         break;
       case "alert":

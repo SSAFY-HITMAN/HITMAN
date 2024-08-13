@@ -6,13 +6,22 @@ import { GameContext } from "@/context/GameContext";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import GameRuleDialog from "@/components/GameRuleDialog";
 
 import useRoomWebSocket from "@/hooks/WebSocket/useRoomWebSocket";
 import useReadyGame from "@/hooks/Map/useReadyGame";
 
 const Room = () => {
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isRuleDialogOpen, setIsRuleDialogOpen] = useState(false); // 게임 규칙
+  const [isAlertDialogOpen, setIsAlertDialogOpen] = useState(false); // 참가자 부족 알림
+
   const { gameRoomId: paramGameRoomId } = useParams();
   const { gameRoomId, setGameRoomId, gameRoomUsers, isGameRoomLoading } =
     useContext(GameContext);
@@ -24,7 +33,19 @@ const Room = () => {
 
   const { handleStartGame } = useReadyGame();
 
+  const handleStartButtonClick = () => {
+    if (gameRoomUsers.length >= 3) {
+      handleStartGame();
+    } else {
+      setIsAlertDialogOpen(true);
+    }
+  };
+
   const isChief = sessionStorage.getItem("isChief") === "true"; // 방장여부 판단
+
+  if (!isChief) {
+    sessionStorage.setItem("isChief", false);
+  }
 
   // 방에 접속 시 username, gameRoomId 설정 및 WebSocket 연결
   useEffect(() => {
@@ -45,24 +66,36 @@ const Room = () => {
     <div className="relative flex h-screen flex-col items-center justify-center">
       {/* 상단의 절대 위치 버튼들 */}
       <Button
-        onClick={() => setIsDialogOpen(true)}
+        onClick={() => setIsRuleDialogOpen(true)}
         className="absolute left-12 top-8 h-12 w-32 bg-gradient-to-r from-teal-400 to-blue-700 font-bold shadow-3d"
       >
         게임 규칙
       </Button>
       <GameRuleDialog
-        isOpen={isDialogOpen}
-        onClose={() => setIsDialogOpen(false)}
+        isOpen={isRuleDialogOpen}
+        onClose={() => setIsRuleDialogOpen(false)}
       />
       {/* 게임시작 버튼은 방장만 보여주기 */}
       {isChief && !isGameRoomLoading && (
         <Button
           className="absolute right-12 top-8 h-12 w-32 animate-gradient-move bg-gradient-rainbow bg-[length:200%_200%] font-bold shadow-3d"
-          onClick={handleStartGame}
+          onClick={handleStartButtonClick}
         >
           게임 시작
         </Button>
       )}
+      <Dialog open={isAlertDialogOpen} onOpenChange={setIsAlertDialogOpen}>
+        <DialogContent className="w-60">
+          <DialogHeader className="gap-4">
+            <DialogTitle>참가자 부족</DialogTitle>
+            <hr />
+            <DialogDescription>
+              최소 플레이 인원은{" "}
+              <span className="font-bold text-red-600">3명</span>입니다.
+            </DialogDescription>
+          </DialogHeader>
+        </DialogContent>
+      </Dialog>
 
       {/* 나머지 요소들은 flex로 배치 */}
       <div className="mt-12 flex flex-col items-center justify-center">

@@ -18,8 +18,7 @@ import * as Popover from "@radix-ui/react-popover";
 // { publisher, handleMainVideoStream }
 const GameHeader = ({ publisher, handleMainVideoStream }) => {
   const [isSpread, setIsSpread] = useState(null);
-  const { targetId, missionList, playerCount, gameStatus, isAlive } =
-    useContext(GameContext);
+  const { targetId, missionList, playerCount } = useContext(GameContext);
 
   const missions = [
     { id: 1, name: "미션 이름", description: "미션 내용" }, // 임시 데이터
@@ -37,13 +36,13 @@ const GameHeader = ({ publisher, handleMainVideoStream }) => {
 
   return (
     <div className="flex flex-col items-center justify-center bg-gradient-to-r from-blue-700 to-teal-700 p-4">
-      {gameStatus && isAlive ? (
+      {targetId ? (
         <>
           <div className="mb-2 flex flex-row">
-            <div className="mr-4 rounded-full bg-gradient-to-r from-teal-400 to-teal-200 p-1 px-3 text-center font-bold text-black">
-              타겟 : <span className="text-red-500">{targetId}</span>
+            <div className="mr-4 text-center font-bold">
+              타겟 : <span className="text-red-500">{targetId}</span>,
             </div>
-            <div className="rounded-full bg-gradient-to-r from-lime-400 to-lime-100 p-1 px-3 text-center font-bold text-black">
+            <div className="text-center font-bold">
               남은 사람 : <span className="text-rose-500">{playerCount}</span>{" "}
               명
             </div>
@@ -132,7 +131,7 @@ const GameHeader = ({ publisher, handleMainVideoStream }) => {
           </DropdownMenu>
         </>
       ) : (
-        <div className="mx-4 text-center text-xl font-semibold">
+        <div className="mx-4 text-center text-lg font-semibold">
           {/* 사망시 표시 문구 */}
           아쉽지만 <span className="text-red-400">추격자에게 잡혔습니다😥</span>
           <br />
