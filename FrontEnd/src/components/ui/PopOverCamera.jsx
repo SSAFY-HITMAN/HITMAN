@@ -1,29 +1,33 @@
-
 import React, { useRef, useState } from "react";
 import { Button } from "@/components/ui/Button";
 import { useParams } from "react-router-dom";
 
 import useItemCount from "@/hooks/Map/useItemCount";
 import useBullet from "@/hooks/Map/useBullet";
-import axiosInstance from "@/api/axiosInstance";  // 추가
+import axiosInstance from "@/api/axiosInstance"; // 추가
 
 import * as Popover from "@radix-ui/react-popover";
 import UserVideoComponent from "@/hooks/WebRTC/UserVideoComponent";
 
 // missionId 추가
-const PopOverCamera = ({ open, publisher, missionId, handleMainVideoStream }) => {
-  const [isButtonDisabled, setIsButtonDisabled] = useState(false);  // 수정부분
-  const videoRef = useRef(null);  
-  const canvasRef = useRef(null);  
+const PopOverCamera = ({
+  open,
+  publisher,
+  missionId,
+  handleMainVideoStream,
+}) => {
+  const [isButtonDisabled, setIsButtonDisabled] = useState(false); // 수정부분
+  const videoRef = useRef(null);
+  const canvasRef = useRef(null);
   const { getItem } = useItemCount();
   const { getBullet } = useBullet();
-  const { gameRoomId: paramGameRoomId } = useParams();  
+  const { gameRoomId: paramGameRoomId } = useParams();
 
   const captureImage = () => {
-    setIsButtonDisabled(true);  // 수정부분
+    setIsButtonDisabled(true); // 수정부분
 
     if (videoRef.current) {
-      const video = videoRef.current.querySelector("video");  
+      const video = videoRef.current.querySelector("video");
       const canvas = canvasRef.current;
       const context = canvas.getContext("2d");
       canvas.width = video.videoWidth;
@@ -32,13 +36,12 @@ const PopOverCamera = ({ open, publisher, missionId, handleMainVideoStream }) =>
 
       // ================================
       // 어제 test에서 주석처리한 부분, 작동 확인 필요
-    //   const image = canvas.toDataURL("image/png");
-    //   const link = document.createElement("a");
-    //   link.href = image;
-    //   link.download = "capture.png";
-    //   link.click();
+      //   const image = canvas.toDataURL("image/png");
+      //   const link = document.createElement("a");
+      //   link.href = image;
+      //   link.download = "capture.png";
+      //   link.click();
       // ================================
-       
 
       canvas.toBlob(blob => {
         const formData = new FormData();
@@ -47,7 +50,7 @@ const PopOverCamera = ({ open, publisher, missionId, handleMainVideoStream }) =>
         formData.append("username", localStorage.getItem("username"));
         formData.append("gameId", sessionStorage.getItem("gameRoomId"));
         formData.append("missionId", missionId);
-        
+
         // axiosInstance 사용 수정
 
         axiosInstance
@@ -63,24 +66,15 @@ const PopOverCamera = ({ open, publisher, missionId, handleMainVideoStream }) =>
               getItem(obtained);
               getBullet(1);
               alert(`미션 성공! 아이템 ID: ${obtained}`);
-            } else if (response.status === 400) {
+            } else if (response.status === 202) {
               alert("미션 실패!");
-
-              setIsButtonDisabled(false)  // 수정부분
-            } else if (response.status === 404) {
-              alert("알 수 없는 오류가 발생했습니다. 다시 시도해주세요.");
               setIsButtonDisabled(false); // 수정부분
-            } else {
-              alert("예상치 못한 응답 상태: " + response.status);
-              setIsButtonDisabled(false); // 수정부분
-
             }
           })
           .catch(error => {
             console.error("Error uploading file:", error);
-            alert("파일 업로드 중 오류가 발생했습니다. 콘솔을 확인하세요.");
+            alert("파일 업로드 중 오류가 발생했습니다. 다시 시도해주세요.");
             setIsButtonDisabled(false); // 수정부분
-
           });
       }, "image/png");
     }
@@ -106,10 +100,11 @@ const PopOverCamera = ({ open, publisher, missionId, handleMainVideoStream }) =>
       </div>
       <div className="flex justify-center">
         {/* 수정부분 */}
-        <Button onClick={captureImage} disabled={isButtonDisabled}>캡처</Button>
+        <Button onClick={captureImage} disabled={isButtonDisabled}>
+          캡처
+        </Button>
       </div>
       <canvas ref={canvasRef} style={{ display: "none" }} />{" "}
-
     </div>
   );
 };
