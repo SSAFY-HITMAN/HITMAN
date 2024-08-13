@@ -19,10 +19,15 @@ const SetUsername = () => {
   const [username, setUsername] = useState("");
   const [error, setError] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [usernameChecked, setUsernameChecked] = useState(false);
 
   const email = localStorage.getItem("email");
 
   const handleSignup = async () => {
+    if (!isValidUsername(username)) {
+      setError("닉네임에 특수기호를 사용할 수 없습니다.");
+      return;
+    }
     try {
       const response = await axios.post(`${BASE_URL}/user/social-signup`, {
         username,
@@ -41,6 +46,31 @@ const SetUsername = () => {
     }
   };
 
+  // 닉네임 유효성 검사 (특수기호 불허)
+  const isValidUsername = username => {
+    const usernameRegex = /^[a-zA-Z0-9가-힣]+$/; // 특수기호 제외
+    return usernameRegex.test(username);
+  };
+
+  const checkUsername = async () => {
+    try {
+      const response = await axios.post(`${BASE_URL}/user/isDuplicate`, {
+        type: "username",
+        value: username,
+      });
+      if (response.status === 200) {
+        setUsernameChecked(true); // 중복확인이 성공하면 상태를 true로 설정
+        setError("");
+      } else {
+        setUsernameChecked(false);
+        setError("닉네임이 이미 사용 중입니다.");
+      }
+    } catch (err) {
+      console.error(err);
+      setError("닉네임 중복 확인 중 오류가 발생했습니다.");
+    }
+  };
+
   return (
     <div className="flex h-screen flex-col items-center justify-center">
       <h1 className="mb-4 text-3xl font-bold">닉네임 설정</h1>
@@ -50,18 +80,35 @@ const SetUsername = () => {
         닉네임만 설정하면 회원가입이 완료됩니다.
       </p>
       <div className="w-60 text-black">
-        <Input
-          type="text"
-          placeholder="닉네임"
-          className="mb-4 p-4"
-          value={username}
-          onChange={e => setUsername(e.target.value)}
-        />
+        <div className="mb-4">
+          <Input
+            type="text"
+            placeholder="닉네임"
+            className="w-full p-4"
+            value={username}
+            onChange={e => {
+              setUsername(e.target.value);
+              setUsernameChecked(false); // 입력이 변경되면 중복체크 상태 초기화
+            }}
+          />
+          {username && !isValidUsername(username) && (
+            <div className="mb-4 text-red-500">
+              닉네임에 특수기호를 사용할 수 없습니다.
+            </div>
+          )}
+          <span
+            onClick={checkUsername}
+            className="mt-2 block cursor-pointer text-right text-sm text-blue-500 hover:text-blue-700"
+          >
+            닉네임 중복확인
+          </span>
+        </div>
       </div>
       <Button
         type="submit"
         className="mb-8 w-60 bg-gradient-to-r from-purple-600 to-teal-300 font-bold shadow-3d"
         onClick={handleSignup}
+        disabled={!usernameChecked}
       >
         회원가입
       </Button>
