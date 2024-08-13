@@ -110,7 +110,7 @@ const GameTime = () => {
   }, [gameStatus, startTime, gamePlayTime]);
 
   return (
-    <div className="m-4 flex h-16 w-48 items-center justify-center rounded-lg border-2 border-black bg-white text-4xl font-bold text-black">
+    <div className="flex h-[7vh] w-40 items-center justify-center rounded-lg border-2 border-black bg-white text-3xl font-bold text-black">
       ⏱ {formatTime(remainingPlayTime)}
     </div>
   );
