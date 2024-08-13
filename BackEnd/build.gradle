@@ -24,7 +24,7 @@ repositories {
 }
 
 ext {
-    set('springCloudGcpVersion', "5.4.3")
+    set('springCloudGcpVersion', "5.5.0")
     set('springCloudVersion', "2023.0.3")
 }
 
@@ -96,7 +96,7 @@ dependencies {
     implementation 'com.google.zxing:core:3.4.1'
     implementation 'com.google.zxing:javase:3.4.1'
 
-    implementation 'com.google.cloud:google-cloud-vision:3.45.0'
+    implementation 'com.google.cloud:google-cloud-vision'
 
     // https://mvnrepository.com/artifact/io.openvidu/openvidu-java-client
     implementation 'io.openvidu:openvidu-java-client:2.30.0'

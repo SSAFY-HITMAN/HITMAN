@@ -1,4 +1,4 @@
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import { GameContext } from "@/context/GameContext";
 
 const ITEM_IDS = {
@@ -20,19 +20,22 @@ const useItemCount = () => {
 
   // itemList 최신화 시(axios response) 갱신
   useEffect(() => {
-    const blockGPSItem = itemList.find(
-      item => item.itemId === ITEM_IDS.BLOCK_GPS
-    ); // 스텔스 망토의 itemId
-    const blockScreenItem = itemList.find(
-      item => item.itemId === ITEM_IDS.BLOCK_SCREEN
-    ); // 방해 폭탄의 itemId
-    const enhancedBulletItem = itemList.find(
-      item => item.itemId === ITEM_IDS.ENHANCED_BULLET
-    ); // 강화 총알의 itemId
+    // const blockGPSItem = itemList.find(
+    //   item => item.itemId === ITEM_IDS.BLOCK_GPS
+    // ); // 스텔스 망토의 itemId
+    // const blockScreenItem = itemList.find(
+    //   item => item.itemId === ITEM_IDS.BLOCK_SCREEN
+    // ); // 방해 폭탄의 itemId
+    // const enhancedBulletItem = itemList.find(
+    //   item => item.itemId === ITEM_IDS.ENHANCED_BULLET
+    // ); // 강화 총알의 itemId
 
-    setBlockGPSCount(blockGPSItem ? blockGPSItem.count : 0);
-    setBlockScreenCount(blockScreenItem ? blockScreenItem.count : 0);
-    setEnhancedBulletCount(enhancedBulletItem ? enhancedBulletItem.count : 0);
+    // setBlockGPSCount(blockGPSItem ? blockGPSItem.count : 0);
+    // setBlockScreenCount(blockScreenItem ? blockScreenItem.count : 0);
+    // setEnhancedBulletCount(enhancedBulletItem ? enhancedBulletItem.count : 0);
+     setBlockGPSCount(0);
+    setBlockScreenCount(0);
+    setEnhancedBulletCount(0);
   }, [itemList]);
 
   // 아이템 획득

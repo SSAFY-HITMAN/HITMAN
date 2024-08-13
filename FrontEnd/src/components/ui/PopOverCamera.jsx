@@ -2,11 +2,12 @@ import React, { useRef } from "react";
 import { Button } from "@/components/ui/Button";
 import useItemCount from "@/hooks/Map/useItemCount";
 import useBullet from "@/hooks/Map/useBullet";
+import axiosInstance from "@/api/axiosInstance.js";
 
 import * as Popover from "@radix-ui/react-popover";
 import UserVideoComponent from "@/hooks/WebRTC/UserVideoComponent";
 
-const PopOverCamera = ({ open, publisher, handleMainVideoStream }) => {
+const PopOverCamera = ({ open, publisher, missionId, handleMainVideoStream }) => {
   const videoRef = useRef(null); // 비디오 요소에 접근하기 위한 ref
   const canvasRef = useRef(null); // 캡처된 이미지를 그릴 canvas 요소 ref
   const { getItem } = useItemCount();
@@ -22,11 +23,11 @@ const PopOverCamera = ({ open, publisher, handleMainVideoStream }) => {
       context.drawImage(video, 0, 0, canvas.width, canvas.height);
 
       // 캡처된 이미지를 다운로드할 수 있도록 링크를 생성
-      const image = canvas.toDataURL("image/png");
-      const link = document.createElement("a");
-      link.href = image;
-      link.download = "capture.png";
-      link.click();
+      // const image = canvas.toDataURL("image/png");
+      // const link = document.createElement("a");
+      // link.href = image;
+      // link.download = "capture.png";
+      // link.click();
 
       // canvas를 Blob으로 변환하고 서버에 전송
       canvas.toBlob(blob => {
@@ -34,12 +35,12 @@ const PopOverCamera = ({ open, publisher, handleMainVideoStream }) => {
         formData.append("file", blob);
 
         // DTO 필드 값을 FormData에 추가
-        formData.append("username", missionChangeRequest.username);
-        formData.append("gameId", missionChangeRequest.gameId);
-        formData.append("missionId", missionChangeRequest.missionId);
+        formData.append("username", localStorage.getItem("username"));
+        formData.append("gameId", sessionStorage.getItem("gameRoomId"));
+        formData.append("missionId", missionId);
 
         // 서버에 POST 요청
-        axios
+        axiosInstance
           .post("/in-game/imageMission", formData, {
             headers: {
               "Content-Type": "multipart/form-data",

@@ -60,6 +60,7 @@ public class  GoogleVision {
           results.addAll(res.getLabelAnnotationsList());
         }
       }catch(Exception e){
+      System.out.println(e.getMessage());
       throw new RuntimeException();
     }
     return results;
@@ -71,6 +72,7 @@ public class  GoogleVision {
     // Initialize client that will be used to send requests. This client only needs to be created
     // once, and can be reused for multiple requests. After completing all of your requests, call
     // the "close" method on the client to safely clean up any remaining background resources.
+//    try (ImageAnnotatorClient client = ImageAnnotatorClient.create()) {
     try (ImageAnnotatorClient client = ImageAnnotatorClient.create()) {
       List<AnnotateImageRequest> requests = connection(file, Feature.Type.TEXT_DETECTION);
       BatchAnnotateImagesResponse response = client.batchAnnotateImages(requests);
@@ -90,6 +92,7 @@ public class  GoogleVision {
         results.addAll(res.getTextAnnotationsList());
       }
     }catch(Exception e){
+      System.out.println(e.getMessage());
       throw new RuntimeException();
     }
     return results;
@@ -126,6 +129,7 @@ public class  GoogleVision {
         results.addAll(colors.getColorsList());
       }
     }catch(Exception e){
+      System.out.println(e.getMessage());
       throw new RuntimeException();
     }
     return results;
