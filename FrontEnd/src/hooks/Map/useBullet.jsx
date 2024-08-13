@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const useBullet = () => {
   const [bullet, setBullet] = useState(() => {
@@ -7,6 +7,11 @@ const useBullet = () => {
   }); // 총알 수
   const [isCooldown, setIsCooldown] = useState(false); // 재사용 대기시간 여부
   const COOLDOWN = 3000; // 재발사 시간 3초
+
+  const username = localStorage.getItem("username");
+  useEffect(() => {
+    console.log(`${username} bullet: ${bullet}`);
+  }, [bullet]);
 
   const getBullet = n => {
     setBullet(prev => prev + n);

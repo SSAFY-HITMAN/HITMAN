@@ -17,6 +17,19 @@ const useItemCount = () => {
   const [blockGPSCount, setBlockGPSCount] = useState(0);
   const [blockScreenCount, setBlockScreenCount] = useState(0);
   const [enhancedBulletCount, setEnhancedBulletCount] = useState(0);
+  const username = localStorage.getItem("username");
+
+  useEffect(() => {
+    console.log(`${username} blockGPS ${blockGPSCount}`);
+  }, [blockGPSCount]);
+
+  useEffect(() => {
+    console.log(`${username} blockScreen ${blockScreenCount}`);
+  }, [blockScreenCount]);
+
+  useEffect(() => {
+    console.log(`${username} enhancedBullet ${enhancedBulletCount}`);
+  }, [enhancedBulletCount]);
 
   // itemList 최신화 시(axios response) 갱신
   useEffect(() => {
