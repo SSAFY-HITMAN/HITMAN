@@ -5,7 +5,7 @@ import React, {
   useCallback,
   useRef,
 } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 
 import axiosInstance from "@/api/axiosInstance";
 import GameHeader from "@/components/GameHeader";
@@ -53,7 +53,7 @@ import { OpenVidu } from "openvidu-browser";
 import UserVideoComponent from "@/hooks/WebRTC/UserVideoComponent";
 import "../hooks/WebRTC/CamChatting.css";
 import OvVideo from "@/hooks/WebRTC/OvVideo.jsx";
-import { BASE_URL } from "@/constants/baseURL";
+import { BASE_URL, WS_BASE_URL } from "@/constants/baseURL";
 
 const APPLICATION_SERVER_URL =
   process.env.NODE_ENV === "production"
@@ -136,15 +136,23 @@ const GamePlay = () => {
   //===========================   OPENVIDU   ============================
 
   const [session, setSession] = useState(undefined); // 방 생성 관련
+  const room = useRef(null);
   const [mainStreamManager, setMainStreamManager] = useState(undefined);
   const [publisher, setPublisher] = useState(undefined);
   const [subscribers, setSubscribers] = useState([]);
   const [currentVideoDevice, setCurrentVideoDevice] = useState(undefined);
   const audioEnabled = false;
+  const ws = useRef(null)
 
-  const ws = useRef(null);
+  const navigate = useNavigate();
   const { gameRoomId: paramGameRoomId } = useParams(); // 추가
-  // username 추출 코드 위로 옮김
+
+  const privateRoom = useRef("");
+  const fromUser = useRef("");
+  const toUser = useRef("");
+
+  useEffect(() => {
+  }, [toUser, fromUser]);
 
   useEffect(() => {
     const handleBeforeUnload = () => {
@@ -159,29 +167,26 @@ const GamePlay = () => {
   }, [session]);
 
   const handleMainVideoStream = stream => {
-    console.log("current main stream manager ", mainStreamManager);
     if (mainStreamManager !== stream) {
       setMainStreamManager(stream);
-      console.log("=====> publisher : ", publisher);
-      console.log("====> subscribers : ", subscribers);
     }
   };
 
-  const handleButtonClick = async receiver => {
-    console.log(receiver);
-    console.log(ws.current);
+  const handleButtonClick = async (receiver) => {
+    const publisherName = publisher.stream.connection.data;
+    const parsedData = JSON.parse(publisherName)
+    const parsedPublisherName = parsedData.clientData;
 
     if (ws.current && ws.current.readyState === WebSocket.OPEN) {
       try {
         const message = {
-          type: "offer",
-          fromUser: participantName,
+          type: 'offer',
+          fromUser: parsedPublisherName,
           toUser: receiver,
-          curRoom: roomName,
+          curRoom: paramGameRoomId,
           privateRoom: "Room" + Math.floor(Math.random() * 100),
         };
         ws.current.send(`click:${JSON.stringify(message)}`);
-        console.log("Sent offer:", message);
       } catch (error) {
         console.error("Error creating or sending offer:", error);
       }
@@ -190,15 +195,54 @@ const GamePlay = () => {
     }
   };
 
+  const handleAcceptClick = async () => {
+    if (ws.current) {
+      if (ws.current.readyState === WebSocket.OPEN) {
+        try {
+          const message = {
+            type: 'answer',
+            fromUser: toUser.current,
+            toUser: fromUser.current,
+            curRoom: paramGameRoomId,
+            privateRoom: privateRoom.current,
+          };
+          ws.current.send(`click:${JSON.stringify(message)}`);
+        } catch (error) {
+          console.error('Error creating or sending answer:', error);
+        }
+      } else {
+        console.error('WebSocket is not open.');
+      }
+    } else {
+      console.error('WebSocket is not initialized.');
+    } 
+    await leaveRoomAndNavigate();
+  };
+
   const leaveSession = () => {
-    if (session) {
-      session.disconnect();
+
+    if(room.data){
+      room.data.disconnect();
     }
-    session(undefined);
+    
+    setSession(undefined);
     setSubscribers([]);
     setMainStreamManager(undefined);
     setPublisher(undefined);
   };
+
+  const leaveRoomAndNavigate = async () => {
+    leaveSession();
+    navigate('/cam-chatting', {
+      state: [{
+        id: username,
+        name: username,
+        gameRoom: paramGameRoomId,
+        camChatting: "privateRoomName",
+      }],
+    });
+
+  }
 
   const deleteSubscriber = streamManager => {
     setSubscribers(prevSubscribers =>
@@ -211,7 +255,6 @@ const GamePlay = () => {
 
     OV.enableProdMode();
 
-    console.log("joiSession");
     OV.isBrowserSupported = function () {
       return true;
     };
@@ -226,7 +269,6 @@ const GamePlay = () => {
       newSession.on("streamCreated", event => {
         const subscriber = newSession.subscribe(event.stream, undefined);
         setSubscribers(prevSubscribers => [...prevSubscribers, subscriber]);
-        console.log("Updated subscribers: ", subscribers);
       });
 
       newSession.on("streamDestroyed", event => {
@@ -235,28 +277,24 @@ const GamePlay = () => {
 
       newSession.on("exception", exception => {
         console.warn(exception);
-        console.log("===============WARN!!!=============");
       });
 
       newSession.on("sessionDisconnected", async event => {
-        console.log("=====> sessionDisconnected! ");
       });
-
       setSession(newSession);
+      room.data = newSession;
     }
 
     const token = await getToken();
 
     try {
       await newSession.connect(token, { clientData: username });
-      console.log("connectToken");
       // 권한 요청 부분 추가
       try {
         await navigator.mediaDevices.getUserMedia({
           video: true,
           audio: audioEnabled,
         }); // 권한 요청
-        console.log("Permissions granted!");
 
         const newPublisher = await OV.initPublisherAsync(undefined, {
           audioSource: audioEnabled ? undefined : false,
@@ -287,21 +325,45 @@ const GamePlay = () => {
         setMainStreamManager(newPublisher);
         setPublisher(newPublisher);
 
-        // // WebSocket 연결 설정
+        //================== WebSocket 연결 설정 ==========================
         // ws.current = new WebSocket("ws://localhost:8080/ChattingServer");
-        // ws.current.onopen = () => {
-        //   console.log("WebSocket connection established");
-        // };
-        // ws.current.onmessage = event => {
-        //   const message = JSON.parse(event.data);
-        //   console.log("Received message:", message);
-        // };
-        // ws.current.onclose = () => {
-        //   console.log("WebSocket connection closed");
-        // };
-        // ws.current.onerror = error => {
-        //   console.log("WebSocket error:", error);
-        // };
+        ws.current = new WebSocket(`${WS_BASE_URL}/ChattingServer`);
+        ws.current.onopen = () => {
+          const message = {
+            username: username
+          };
+          ws.current.send(`send:${JSON.stringify(message)}`)
+        };
+
+        ws.current.onmessage = (event) => {
+          const messageString = event.data.replace('click:', '').trim(); 
+          const message = JSON.parse(messageString);
+
+          fromUser.current = message.fromUser;
+          toUser.current = message.toUser;
+          curRoom: paramGameRoomId,
+          privateRoom.current = message.privateRoom;
+          
+          console.log(message)
+          if (message.type === "offer"){
+            const accept = window.alert("비밀채팅으로 초대하셨습니다.");
+              handleAcceptClick();      
+          } else if (message.type === "answer"){
+            // toast(<MoveToPrivateChatToast />)
+            const accept = window.alert("초대에 응답했습니다");
+            leaveRoomAndNavigate();
+          }else if (message.type === "refuse"){
+            toast(<RefuseToast />)
+          } 
+        };
+
+        ws.current.onclose = () => {
+          console.log("WebSocket connection closed");
+        };
+        ws.current.onerror = error => {
+          console.log("WebSocket error:", error);
+          leaveSession();
+        };
       } catch (permissionError) {
         console.error("Permission denied:", permissionError);
         alert(
@@ -393,6 +455,7 @@ const GamePlay = () => {
 
   return (
     <>
+      
       {timeUntilStart > 0 && (
         <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black bg-opacity-75 text-center text-3xl leading-relaxed text-white">
           게임 시작까지
@@ -596,7 +659,10 @@ const GamePlay = () => {
                       //   {clientData}
                       // </Button>
                       <div className="flex justify-center">
-                        <Button key={idx} onClick={handleButtonClick}>
+                        <Button 
+                          key={idx}
+                          onClick={() => handleButtonClick(clientData)} 
+                        >
                           {clientData}
                         </Button>
                       </div>
