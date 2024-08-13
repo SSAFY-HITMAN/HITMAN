@@ -35,7 +35,7 @@ public class FilterConfig {
     CorsConfiguration configuration = new CorsConfiguration();
 //    configuration.setAllowedOrigins(Collections.singletonList("http://localhost:5080/")); // 임시
     configuration.setAllowedOrigins(Arrays.asList("https://i11b205.p.ssafy.io"));
-    configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+    configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE","PATCH", "OPTIONS"));
     configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
     configuration.setAllowCredentials(true);
     configuration.setExposedHeaders(Collections.singletonList("Authorization"));
