@@ -38,7 +38,9 @@ const useCatchTarget = () => {
 
   const handleAdditionalRequest = async () => {
     try {
-      const additionalResponse = await axiosInstance.get(`/in-game/init/${gameRoomId}`);
+      const additionalResponse = await axiosInstance.get(
+        `/in-game/init/${gameRoomId}`
+      );
       if (additionalResponse.status == 200) {
         const metadata = additionalResponse.data;
 
@@ -49,7 +51,9 @@ const useCatchTarget = () => {
         // 아이템 합산 갱신
         setItemList(metadata.myItems);
       } else {
-        console.log(`아이템을 가져오는 중 문제가 발생했습니다: ${additionalResponse.status}`);
+        console.log(
+          `아이템을 가져오는 중 문제가 발생했습니다: ${additionalResponse.status}`
+        );
       }
     } catch (error) {
       console.log(`아이템을 가져오지 못했습니다: ${error}`);
@@ -63,7 +67,7 @@ const useCatchTarget = () => {
         username: username,
         gameId: gameRoomId,
       });
-      if (response.status == 200) {
+      if (response.data == "CONTINUE") {
         alert("Target caught successfully!");
         await handleAdditionalRequest();
       }

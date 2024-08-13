@@ -11,7 +11,7 @@ import plusIcon from "@assets/material-icon/plus-icon.svg";
 import qrcodeIcon from "@assets/material-icon/qrcode-icon.svg";
 import trophyIcon from "@assets/material-icon/trophy-icon.svg";
 import profileIcon from "@assets/material-icon/profile-icon.svg";
-import ProfileDialog from "@/components/ProfileDialog";
+import MyProfileDialog from "@/components/MyProfileDialog";
 
 const ActionButton = ({ onClick, icon, color, label }) => {
   return (
@@ -127,11 +127,9 @@ const Home = () => {
           isOpen={isGameSettingDialogOpen}
           onClose={() => setIsGameSettingDialogOpen(false)}
         />
-        <ProfileDialog
+        <MyProfileDialog
           isOpen={isProfileDialogOpen}
           onClose={() => setIsProfileDialogOpen(false)}
-          url="/user/myProfile"
-          isMyProfile="true"
         />
 
         {isQrReaderOpen && (

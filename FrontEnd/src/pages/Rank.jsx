@@ -1,9 +1,19 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ScrollArea } from "@/components/ui/ScrollArea";
 import { Separator } from "@/components/ui/Separator";
 import GoBackButton from "@/components/GoBackButton";
-import ProfileDialog from "@/components/ProfileDialog";
+import UserProfileDialog from "@/components/UserProfileDialog";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/Avatar";
 import useGetRank from "@/hooks/Rank/useGetRank";
+
+// avatar 이미지 모두 가져오기
+const importAllImages = import.meta.glob("@/assets/avatar/*.{jpg,jpeg}");
+let images = [];
+for (const path in importAllImages) {
+  importAllImages[path]().then(module => {
+    images.push(module.default);
+  });
+}
 
 const Rank = () => {
   const rankingList = useGetRank();
@@ -11,10 +21,44 @@ const Rank = () => {
   const jsonObject = JSON.parse(rankList).rankingList;
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedUserId, setSelectedUserId] = useState(null);
+  const [isProfileDialogOpen, setIsProfileDialogOpen] = useState(false);
+  const [userAvatars, setUserAvatars] = useState({});
+
+  useEffect(() => {
+    const loadUserAvatars = () => {
+      const storedProfilePics =
+        JSON.parse(localStorage.getItem("profile_pictures")) || {};
+      const avatars = {};
+
+      jsonObject.forEach((user, idx) => {
+        if (storedProfilePics[user.id]) {
+          avatars[user.id] = storedProfilePics[user.id];
+        } else {
+          // 순서에 따른 이미지 할당
+          const assignedImage = images[idx % images.length]; // 순서대로 이미지를 할당
+          if (assignedImage) {
+            avatars[user.id] = assignedImage;
+            storedProfilePics[user.id] = assignedImage;
+          }
+        }
+      });
+
+      // 업데이트된 객체를 다시 localStorage에 저장
+      localStorage.setItem(
+        "profile_pictures",
+        JSON.stringify(storedProfilePics)
+      );
+      setUserAvatars(avatars);
+    };
+
+    if (images.length > 0) {
+      loadUserAvatars();
+    }
+  }, [images, jsonObject]);
+
   const filteredList = jsonObject.filter(user =>
     user.id.toLowerCase().includes(searchTerm.toLowerCase())
   );
-  const [isProfileDialogOpen, setIsProfileDialogOpen] = useState(false);
 
   const winnerClass = idx =>
     searchTerm === "" && idx + 1 === 1
@@ -27,7 +71,7 @@ const Rank = () => {
 
     switch (idx + 1) {
       case 1: // 금메달
-        return "h-[16vh] bg-gradient-to-br from-yellow-200 to-yellow-500 text-4xl font-black";
+        return "h-[16vh] bg-gradient-to-br from-yellow-200 to-yellow-500 text-3xl font-black";
       case 2: // 은메달
         return "bg-gradient-to-br from-gray-200 to-gray-500 text-xl";
       case 3: // 동메달
@@ -69,18 +113,30 @@ const Rank = () => {
                 <div
                   key={user.id}
                   id="rank-row"
-                  className={`flex h-full w-full flex-row p-2 ${top3Class(idx)}`}
+                  className={`flex h-full w-full flex-row p-2 ${top3Class(
+                    idx
+                  )}`}
                   onClick={() => handleReadProfile(user.id)}
                 >
                   <span
                     id="rank-number"
-                    className={`m-2 flex w-[15%] items-center justify-center ${winnerClass(idx)}`}
+                    className={`m-2 flex w-[15%] items-center justify-center ${winnerClass(
+                      idx
+                    )}`}
                   >
                     {idx + 1}
                   </span>
+                  <Avatar className="m-2 h-8 w-8">
+                    <AvatarImage src={userAvatars[user.id]} alt={user.id} />
+                    <AvatarFallback>
+                      {user.id.charAt(0).toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
                   <span
                     id="nickname"
-                    className={`flex w-[60%] items-center justify-center ${winnerClass(idx)}`}
+                    className={`flex w-[45%] items-center justify-center ${winnerClass(
+                      idx
+                    )}`}
                   >
                     {user.id}
                   </span>
@@ -92,12 +148,13 @@ const Rank = () => {
                   </span>
                 </div>
                 <Separator />
-                <ProfileDialog
-                  isOpen={isProfileDialogOpen}
-                  onClose={() => setIsProfileDialogOpen(false)}
-                  apiPath={`/user/profile/${user.id}`}
-                  isMyProfile="false"
-                />
+                {isProfileDialogOpen && selectedUserId === user.id && (
+                  <UserProfileDialog
+                    isOpen={isProfileDialogOpen}
+                    onClose={() => setIsProfileDialogOpen(false)}
+                    userId={user.id}
+                  />
+                )}
               </>
             ))}
           </ScrollArea>
