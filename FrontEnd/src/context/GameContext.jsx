@@ -35,14 +35,7 @@ export const GameProvider = ({ children }) => {
   }); // 플레이어의 생존 상태 (게임 시작 시 true로 전환되고 sessionStorage에 저장됨)
   const [areaCenter, setAreaCenter] = useState(() => {
     const savedCenter = sessionStorage.getItem("areaCenter"); // 기본적으로 String
-    if (savedCenter) {
-      const parsedCenter = JSON.parse(savedCenter);
-      return {
-        lat: parseFloat(parsedCenter.lat),
-        lng: parseFloat(parsedCenter.lng),
-      };
-    }
-    return { lat: 0, lng: 0 };
+    return savedCenter ? JSON.parse(savedCenter) : { lat: 0, lng: 0 };
   }); // 영역 중심
   const [areaRadius, setAreaRadius] = useState(() => {
     const savedRadius = sessionStorage.getItem("areaRadius");

@@ -31,8 +31,7 @@ const useStartGame = () => {
 
   // 게임 시작 시간 처리 함수 별도 분리
   const handleStartGameTime = newStartTime => {
-    const startTimeValue =
-      new Date(newStartTime).getTime();
+    const startTimeValue = new Date(newStartTime).getTime();
     sessionStorage.setItem("startTime", startTimeValue);
 
     const currentTime = new Date().getTime();
@@ -81,8 +80,8 @@ const useStartGame = () => {
         // 반경, 중심, 타겟 닉네임 수신
         const newAreaRadius = parseInt(metadata.gameInfo.mapSize, 10);
         const newAreaCenter = {
-          lat: parseFloat(metadata.gameInfo.centerLat).toFixed(5),
-          lng: parseFloat(metadata.gameInfo.centerLng).toFixed(5),
+          lat: parseFloat(parseFloat(metadata.gameInfo.centerLat).toFixed(5)),
+          lng: parseFloat(parseFloat(metadata.gameInfo.centerLng).toFixed(5)),
         };
         const newTargetId = metadata.targetName;
         const newGamePlayTime = parseInt(metadata.gameInfo.time, 10) * 60; // 초 단위
@@ -98,7 +97,7 @@ const useStartGame = () => {
         getBullet(newBullet);
 
         sessionStorage.setItem("areaRadius", newAreaRadius);
-        sessionStorage.setItem("areaCenter", newAreaCenter);
+        sessionStorage.setItem("areaCenter", JSON.stringify(newAreaCenter));
         sessionStorage.setItem("targetId", newTargetId);
         sessionStorage.setItem("gamePlayTime", newGamePlayTime);
         sessionStorage.setItem("bullets", newBullet);
