@@ -67,7 +67,11 @@ export const GameProvider = ({ children }) => {
       done: true,
     },
   ]); // 미션 목록
-  const [itemList, setItemList] = useState([]);
+  const [itemList, setItemList] = useState([
+    { itemId: 1, count: 0 }, // 스텔스 망토 (GPS)
+    { itemId: 2, count: 0 }, // 방해 폭탄 (screen)
+    { itemId: 3, count: 0 }, // 강화 총알
+  ]);
   const [playerCount, setPlayerCount] = useState(() => {
     const savedPlayerCount = sessionStorage.getItem("playerCount");
     return savedPlayerCount !== null ? parseInt(savedPlayerCount, 10) : null;
@@ -93,7 +97,9 @@ export const GameProvider = ({ children }) => {
 
   useEffect(() => {
     myLocationRef.current = myLocation;
-    console.log(`myLocation: ${myLocationRef.current.lat} ${myLocationRef.current.lng}`);
+    console.log(
+      `myLocation: ${myLocationRef.current.lat} ${myLocationRef.current.lng}`
+    );
   }, [myLocation]);
 
   useEffect(() => {

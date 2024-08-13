@@ -20,14 +20,16 @@ const useItemCount = () => {
 
   // itemList 최신화 시(axios response) 갱신
   useEffect(() => {
+    if (!itemList || itemList.length === 0) return; // itemList가 비어있으면 실행하지 않음
+
     const blockGPSItem = itemList.find(
-      item => item.itemId === ITEM_IDS.BLOCK_GPS
+      item => item.itemId == ITEM_IDS.BLOCK_GPS
     ); // 스텔스 망토의 itemId
     const blockScreenItem = itemList.find(
-      item => item.itemId === ITEM_IDS.BLOCK_SCREEN
+      item => item.itemId == ITEM_IDS.BLOCK_SCREEN
     ); // 방해 폭탄의 itemId
     const enhancedBulletItem = itemList.find(
-      item => item.itemId === ITEM_IDS.ENHANCED_BULLET
+      item => item.itemId == ITEM_IDS.ENHANCED_BULLET
     ); // 강화 총알의 itemId
 
     setBlockGPSCount(blockGPSItem ? blockGPSItem.count : 0);
