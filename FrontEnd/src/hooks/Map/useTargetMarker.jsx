@@ -1,11 +1,15 @@
 import { useEffect, useRef, useContext } from "react";
 import { GameContext } from "@/context/GameContext";
+import targetMarkerImage from "@/assets/gameplay-icon/target-marker.png";
 
 const { kakao } = window;
 
 const useTargetMarker = mapInstance => {
   const markerRef = useRef(null);
   const { targetLocation, gameStatus, blockGPS } = useContext(GameContext);
+
+  const imageSize = new kakao.maps.Size(45, 45);
+  const markerImage = new kakao.maps.MarkerImage(targetMarkerImage, imageSize);
 
   // 타겟 위치 변동에 따라 마커를 새로 set
   useEffect(() => {
@@ -25,6 +29,7 @@ const useTargetMarker = mapInstance => {
     if (gameStatus && mapInstance && targetLocation && !markerRef.current) {
       const marker = new kakao.maps.Marker({
         position: new kakao.maps.LatLng(targetLocation.lat, targetLocation.lng),
+        image: markerImage,
         map: mapInstance,
       });
       markerRef.current = marker;
