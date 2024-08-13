@@ -55,9 +55,7 @@ import OvVideo from "@/hooks/WebRTC/OvVideo.jsx";
 import { BASE_URL } from "@/constants/baseURL";
 
 const APPLICATION_SERVER_URL =
-  process.env.NODE_ENV === "production"
-    ? BASE_URL
-    : "http://localhost:8080/cam/";
+  process.env.NODE_ENV === "production" ? BASE_URL : "http://localhost:8080/cam/";
 
 let count = 1;
 const GamePlay = () => {
