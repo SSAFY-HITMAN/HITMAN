@@ -57,28 +57,21 @@ const PopOverCamera = ({ open, publisher, missionId, handleMainVideoStream }) =>
             },
           })
           .then(response => {
+            console.log(response);
             if (response.status === 200) {
               // 성공적인 응답 처리
               const obtained = response.data.itemId;
               getItem(obtained);
               getBullet(1);
               alert(`미션 성공! 아이템 ID: ${obtained}`);
-            } else if (response.status === 400) {
+            } else if (response.status === 202) {
               alert("미션 실패!");
-
               setIsButtonDisabled(false)  // 수정부분
-            } else if (response.status === 404) {
-              alert("알 수 없는 오류가 발생했습니다. 다시 시도해주세요.");
-              setIsButtonDisabled(false); // 수정부분
-            } else {
-              alert("예상치 못한 응답 상태: " + response.status);
-              setIsButtonDisabled(false); // 수정부분
-
-            }
+            } 
           })
           .catch(error => {
             console.error("Error uploading file:", error);
-            alert("파일 업로드 중 오류가 발생했습니다. 콘솔을 확인하세요.");
+            alert("파일 업로드 중 오류가 발생했습니다. 다시 시도해주세요.");
             setIsButtonDisabled(false); // 수정부분
 
           });

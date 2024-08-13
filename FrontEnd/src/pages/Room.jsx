@@ -34,7 +34,7 @@ const Room = () => {
   const { handleStartGame } = useReadyGame();
 
   const handleStartButtonClick = () => {
-    if (gameRoomUsers.length >= 3) {
+    if (gameRoomUsers.length >= 0) {
       handleStartGame();
     } else {
       setIsAlertDialogOpen(true);
