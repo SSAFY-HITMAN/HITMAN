@@ -110,6 +110,7 @@ const GameHeader = ({ publisher, handleMainVideoStream }) => {
                 <PopOverCamera
                   open={openCamera === mission.missionId} // 현재 열린 팝업이 해당 미션인지 확인
                   publisher={publisher} // publisher 전달
+                  missionId={mission.missionId}
                   handleMainVideoStream={handleMainVideoStream} // handleMainVideoStream 전달
                 />
               </Popover.Content>
