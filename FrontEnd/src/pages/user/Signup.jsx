@@ -37,14 +37,10 @@ const Signup = () => {
       if (response.status == 200) {
         setUsernameChecked(true);
         setError(""); // 성공하면 에러 초기화
-        alert("사용 가능한 닉네임입니다.");
-      } else {
-        setUsernameChecked(false);
-        setError("닉네임이 이미 사용 중입니다.");
       }
     } catch (err) {
-      console.error(err);
-      setError("닉네임 중복 확인 중 오류가 발생했습니다.");
+      setUsernameChecked(false);
+      setError("닉네임이 이미 사용 중입니다.");
     }
   };
 
@@ -57,14 +53,10 @@ const Signup = () => {
       if (response.status == 200) {
         setEmailChecked(true);
         setError(""); // 성공하면 에러 초기화
-        alert("사용 가능한 이메일입니다.");
-      } else {
-        setEmailChecked(false);
-        setError("이메일이 이미 사용 중입니다.");
       }
     } catch (err) {
-      console.error(err);
-      setError("이메일 중복 확인 중 오류가 발생했습니다.");
+      setEmailChecked(false);
+      setError("이메일이 이미 사용 중입니다.");
     }
   };
 
@@ -135,7 +127,7 @@ const Signup = () => {
           <Input
             type="text"
             placeholder="닉네임"
-            className="w-full p-4"
+            className={`w-full p-4 ${usernameChecked ? "bg-green-100" : ""}`}
             value={username}
             onChange={e => {
               setUsername(e.target.value);
@@ -157,9 +149,9 @@ const Signup = () => {
 
         <div className="mb-4">
           <Input
-            type="email"
+            type="text"
             placeholder="이메일"
-            className="w-full p-4"
+            className={`w-full p-4 ${emailChecked ? "bg-green-100" : ""}`}
             value={email}
             onChange={e => {
               setEmail(e.target.value);

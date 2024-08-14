@@ -61,13 +61,10 @@ const SetUsername = () => {
       if (response.status === 200) {
         setUsernameChecked(true); // 중복확인이 성공하면 상태를 true로 설정
         setError("");
-      } else {
-        setUsernameChecked(false);
-        setError("닉네임이 이미 사용 중입니다.");
       }
     } catch (err) {
-      console.error(err);
-      setError("닉네임 중복 확인 중 오류가 발생했습니다.");
+      setUsernameChecked(false);
+      setError("닉네임이 이미 사용 중입니다.");
     }
   };
 
@@ -84,7 +81,7 @@ const SetUsername = () => {
           <Input
             type="text"
             placeholder="닉네임"
-            className="w-full p-4"
+            className={`w-full p-4 ${usernameChecked ? "bg-green-100" : ""}`}
             value={username}
             onChange={e => {
               setUsername(e.target.value);
