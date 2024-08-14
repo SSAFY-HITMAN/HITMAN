@@ -114,6 +114,11 @@ export const GameProvider = ({ children }) => {
     areaCenterRef.current = areaCenter;
   }, [areaCenter]);
 
+  // 남은 사람 수 렌더링 되지 않는 문제 해결
+  useEffect(() => {
+    sessionStorage.setItem("playerCount", playerCount);
+  }, [playerCount]);
+
   const calculationAverageLocation = (latSum, lngSum, count) => {
     const averageLat = latSum / count;
     const averageLng = lngSum / count;

@@ -53,30 +53,30 @@ const Home = () => {
     navigate("/login");
   };
 
-  const handleQrScan = async data => {
-    if (data) {
-      const gameCode = data.text;
-      console.log("QR Code Data:", gameCode);
-      setIsQrReaderOpen(false);
+  // const handleQrScan = async data => {
+  //   if (data) {
+  //     const gameCode = data.text;
+  //     console.log("QR Code Data:", gameCode);
+  //     setIsQrReaderOpen(false);
 
-      try {
-        const response = await axiosInstance.get(`/gameroom/${gameCode}`);
+  //     try {
+  //       const response = await axiosInstance.get(`/gameroom/${gameCode}`);
 
-        if (response.status == 200) {
-          const { gameId } = response.data;
-          navigate(`/room/${gameId}`);
-        } else if (response.status === 400) {
-          alert("인원이 다 차서 들어갈 수 없습니다");
-        } else {
-          alert("해당하는 방이 없습니다.");
-        }
-      } catch (err) {
-        alert(
-          "서버와 통신하는 중에 문제가 발생했습니다. 나중에 다시 시도해주세요."
-        );
-      }
-    }
-  };
+  //       if (response.status == 200) {
+  //         const { gameId } = response.data;
+  //         navigate(`/room/${gameId}`);
+  //       } else if (response.status === 400) {
+  //         alert("인원이 다 차서 들어갈 수 없습니다");
+  //       } else {
+  //         alert("해당하는 방이 없습니다.");
+  //       }
+  //     } catch (err) {
+  //       alert(
+  //         "서버와 통신하는 중에 문제가 발생했습니다. 나중에 다시 시도해주세요."
+  //       );
+  //     }
+  //   }
+  // };
 
   // const handleQrError = err => {
   //   console.error("QR Code Scan Error:", err);
