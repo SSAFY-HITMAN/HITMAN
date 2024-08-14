@@ -32,7 +32,7 @@ const useStartGame = () => {
   // 게임 시작 시간 처리 함수 별도 분리
   const handleStartGameTime = newStartTime => {
     const startTimeValue =
-      new Date(newStartTime).getTime() + 9 * 60 * 60 * 1000 - 55 * 1000; // 테스트용 (추후 "55 * 1000"은 제거 필요)
+      new Date(newStartTime).getTime() + 9 * 60 * 60 * 1000;
     sessionStorage.setItem("startTime", startTimeValue);
 
     const currentTime = new Date().getTime();
