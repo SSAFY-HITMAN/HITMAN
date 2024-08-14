@@ -34,7 +34,8 @@ const Room = () => {
   const { handleStartGame } = useReadyGame();
 
   const handleStartButtonClick = () => {
-    if (gameRoomUsers.length >= 3) {
+    // 테스트용 (추후 "3"으로 복구 필요)
+    if (gameRoomUsers.length >= 0) {
       handleStartGame();
     } else {
       setIsAlertDialogOpen(true);
