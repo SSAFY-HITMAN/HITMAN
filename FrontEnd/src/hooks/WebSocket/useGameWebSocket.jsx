@@ -80,6 +80,7 @@ const useGameWebSocket = () => {
           const newTargetId = msg.target;
           setTargetId(newTargetId);
           sessionStorage.setItem("targetId", newTargetId);
+          alert(`changeTarget: ${newTargetId}`);
         }
         break;
       case "eliminated":
@@ -89,10 +90,12 @@ const useGameWebSocket = () => {
           setTargetId(null);
           sessionStorage.setItem("setIsAlive", false);
           sessionStorage.removeItem("targetId");
+          alert(`eliminated!`);
         }
         break;
       case "alert":
         handleAlertDegree(msg.alertDegree);
+        alert(`alert: ${msg.alertDegree}`);
         break;
       case "end": // 게임 종료 조건(인원수)
         setGameStatus(false);
@@ -103,6 +106,7 @@ const useGameWebSocket = () => {
       case "playerCount":
         const count = parseInt(msg.count, 10);
         setPlayerCount(count);
+        alert(`player count: ${count}`);
         break;
       case "useItem":
         const effect = msg.effect;
@@ -110,6 +114,7 @@ const useGameWebSocket = () => {
         if (username === affected) {
           handleItemEffect(effect);
         }
+        alert(`아이템을 맞았습니다! ${effect}`);
         break;
       default:
         break;

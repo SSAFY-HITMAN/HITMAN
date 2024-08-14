@@ -13,6 +13,7 @@ const useBullet = () => {
   }, [bullet]);
 
   const getBullet = n => {
+    console.log(`getBullet: +${n}`);
     setBullet(prev => prev + n);
   };
 

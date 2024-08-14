@@ -5,8 +5,14 @@ const GameTime = () => {
   const { gameStatus, setGameStatus, setIsAlive } = useContext(GameContext);
 
   // startTime과 gamePlayTime을 state로 관리
-  const [startTime, setStartTime] = useState(null);
-  const [gamePlayTime, setGamePlayTime] = useState(null);
+  const [startTime, setStartTime] = useState(() => {
+    const savedStartTime = sessionStorage.getItem("startTime");
+    return savedStartTime ? parseInt(savedStartTime, 10) : null;
+  });
+  const [gamePlayTime, setGamePlayTime] = useState(() => {
+    const savedGamePlayTime = sessionStorage.getItem("gamePlayTime");
+    return savedGamePlayTime ? parseInt(savedGamePlayTime, 10) : null;
+  });
 
   // 남은 시간 초기화
   const initializeRemainingPlayTime = () => {
@@ -70,7 +76,7 @@ const GameTime = () => {
   useEffect(() => {
     // startTime과 gamePlayTime이 없을 때 sessionStorage를 주기적으로 체크
     const checkSessionStorage = () => {
-      const storedStartTime = sessionStorage.getItem("startTime");
+      const storedStartTime = parseInt(sessionStorage.getItem("startTime"), 10);
       const storedGamePlayTime = parseInt(
         sessionStorage.getItem("gamePlayTime"),
         10
@@ -87,7 +93,7 @@ const GameTime = () => {
 
     // startTime과 gamePlayTime이 설정되면 타이머를 시작
     if (!gameStatus) {
-      if (startTime && gamePlayTime) {
+      if (!intervalIdRef.current && startTime && gamePlayTime) {
         clearInterval(interval); // interval 제거
         updateTimer(startTime); // 초기 타이머 업데이트
 
