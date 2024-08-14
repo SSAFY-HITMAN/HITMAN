@@ -52,10 +52,10 @@ const useGameWebSocket = () => {
             // 메시지 구독여부 디버깅
             try {
               const msg = JSON.parse(serverMsg.body);
-              console.log("웹소켓 메시지 수신 완료:", msg); // 이 메시지가 안나오면 구독 경로 또는 WebSocket 서버 설정 문제
+              console.log("게임웹소켓 메시지 수신 완료:", msg); // 이 메시지가 안나오면 구독 경로 또는 WebSocket 서버 설정 문제
               handleAlertMessage(msg);
             } catch (error) {
-              console.error("웹소켓 메시지 수신 실패:", error);
+              console.error("게임웹소켓 메시지 수신 실패:", error);
             }
           }
         );

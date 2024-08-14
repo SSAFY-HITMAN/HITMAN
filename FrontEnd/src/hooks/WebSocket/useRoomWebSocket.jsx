@@ -28,8 +28,14 @@ const useRoomWebSocket = () => {
         stompClient.current.subscribe(
           `/topic/waiting/${gameRoomId}`,
           serverMsg => {
-            const msg = JSON.parse(serverMsg.body);
-            handleAlertMessage(msg);
+            // 메시지 구독여부 디버깅
+            try {
+              const msg = JSON.parse(serverMsg.body);
+              console.log("룸웹소켓 메시지 수신 완료:", msg); // 이 메시지가 안나오면 구독 경로 또는 WebSocket 서버 설정 문제
+              handleAlertMessage(msg);
+            } catch (error) {
+              console.error("룸웹소켓 메시지 수신 실패:", error);
+            }
           }
         );
       },
