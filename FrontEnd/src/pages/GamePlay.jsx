@@ -155,6 +155,8 @@ const GamePlay = () => {
 
   const navigate = useNavigate();
   const { gameRoomId: paramGameRoomId } = useParams(); // 추가
+  const [userInvitationStatus, setUserInvitationStatus] = useState({});
+
 
   const privateRoom = useRef("");
   const fromUser = useRef("");
@@ -191,6 +193,18 @@ const GamePlay = () => {
     const parsedData = JSON.parse(publisherName);
     const parsedPublisherName = parsedData.clientData;
 
+    if (userInvitationStatus[username]?.isInviting || userInvitationStatus[parsedPublisherName]?.isBeingInvited) {
+      alert(`${username} 또는 ${parsedPublisherName}는 이미 초대 중이거나 초대받고 있습니다.`);
+      return;
+    }
+
+    // 사용자별 초대 상태 설정
+    setUserInvitationStatus(prev => ({
+      ...prev,
+      [username]: { isInviting: true, isBeingInvited: false },
+      [parsedPublisherName]: { isInviting: false, isBeingInvited: true },
+    }));
+
     if (ws.current && ws.current.readyState === WebSocket.OPEN) {
       try {
         const message = {
@@ -221,6 +235,14 @@ const GamePlay = () => {
             privateRoom: privateRoom.current,
           };
           ws.current.send(`click:${JSON.stringify(message)}`);
+
+          // 초대 상태 초기화
+          setUserInvitationStatus(prev => ({
+            ...prev,
+            [toUser.current]: { isInviting: false, isBeingInvited: false },
+            [fromUser.current]: { isInviting: false, isBeingInvited: false },
+          }));
+
         } catch (error) {
           console.error("Error creating or sending answer:", error);
         }

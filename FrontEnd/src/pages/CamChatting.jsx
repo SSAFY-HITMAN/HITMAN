@@ -135,7 +135,7 @@ const CamChatting = () => {
 
     const leaveRoomAndNavigate = async () => {
         leaveSession();
-        navigate("/game-play/" + location.state.gameRoom, { 
+        navigate("/game-play/" + location.state[0].gameRoom, { 
             state: [{
                 id: location.state[0].name,
                 name: location.state[0].name,
