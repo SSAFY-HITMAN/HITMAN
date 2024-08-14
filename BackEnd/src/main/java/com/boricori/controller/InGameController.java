@@ -224,8 +224,8 @@ public class InGameController {
     String username = request.getUsername();
     inGameService.eliminateUser(username, gameId);
     messageService.notifyEliminated(username,gameId);
-    messageService.playersCount(gameId, gameManager.numPlayers(gameId));
     Node<User> hunter = gameManager.removePlayerAndReturnHunter(gameId, username);
+    messageService.playersCount(gameId, gameManager.numPlayers(gameId));
     if (gameManager.isLastTwo(gameId)) {
       GameResult res = inGameService.finishGameAndHandleLastTwoPlayers(gameId);
       messageService.endGameScore(res);

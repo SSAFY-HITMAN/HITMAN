@@ -209,6 +209,14 @@ public class InGameServiceImpl implements InGameService{
   public GameResult finishGameAndHandleLastTwoPlayers(long gameId){
     finishGame(gameId);
     List<String> users = gameManager.EndGameUserInfo(gameId);
+    if (users.isEmpty()){
+      List<EndGameUserInfoResponse> usersInfo = participantRepository.getEndGamePlayersInfo(gameId);
+      return new GameResult(gameId, null, null, usersInfo);
+    }else if (users.size() == 1){
+      GameParticipants userA = participantRepository.getByUsername(users.get(0), gameId);
+      List<EndGameUserInfoResponse> usersInfo = participantRepository.getEndGamePlayersInfo(gameId);
+      return new GameResult(gameId, userA.getUser().getUsername(), null, usersInfo);
+    }
     GameParticipants userA = participantRepository.getByUsername(users.get(0), gameId);
     GameParticipants userB = participantRepository.getByUsername(users.get(1), gameId);
     String winner = determineWinner(userA, userB);

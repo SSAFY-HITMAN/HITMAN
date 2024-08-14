@@ -50,9 +50,9 @@ public class RedisKeyExpirationListener implements MessageListener {
       String username = parts[0];
       long roomId = Long.parseLong(parts[1]);
       inGameService.eliminateUser(username, roomId);
-      messageService.playersCount(roomId, gameManager.numPlayers(roomId));
       // 해당 유저 쫓던 유저의 타겟이 바뀌는 로직
       Node<User> hunter = gameManager.removePlayerAndReturnHunter(roomId, username);
+      messageService.playersCount(roomId, gameManager.numPlayers(roomId));
       if (gameManager.isLastTwo(roomId)) {
         GameResult res = inGameService.finishGameAndHandleLastTwoPlayers(roomId);
         messageService.endGameScore(res);
