@@ -146,8 +146,7 @@ const useGameWebSocket = () => {
         setGameStatus(false);
         setToOffChatting(true); // 종료 시 true로 변환
         alert("게임 종료!");
-        const data = msg.data;
-        endGame(data);
+        endGame(msg);
         break;
       case "playerCount":
         const count = parseInt(msg.count, 10);
