@@ -79,8 +79,8 @@ public class GameRoomServiceImpl implements GameRoomService {
     try {
       acquired = lock.tryLock(10, 10, TimeUnit.SECONDS);
       if (acquired) {
-        Map<String, String> room = (Map<String, String>) redisObjectTemplate.opsForHash().get("roomId", roomId);
-        return room != null ? room.size() : 0;
+        Map<String, String> usersInRoom = redisObjectTemplate.<String, String>opsForHash().entries("room:" + roomId);
+        return usersInRoom != null ? usersInRoom.size() : 0;
       } else {
         log.info("Unable to acquire lock for room: {}" , roomId);
       }
@@ -103,7 +103,6 @@ public class GameRoomServiceImpl implements GameRoomService {
       if (acquired) {
         // "room:" + roomId 해시에 새로운 엔트리 추가
         redisObjectTemplate.opsForHash().put("room:" + roomId, sessionId, userName);
-        System.out.println("User added to room " + roomId + ": sessionId=" + sessionId + ", username=" + userName);
       } else {
         log.info("{} 방에 아직 들어갈 수 없습니다.", roomId);
       }
