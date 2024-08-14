@@ -13,13 +13,23 @@ const useTargetMarker = mapInstance => {
 
   // 타겟 위치 변동에 따라 마커를 새로 set
   useEffect(() => {
-    if (gameStatus && markerRef.current && targetLocation && !blockGPS) {
-      // blockGPS 아이템 조건
-      const newPosition = new kakao.maps.LatLng(
-        targetLocation.lat,
-        targetLocation.lng
-      );
-      markerRef.current.setPosition(newPosition);
+    if (gameStatus && markerRef.current && targetLocation) {
+      if (!blockGPS) {
+        // blockGPS가 false이면 마커 위치 업데이트
+        const newPosition = new kakao.maps.LatLng(
+          targetLocation.lat,
+          targetLocation.lng
+        );
+        markerRef.current.setPosition(newPosition);
+
+        if (!markerRef.current.getMap()) {
+          // 마커가 숨겨져 있는 경우에만 다시 지도에 표시
+          markerRef.current.setMap(mapInstance);
+        }
+      } else {
+        // blockGPS가 true라면 마커 숨기기
+        markerRef.current.setMap(null);
+      }
     }
   }, [targetLocation, gameStatus, blockGPS]);
 
