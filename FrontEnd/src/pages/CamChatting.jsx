@@ -139,7 +139,7 @@ const CamChatting = () => {
             state: [{
                 id: location.state[0].name,
                 name: location.state[0].name,
-                camChatting: location.camChatting,
+                camChatting: location.state[0].camChatting,
             }],
         });
     }
