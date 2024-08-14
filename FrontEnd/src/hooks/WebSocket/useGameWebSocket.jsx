@@ -49,6 +49,7 @@ const useGameWebSocket = () => {
           `/topic/play/${gameRoomId}`,
           serverMsg => {
             const msg = JSON.parse(serverMsg.body);
+            console.log("웹소켓 메시지 : " + msg);
             handleAlertMessage(msg);
           }
         );
@@ -106,6 +107,7 @@ const useGameWebSocket = () => {
         break;
       case "playerCount":
         const count = parseInt(msg.count, 10);
+        console.log("웹소켓 메시지로 받는 남은 인원수 : " + count);
         setPlayerCount(count);
         alert(`남은 인원 수: ${count}`);
         break;
