@@ -345,13 +345,9 @@ const GamePlay = () => {
         await newSession.publish(newPublisher);
 
         const devices = await OV.getDevices();
-        console.log("devices ----------> ", devices);
-
         const videoDevices = devices.filter(
           device => device.kind === "videoinput"
         );
-
-        console.log("videoDevices ---------> ", videoDevices);
         const currentVideoDeviceId = newPublisher.stream
           .getMediaStream()
           .getVideoTracks()[0]
@@ -424,44 +420,78 @@ const GamePlay = () => {
     initSession();
   }, []);
 
+  // const switchCamera = useCallback(async () => {
+  //   if (!currentVideoDevice || !session) return;
+
+  //   try {
+  //     const OV = new OpenVidu(); // switchCamera에서도 OV를 선언
+  //     const devices = await OV.getDevices();
+  //     const videoDevices = devices.filter(
+  //       device => device.kind === "videoinput"
+  //     );
+
+  //     if (videoDevices.length > 1) {
+  //       const newVideoDevice = videoDevices.find(
+  //         device => device.deviceId !== currentVideoDevice.deviceId
+  //       );
+
+  //       if (newVideoDevice) {
+  //         const newPublisher = OV.initPublisher(undefined, {
+  //           videoSource: newVideoDevice.deviceId,
+  //           publishAudio: true,
+  //           publishVideo: true,
+  //           mirror: true,
+  //         });
+
+  //         await session.unpublish(mainStreamManager);
+  //         await session.publish(newPublisher);
+
+  //         setCurrentVideoDevice(newVideoDevice);
+  //         setMainStreamManager(newPublisher);
+  //         setPublisher(newPublisher);
+  //       }
+  //     }
+  //   } catch (e) {
+  //     console.error(e);
+  //   }
+  // }, [session, mainStreamManager, currentVideoDevice]);
+
   const switchCamera = useCallback(async () => {
-    if (!currentVideoDevice || !session) return;
-
+    if (!currentVideoDevice || !session) return; // currentVideoDevice 검사는 필요 없음
+  
     try {
-      const OV = new OpenVidu(); // switchCamera에서도 OV를 선언
-      const devices = await OV.getDevices();
-      console.log("devices =============> ", devices);
-      const videoDevices = devices.filter(
-        device => device.kind === "videoinput"
-      );
-
-      console.log("videoDevices =============> ", videoDevices);
-
-      if (videoDevices.length > 1) {
-        const newVideoDevice = videoDevices.find(
-          device => device.deviceId !== currentVideoDevice.deviceId
-        );
-
-        if (newVideoDevice) {
-          const newPublisher = OV.initPublisher(undefined, {
-            videoSource: newVideoDevice.deviceId,
-            publishAudio: true,
-            publishVideo: true,
-            mirror: true,
-          });
-
-          await session.unpublish(mainStreamManager);
-          await session.publish(newPublisher);
-
-          setCurrentVideoDevice(newVideoDevice);
-          setMainStreamManager(newPublisher);
-          setPublisher(newPublisher);
-        }
-      }
+      const OV = new OpenVidu();
+  
+      // 후면 카메라로 전환하려면 facingMode를 "environment"로 설정합니다.
+      const constraints = {
+        video: {
+          facingMode: { exact: "environment" }, // 후면 카메라
+        },
+      };
+  
+      const newPublisher = OV.initPublisher(undefined, {
+        videoSource: undefined, // videoSource를 undefined로 설정하면 constraints 사용
+        audioSource: undefined, // 오디오 설정은 기존대로 유지
+        publishAudio: true,
+        publishVideo: true,
+        mirror: false, // 후면 카메라일 경우 거울 효과 제거
+        resolution: "640x480", // 기존 설정 유지
+        frameRate: 30, // 기존 설정 유지
+        constraints: constraints, // constraints 전달
+      });
+  
+      // 기존의 퍼블리셔를 언퍼블리시하고 새로운 퍼블리셔를 퍼블리시
+      await session.unpublish(mainStreamManager);
+      await session.publish(newPublisher);
+  
+      // 상태 업데이트
+      setMainStreamManager(newPublisher);
+      setPublisher(newPublisher);
     } catch (e) {
       console.error(e);
     }
   }, [session, mainStreamManager, currentVideoDevice]);
+  
 
   const getToken = async () => {
     const sessionId = await createSession(paramGameRoomId);
