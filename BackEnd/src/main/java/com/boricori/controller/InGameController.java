@@ -159,10 +159,11 @@ public class InGameController {
     String username = (String) req.getAttribute("username");
     try{
       System.out.println("===================init called================");
+      int playerCnt = gameManager.numPlayers(gameId);
       GameParticipants player = inGameService.checkIfPlayer(username, gameId);
       GameRoom game = gameRoomService.findGame(gameId);
       if (!player.isAlive()){ // 게임이 진행중이고, 플레이어는 아웃된 상태
-        InitResponse data = InitResponse.builder().status("dead").gameInfo(GameInfo.of(game)).build();
+        InitResponse data = InitResponse.builder().status("dead").gameInfo(GameInfo.of(game)).playerCount(playerCnt).build();
         return ResponseEntity.status(ResponseEnum.SUCCESS.getCode()).body(data);
       }
       // 플레이어가 살아있는 상태. 게임 시작전일수도, 진행중일 수도 있음
@@ -181,7 +182,7 @@ public class InGameController {
       return ResponseEntity.status(ResponseEnum.SUCCESS.getCode())
           .body(InitResponse.builder().status("alive").gameInfo(GameInfo.of(game))
               .targetName(target.getUsername()).myMissions(myMissions).myItems(myItems).bullets(
-                  player.getBullets()).build());
+                  player.getBullets()).playerCount(playerCnt).build());
 
     }catch (NotAPlayerException e){
       return ResponseEntity.status(ResponseEnum.NOT_ACCEPTABLE.getCode()).body(null);

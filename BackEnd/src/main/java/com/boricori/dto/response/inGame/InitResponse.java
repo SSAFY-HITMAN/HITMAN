@@ -16,6 +16,8 @@ public class InitResponse {
 
   private int bullets;
 
+  private int playerCount;
+
   @Schema(description = "내가 쫓는 사람의 닉네임")
   private String targetName;
 
@@ -25,12 +27,13 @@ public class InitResponse {
 
   @Builder
   public InitResponse(String status, GameInfo gameInfo, String targetName,
-      List<MissionResponse> myMissions, List<ItemCount> myItems, int bullets) {
+      List<MissionResponse> myMissions, List<ItemCount> myItems, int bullets, int playerCount) {
     this.status = status;
     this.gameInfo = gameInfo;
     this.targetName = targetName;
     this.myMissions = myMissions;
     this.myItems = myItems;
     this.bullets = bullets;
+    this.playerCount = playerCount;
   }
 }

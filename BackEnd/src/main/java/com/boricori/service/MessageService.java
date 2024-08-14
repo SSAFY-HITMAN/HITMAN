@@ -1,11 +1,13 @@
 package com.boricori.service;
 
 import com.boricori.dto.GameResult;
+import com.boricori.dto.response.gameroom.EnterMessageResponse;
 import com.boricori.entity.GameRoom;
 import com.boricori.game.GameManager;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.util.List;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
@@ -63,5 +65,10 @@ public class MessageService {
   public void playersCount(long gameId, int playersLeft) {
     String jsonPayload = String.format("{\"msgType\":\"playerCount\", \"count\":\"%d\"}", playersLeft);
     messagingTemplate.convertAndSend(String.format("/topic/play/%d", gameId), jsonPayload);
+  }
+
+  public void userList(long gameId, List<String> users){
+    EnterMessageResponse message = new EnterMessageResponse("users", users);
+    messagingTemplate.convertAndSend(String.format("/topic/waiting/%d", gameId), message);
   }
 }
