@@ -12,6 +12,9 @@ const useRoomWebSocket = () => {
 
   const connect = () => {
     // WebSocket 연결 생성
+    console.log(
+      `룸웹소켓 연결 시도중... : ${WS_BASE_URL}/gameRoom/${gameRoomId}`
+    );
     const socket = new WebSocket(`${WS_BASE_URL}/gameRoom/${gameRoomId}`);
     stompClient.current = Stomp.over(socket);
 
@@ -22,13 +25,13 @@ const useRoomWebSocket = () => {
     stompClient.current.connect(
       { username: username }, // 헤더에 username 추가
       frame => {
-        console.log("Connected:" + frame);
+        console.log("룸웹소켓 연결 완료, frame:", frame);
 
         // 메시지 구독 설정
         stompClient.current.subscribe(
           `/topic/waiting/${gameRoomId}`,
           serverMsg => {
-            // 메시지 구독여부 디버깅
+            console.log("서버에서 룸웹소켓 메시지 수신됨:", serverMsg);
             try {
               const msg = JSON.parse(serverMsg.body);
               console.log("룸웹소켓 메시지 수신 완료:", msg); // 이 메시지가 안나오면 구독 경로 또는 WebSocket 서버 설정 문제
