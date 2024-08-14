@@ -23,12 +23,41 @@ const useGameWebSocket = () => {
   const stompClient = useRef(null);
   const areaRadiusRef = useRef(areaRadius);
   const effectTimeoutRef = useRef(null); // 현재 실행 중인 타이머를 저장하는 변수
+  const reconnectAttempts = useRef(0); // 재연결 시도 횟수를 저장하는 변수
+  const maxReconnectAttempts = 5; // 최대 재연결 시도 횟수
 
   useEffect(() => {
     areaRadiusRef.current = areaRadius;
   }, [areaRadius]);
 
+  // 끊길 시 재연결에 관한 로직
+  const handleDisconnect = () => {
+    if (reconnectAttempts.current < maxReconnectAttempts) {
+      reconnectAttempts.current += 1;
+      console.log(
+        `재연결 시도 중... (${reconnectAttempts.current}/${maxReconnectAttempts})`
+      );
+      setTimeout(() => {
+        connect();
+      }, 1000); // 1초 후 재연결 시도
+    } else {
+      console.error(
+        "최대 재연결 시도 횟수를 초과했습니다. 페이지를 새로고침합니다."
+      );
+      window.location.reload(); // 최대 시도 횟수를 초과하면 페이지 새로고침
+    }
+  };
+
   const connect = () => {
+    // 기본 연결 상태 체크
+    if (
+      stompClient.current &&
+      stompClient.current.ws.readyState === WebSocket.OPEN
+    ) {
+      console.log("이미 연결된 WebSocket이 있습니다.");
+      return;
+    }
+
     // WebSocket 연결 생성
     console.log(
       `게임웹소켓 연결 시도중... : ${WS_BASE_URL}/gameRoom/${gameRoomId}`
@@ -45,6 +74,9 @@ const useGameWebSocket = () => {
       { username: username }, // 헤더에 username 추가
       frame => {
         console.log("게임웹소켓 연결 완료, frame:", frame);
+
+        // 재연결 시도 횟수 초기화
+        reconnectAttempts.current = 0;
 
         // 메시지 구독 설정
         stompClient.current.subscribe(
@@ -63,18 +95,23 @@ const useGameWebSocket = () => {
       },
       error => {
         console.error("STOMP connection error:", error);
+        handleDisconnect();
       }
     );
+
+    socket.onclose = () => {
+      console.log("WebSocket 연결이 종료되었습니다.");
+      handleDisconnect();
+    };
   };
 
   const disconnect = () => {
-    if (
-      stompClient.current &&
-      stompClient.current.ws.readyState === WebSocket.OPEN
-    ) {
-      stompClient.current.disconnect(() => {
-        console.log("Disconnect");
-      });
+    if (stompClient.current) {
+      if (stompClient.current.ws.readyState === WebSocket.OPEN) {
+        stompClient.current.disconnect(() => {
+          console.log("Disconnect");
+        });
+      }
       stompClient.current = null;
     }
   };
