@@ -57,7 +57,7 @@ import { BASE_URL, WS_BASE_URL } from "@/constants/baseURL";
 
 const APPLICATION_SERVER_URL =
   process.env.NODE_ENV === "production"
-    ? BASE_URL
+    ? BASE_URL + "/cam/"
     : "http://localhost:8080/cam/";
 
 let count = 1;
