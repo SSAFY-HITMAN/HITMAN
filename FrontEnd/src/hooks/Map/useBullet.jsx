@@ -1,10 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
+import { GameContext } from "@/context/GameContext";
 
 const useBullet = () => {
-  const [bullet, setBullet] = useState(() => {
-    const savedBullet = sessionStorage.getItem("bullets");
-    return savedBullet !== null ? parseInt(savedBullet, 10) : 0;
-  }); // 총알 수
+  const { bullet, setBullet } = useContext(GameContext);
+
   const [isCooldown, setIsCooldown] = useState(false); // 재사용 대기시간 여부
   const COOLDOWN = 3000; // 재발사 시간 3초
 

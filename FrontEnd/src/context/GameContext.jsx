@@ -60,11 +60,6 @@ export const GameProvider = ({ children }) => {
       done: true,
     },
   ]); // 미션 목록
-  const [itemList, setItemList] = useState([
-    { itemId: 1, count: 0 }, // 스텔스 망토 (GPS)
-    { itemId: 2, count: 0 }, // 방해 폭탄 (screen)
-    { itemId: 3, count: 0 }, // 강화 총알
-  ]);
   const [playerCount, setPlayerCount] = useState(() => {
     const savedPlayerCount = sessionStorage.getItem("playerCount");
     return savedPlayerCount !== null ? parseInt(savedPlayerCount, 10) : null;
@@ -81,6 +76,22 @@ export const GameProvider = ({ children }) => {
   const DISTANCE_ENHANCED_BULLET = 10; // 강화 총알 거리
   const [distToCatch, setDistToCatch] = useState(DISTANCE_TO_CATCH);
 
+  // 총알 관리
+  const [bullet, setBullet] = useState(() => {
+    const savedBullet = sessionStorage.getItem("bullets");
+    return savedBullet !== null ? parseInt(savedBullet, 10) : 0;
+  }); // 총알 수
+
+  // GamePlay.jsx 진입 시 fetch 함수 호출로 아이템 개수는 새로 세팅됨
+  const [itemList, setItemList] = useState([
+    { itemId: 1, count: 0 }, // 스텔스 망토 (GPS)
+    { itemId: 2, count: 0 }, // 방해 폭탄 (screen)
+    { itemId: 3, count: 0 }, // 강화 총알
+  ]);
+  const [blockGPSCount, setBlockGPSCount] = useState(0);
+  const [blockScreenCount, setBlockScreenCount] = useState(0);
+  const [enhancedBulletCount, setEnhancedBulletCount] = useState(0);
+
   // 위치 보정
   const GET_POSITION_COUNT = 5;
 
@@ -90,9 +101,9 @@ export const GameProvider = ({ children }) => {
 
   useEffect(() => {
     myLocationRef.current = myLocation;
-    console.log(
-      `myLocation: ${myLocationRef.current.lat} ${myLocationRef.current.lng}`
-    );
+    // console.log(
+    //   `myLocation: ${myLocationRef.current.lat} ${myLocationRef.current.lng}`
+    // );
   }, [myLocation]);
 
   useEffect(() => {
@@ -242,6 +253,14 @@ export const GameProvider = ({ children }) => {
         setDistToCatch,
         DISTANCE_TO_CATCH,
         DISTANCE_ENHANCED_BULLET,
+        bullet,
+        setBullet,
+        blockGPSCount,
+        setBlockGPSCount,
+        blockScreenCount,
+        setBlockScreenCount,
+        enhancedBulletCount,
+        setEnhancedBulletCount,
       }}
     >
       {children}

@@ -62,12 +62,22 @@ const APPLICATION_SERVER_URL =
 
 let count = 1;
 const GamePlay = () => {
+  const {
+    gameRoomId: gameId,
+    isAlive,
+    gameStatus,
+    bullet,
+    blockScreen,
+    toOffChatting,
+    blockGPSCount,
+    blockScreenCount,
+    enhancedBulletCount,
+  } = useContext(GameContext);
+
   //===========================   ITEM   ============================
 
   const username = localStorage.getItem("username");
-  const { gameRoomId: gameId, isAlive } = useContext(GameContext);
-  const { blockGPSCount, blockScreenCount, enhancedBulletCount, useItem } =
-    useItemCount();
+  const { useItem } = useItemCount();
 
   // // 테스트 데이터
   // const blockGPSCount = 1;
@@ -97,12 +107,11 @@ const GamePlay = () => {
 
   //===========================   GPS   ============================
 
-  const { gameStatus, blockScreen, toOffChatting } = useContext(GameContext);
   const { fetch, timeUntilStart, checkItemEffect } = useStartGame();
   const { startSendingGPS } = useSendGPS();
   const { isAbleToCatchTarget, handleOnClickCatchTarget } = useCatchTarget();
   const { connect, disconnect } = useGameWebSocket();
-  const { bullet, isCooldown, shootBullet } = useBullet();
+  const { isCooldown, shootBullet } = useBullet();
 
   const [camChatting, setCamChatting] = useState(false);
   const [isItemClicked, setIsItemClicked] = useState(false);
@@ -142,7 +151,7 @@ const GamePlay = () => {
   const [subscribers, setSubscribers] = useState([]);
   const [currentVideoDevice, setCurrentVideoDevice] = useState(undefined);
   const audioEnabled = false;
-  const ws = useRef(null)
+  const ws = useRef(null);
 
   const navigate = useNavigate();
   const { gameRoomId: paramGameRoomId } = useParams(); // 추가
@@ -151,8 +160,7 @@ const GamePlay = () => {
   const fromUser = useRef("");
   const toUser = useRef("");
 
-  useEffect(() => {
-  }, [toUser, fromUser]);
+  useEffect(() => {}, [toUser, fromUser]);
 
   useEffect(() => {
     const handleBeforeUnload = () => {
@@ -172,15 +180,15 @@ const GamePlay = () => {
     }
   };
 
-  const handleButtonClick = async (receiver) => {
+  const handleButtonClick = async receiver => {
     const publisherName = publisher.stream.connection.data;
-    const parsedData = JSON.parse(publisherName)
+    const parsedData = JSON.parse(publisherName);
     const parsedPublisherName = parsedData.clientData;
 
     if (ws.current && ws.current.readyState === WebSocket.OPEN) {
       try {
         const message = {
-          type: 'offer',
+          type: "offer",
           fromUser: parsedPublisherName,
           toUser: receiver,
           curRoom: paramGameRoomId,
@@ -200,7 +208,7 @@ const GamePlay = () => {
       if (ws.current.readyState === WebSocket.OPEN) {
         try {
           const message = {
-            type: 'answer',
+            type: "answer",
             fromUser: toUser.current,
             toUser: fromUser.current,
             curRoom: paramGameRoomId,
@@ -208,23 +216,22 @@ const GamePlay = () => {
           };
           ws.current.send(`click:${JSON.stringify(message)}`);
         } catch (error) {
-          console.error('Error creating or sending answer:', error);
+          console.error("Error creating or sending answer:", error);
         }
       } else {
-        console.error('WebSocket is not open.');
+        console.error("WebSocket is not open.");
       }
     } else {
-      console.error('WebSocket is not initialized.');
-    } 
+      console.error("WebSocket is not initialized.");
+    }
     await leaveRoomAndNavigate();
   };
 
   const leaveSession = () => {
-
-    if(room.data){
+    if (room.data) {
       room.data.disconnect();
     }
-    
+
     setSession(undefined);
     setSubscribers([]);
     setMainStreamManager(undefined);
@@ -233,16 +240,17 @@ const GamePlay = () => {
 
   const leaveRoomAndNavigate = async () => {
     leaveSession();
-    navigate('/cam-chatting', {
-      state: [{
-        id: username,
-        name: username,
-        gameRoom: paramGameRoomId,
-        camChatting: "privateRoomName",
-      }],
+    navigate("/cam-chatting", {
+      state: [
+        {
+          id: username,
+          name: username,
+          gameRoom: paramGameRoomId,
+          camChatting: "privateRoomName",
+        },
+      ],
     });
-
-  }
+  };
 
   const deleteSubscriber = streamManager => {
     setSubscribers(prevSubscribers =>
@@ -279,8 +287,7 @@ const GamePlay = () => {
         console.warn(exception);
       });
 
-      newSession.on("sessionDisconnected", async event => {
-      });
+      newSession.on("sessionDisconnected", async event => {});
       setSession(newSession);
       room.data = newSession;
     }
@@ -330,30 +337,28 @@ const GamePlay = () => {
         ws.current = new WebSocket(`${WS_BASE_URL}/ChattingServer`);
         ws.current.onopen = () => {
           const message = {
-            username: username
+            username: username,
           };
-          ws.current.send(`send:${JSON.stringify(message)}`)
+          ws.current.send(`send:${JSON.stringify(message)}`);
         };
 
-        ws.current.onmessage = (event) => {
-          const messageString = event.data.replace('click:', '').trim(); 
+        ws.current.onmessage = event => {
+          const messageString = event.data.replace("click:", "").trim();
           const message = JSON.parse(messageString);
 
           fromUser.current = message.fromUser;
           toUser.current = message.toUser;
-          curRoom: paramGameRoomId,
-          privateRoom.current = message.privateRoom;
-          
-          console.log(message)
-          if (message.type === "offer"){
-              window.alert("비밀채팅으로 초대하셨습니다.");
-              handleAcceptClick();      
-          } else if (message.type === "answer"){
+          curRoom: paramGameRoomId, (privateRoom.current = message.privateRoom);
+
+          console.log(message);
+          if (message.type === "offer") {
+            window.alert("비밀채팅으로 초대하셨습니다.");
+            handleAcceptClick();
+          } else if (message.type === "answer") {
             window.alert("초대에 응답했습니다");
             leaveRoomAndNavigate();
-          }else if (message.type === "refuse"){
-
-          } 
+          } else if (message.type === "refuse") {
+          }
         };
 
         ws.current.onclose = () => {
@@ -454,7 +459,6 @@ const GamePlay = () => {
 
   return (
     <>
-      
       {timeUntilStart > 0 && (
         <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black bg-opacity-75 text-center text-3xl leading-relaxed text-white">
           게임 시작까지
@@ -508,7 +512,7 @@ const GamePlay = () => {
           <MapComponent />
           <div className="item-center flex justify-center">
             <div
-              className={`relative mr-4 h-[28vh] w-[28vh] overflow-hidden ${bullet && !isCooldown && isAbleToCatchTarget ? "" : "pointer-events-none cursor-not-allowed opacity-30"}`}
+              className={`relative mr-4 h-[28vh] w-[28vh] overflow-hidden ${bullet > 0 && !isCooldown && isAbleToCatchTarget ? "" : "pointer-events-none cursor-not-allowed opacity-30"}`}
             >
               <img
                 src={catchButton}
@@ -658,9 +662,9 @@ const GamePlay = () => {
                       //   {clientData}
                       // </Button>
                       <div className="flex justify-center">
-                        <Button 
+                        <Button
                           key={idx}
-                          onClick={() => handleButtonClick(clientData)} 
+                          onClick={() => handleButtonClick(clientData)}
                         >
                           {clientData}
                         </Button>

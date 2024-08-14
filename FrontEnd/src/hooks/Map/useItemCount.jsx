@@ -8,15 +8,16 @@ const ITEM_IDS = {
 };
 
 const useItemCount = () => {
-  const { itemList } = useContext(GameContext);
+  const {
+    itemList,
+    setBlockGPSCount,
+    setBlockScreenCount,
+    setEnhancedBulletCount,
+  } = useContext(GameContext);
 
   // 1. 스텔스 망토 blockGPSCount
   // 2. 방해 폭탄 blockScreenCount
   // 3. 강화 총알 enhancedBulletCount
-
-  const [blockGPSCount, setBlockGPSCount] = useState(0);
-  const [blockScreenCount, setBlockScreenCount] = useState(0);
-  const [enhancedBulletCount, setEnhancedBulletCount] = useState(0);
 
   // itemList 최신화 시(axios response) 갱신
   useEffect(() => {
@@ -32,9 +33,13 @@ const useItemCount = () => {
       item => item.itemId == ITEM_IDS.ENHANCED_BULLET
     ); // 강화 총알의 itemId
 
-    setBlockGPSCount(blockGPSItem ? blockGPSItem.count : 0);
-    setBlockScreenCount(blockScreenItem ? blockScreenItem.count : 0);
-    setEnhancedBulletCount(enhancedBulletItem ? enhancedBulletItem.count : 0);
+    setBlockGPSCount(blockGPSItem ? parseInt(blockGPSItem.count, 10) : 0);
+    setBlockScreenCount(
+      blockScreenItem ? parseInt(blockScreenItem.count, 10) : 0
+    );
+    setEnhancedBulletCount(
+      enhancedBulletItem ? parseInt(enhancedBulletItem.count, 10) : 0
+    );
   }, [itemList]);
 
   // 아이템 획득
@@ -73,9 +78,6 @@ const useItemCount = () => {
   };
 
   return {
-    blockGPSCount,
-    blockScreenCount,
-    enhancedBulletCount,
     getItem,
     useItem,
   };
