@@ -33,6 +33,7 @@ const useGameWebSocket = () => {
     console.log("test");
     console.log(`${WS_BASE_URL}/gameRoom/${gameRoomId}`);
     const socket = new WebSocket(`${WS_BASE_URL}/gameRoom/${gameRoomId}`);
+
     stompClient.current = Stomp.over(socket);
 
     // 사용자 이름 가져오기
@@ -48,9 +49,14 @@ const useGameWebSocket = () => {
         stompClient.current.subscribe(
           `/topic/play/${gameRoomId}`,
           serverMsg => {
-            const msg = JSON.parse(serverMsg.body);
-            console.log("웹소켓 메시지 : " + msg);
-            handleAlertMessage(msg);
+            // 메시지 구독여부 디버깅
+            try {
+              const msg = JSON.parse(serverMsg.body);
+              console.log("웹소켓 메시지 수신 완료:", msg); // 이 메시지가 안나오면 구독 경로 또는 WebSocket 서버 설정 문제
+              handleAlertMessage(msg);
+            } catch (error) {
+              console.error("웹소켓 메시지 수신 실패:", error);
+            }
           }
         );
       },
