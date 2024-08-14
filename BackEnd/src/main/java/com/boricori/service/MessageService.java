@@ -39,7 +39,7 @@ public class MessageService {
   }
 
   public void changeTarget(String username, String newTarget, long gameId){
-    String jsonPayload = String.format("{\"msgType\":\"start\", \"hunter\":\"%s\", \"target\":\"%s\"}", username, newTarget);
+    String jsonPayload = String.format("{\"msgType\":\"changeTarget\", \"hunter\":\"%s\", \"target\":\"%s\"}", username, newTarget);
     messagingTemplate.convertAndSend(String.format("/topic/play/%d", gameId), jsonPayload);
   }
 
