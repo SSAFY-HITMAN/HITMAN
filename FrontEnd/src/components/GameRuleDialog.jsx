@@ -9,7 +9,7 @@ import {
 const GameRuleDialog = ({ isOpen, onClose }) => {
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="w-80">
+      <DialogContent className="w-[90%] rounded-2xl">
         <DialogHeader>
           <DialogTitle className="mb-4 text-center text-2xl font-bold">
             게임 규칙

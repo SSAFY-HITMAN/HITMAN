@@ -103,7 +103,7 @@ const Rank = () => {
         <GoBackButton to="/home" />
         <div className="flex w-full flex-col items-center">
           <div className="m-8 flex items-center justify-center text-4xl font-bold">
-            <span className="mr-4 bg-gradient-to-r from-rose-700 to-rose-200 bg-clip-text text-transparent">
+            <span className="mr-4 bg-gradient-to-r from-rose-600 to-rose-400 bg-clip-text text-transparent">
               HITMAN
             </span>
             순위

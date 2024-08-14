@@ -2,52 +2,63 @@ import { useState, useEffect } from "react";
 import axiosInstance from "@/api/axiosInstance";
 
 const useGetRank = () => {
-  const [rankingList, setRankingList] = useState([
+  // const [rankingList, setRankingList] = useState([]);
+
+  // 더미 데이터
+  const rankingList = [
     {
       id: "강해린",
       score: 1050,
     },
     {
       id: "다니엘",
-      score: 100,
+      score: 1004,
     },
     {
       id: "김민지",
-      score: 90,
+      score: 942,
     },
     {
       id: "하니",
-      score: 80,
+      score: 879,
     },
     {
       id: "이혜인",
-      score: 70,
+      score: 852,
     },
     {
       id: "카리나",
-      score: 60,
+      score: 772,
     },
     {
       id: "윈터",
-      score: 50,
+      score: 693,
     },
     {
       id: "닝닝",
-      score: 40,
+      score: 662,
     },
     {
       id: "지젤",
-      score: 30,
+      score: 620,
     },
     {
       id: "안유진",
-      score: 20,
+      score: 590,
     },
     {
       id: "장원영",
-      score: 20,
+      score: 586,
     },
-  ]);
+    {
+      id: "제니",
+      score: 493,
+    },
+    {
+      id: "로제",
+      score: 475,
+    },
+  ];
 
   useEffect(() => {
     (async () => {
@@ -55,7 +66,7 @@ const useGetRank = () => {
         const response = await axiosInstance.get("/user/ranks");
         if (response.status == 200) {
           const data = response.data;
-          setRankingList(data);
+          // setRankingList(data);
         } else {
           alert(
             "랭킹 조회 요청에 대한 응답 수신에 실패했습니다. 나중에 다시 시도해주세요."

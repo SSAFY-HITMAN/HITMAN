@@ -33,7 +33,7 @@ const Room = () => {
 
   const { handleStartGame } = useReadyGame();
 
-  // 테스트를 위한 최소 인원 제한 없음 
+  // 테스트를 위한 최소 인원 제한 없음
   const handleStartButtonClick = () => {
     // 테스트용 (추후 "3"으로 복구 필요)
     if (gameRoomUsers.length >= 0) {
@@ -118,14 +118,17 @@ const Room = () => {
         ) : isChief ? (
           // 방장이면서 게임이 시작되지 않은 경우: QR 코드와 방 코드 표시
           <>
-            {qrCode && (
+            {/* QR 코드 미사용 */}
+            {/* {qrCode && (
               <img
                 src={`data:image/png;base64,${qrCode}`}
                 alt="QR code"
                 className="mb-8 h-40 w-40"
               />
-            )}
-            <div className="mb-4 text-2xl font-bold">방 코드 : {gameCode}</div>
+            )} */}
+            <div className="mb-12 text-center text-3xl font-bold leading-loose">
+              방 코드 : {gameCode}
+            </div>
           </>
         ) : (
           // 플레이어면서 게임이 시작되지 않은 경우: 대기 메시지와 로딩 스피너 표시
@@ -138,19 +141,25 @@ const Room = () => {
             />
             <div className="mb-12 text-center text-xl leading-loose">
               방장이 게임을 시작할 때까지
-              <br /> 기다려주세요!
+              <br /> 잠시만 기다려주세요 !
             </div>
           </>
         )}
 
-        <Card className="h-60 w-80">
-          <CardHeader className="text-center">
-            <CardTitle>참가자 목록</CardTitle>
+        <Card className="h-[45vh] w-80 rounded-2xl">
+          <CardHeader>
+            <CardTitle className="mb-4 text-center font-bold">
+              참가자 목록
+            </CardTitle>
+            <hr />
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-2 gap-4">
               {gameRoomUsers.map((user, index) => (
-                <div key={index} className="text-center font-bold">
+                <div
+                  key={index}
+                  className="rounded-2xl p-4 text-center text-xl font-bold"
+                >
                   {user}
                 </div>
               ))}
