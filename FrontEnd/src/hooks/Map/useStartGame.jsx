@@ -51,9 +51,16 @@ const useStartGame = () => {
           clearInterval(intervalId);
           setTimeUntilStart(0);
           setGameStatus(true);
-          setIsAlive(true);
           sessionStorage.setItem("gameStatus", true);
-          sessionStorage.setItem("isAlive", true);
+
+          const savedIsAlive = sessionStorage.getItem("isAlive");
+          if (savedIsAlive == "true") {
+            setIsAlive(true);
+            sessionStorage.setItem("isAlive", true);
+          } else {
+            setIsAlive(false);
+            sessionStorage.setItem("isAlive", false);
+          }
         } else {
           setTimeUntilStart(updatedTimeUntilStart);
         }
