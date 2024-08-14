@@ -117,10 +117,10 @@ const useStartGame = () => {
   };
 
   const checkItemEffect = () => {
-    const expirationTime = parseInt(
-      sessionStorage.getItem("effectExpirationTime"),
-      10
-    );
+    const expirationTime = sessionStorage.getItem("effectExpirationTime")
+      ? parseInt(sessionStorage.getItem("effectExpirationTime"), 10)
+      : null;
+
     const currentTime = Date.now();
 
     if (expirationTime) {
