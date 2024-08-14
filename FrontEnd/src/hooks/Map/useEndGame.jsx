@@ -25,6 +25,7 @@ const useEndGame = () => {
 
   const endGame = data => {
     removeSessionStorageList.forEach(value => {
+      console.log(`sessionStorage.removeItem: ${value}`);
       sessionStorage.removeItem(value);
     });
 
