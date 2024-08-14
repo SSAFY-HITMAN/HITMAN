@@ -54,12 +54,12 @@ public class MessageService {
 
   public void endGameScore(GameResult result) {
     try {
-      String JSONresult = mapper.writeValueAsString(result.getResult());
+        String JSONresult = mapper.writeValueAsString(result.getResult());
       String jsonPayload = String.format("{\"msgType\":\"end\", "
           + "\"gameId\":\"%d\", "
           + "\"winner1\":\"%s\", "
           + "\"winner2\":\"%s\", "
-          + "\"result\":\"%s\"}"
+          + "\"result\":%s}"
           , result.getGameId(), result.getWinner1(), result.getWinner2(), JSONresult);
       messagingTemplate.convertAndSend(String.format("/topic/play/%d", result.getGameId()), jsonPayload);
     } catch (JsonProcessingException e) {
