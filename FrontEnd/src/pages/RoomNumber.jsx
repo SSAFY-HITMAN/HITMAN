@@ -19,19 +19,15 @@ const RoomNumber = () => {
 
     try {
       const response = await axiosInstance.get(`/gameroom/${gameCode}`);
+      const { gameId, result } = response.data;
 
-      if (response.status == 200) {
-        const { gameId } = response.data;
-        navigate(`/room/${gameId}`);
-      } else if (response.status === 400) {
+      if (result == "Full") {
         setError("인원이 다 차서 들어갈 수 없습니다");
       } else {
-        setError("해당하는 방이 없습니다.");
+        navigate(`/room/${gameId}`);
       }
     } catch (err) {
-      setError(
-        "서버와 통신하는 중에 문제가 발생했습니다. 나중에 다시 시도해주세요."
-      );
+      setError("유효하지 않은 입장코드입니다. 다시 확인해주세요.");
     }
   };
 

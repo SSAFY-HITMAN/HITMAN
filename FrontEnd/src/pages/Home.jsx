@@ -36,8 +36,10 @@ const Home = () => {
   const username = localStorage.getItem("username");
 
   const handleLogout = () => {
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("refreshToken");
+    sessionStorage.clear();
+    localStorage.clear();
+    document.cookie =
+      "refreshToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;"; // 쿠키 삭제
 
     // 카카오 로그아웃
     window.Kakao.Auth.logout()

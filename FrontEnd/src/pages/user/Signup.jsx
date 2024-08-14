@@ -37,6 +37,7 @@ const Signup = () => {
       if (response.status == 200) {
         setUsernameChecked(true);
         setError(""); // 성공하면 에러 초기화
+        alert("사용 가능한 닉네임입니다.");
       } else {
         setUsernameChecked(false);
         setError("닉네임이 이미 사용 중입니다.");
@@ -56,6 +57,7 @@ const Signup = () => {
       if (response.status == 200) {
         setEmailChecked(true);
         setError(""); // 성공하면 에러 초기화
+        alert("사용 가능한 이메일입니다.");
       } else {
         setEmailChecked(false);
         setError("이메일이 이미 사용 중입니다.");
