@@ -18,13 +18,21 @@ for (const path in importAllImages) {
 const Rank = () => {
   const rankingList = useGetRank();
   const rankList = JSON.stringify(rankingList);
-  const jsonObject = JSON.parse(rankList).rankingList;
+  const jsonObject = (JSON.parse(rankList)?.rankingList || []).map(user => ({
+    id: user?.id || "Unknown",
+    ...user,
+  })); // undefined 에러 회피
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedUserId, setSelectedUserId] = useState(null);
   const [isProfileDialogOpen, setIsProfileDialogOpen] = useState(false);
   const [userAvatars, setUserAvatars] = useState({});
 
   useEffect(() => {
+    if (!jsonObject || !Array.isArray(jsonObject)) {
+      console.error("jsonObject is not an array or is undefined");
+      return;
+    }
+
     const loadUserAvatars = () => {
       const storedProfilePics =
         JSON.parse(localStorage.getItem("profile_pictures")) || {};
@@ -51,14 +59,14 @@ const Rank = () => {
       setUserAvatars(avatars);
     };
 
-    if (images.length > 0) {
+    if (images.length > 0 && jsonObject.length > 0) {
       loadUserAvatars();
     }
   }, [images, jsonObject]);
 
-  const filteredList = jsonObject.filter(user =>
-    user.id.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredList = jsonObject
+    .filter(user => user && user.id) // user와 user.id가 정의되어 있는지 확인
+    .filter(user => user.id.toLowerCase().includes(searchTerm.toLowerCase()));
 
   const winnerClass = idx =>
     searchTerm === "" && idx + 1 === 1
