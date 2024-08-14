@@ -11,6 +11,7 @@ const useStartGame = () => {
     setAreaCenter,
     setTargetId,
     setIsAlive,
+    setPlayerCount,
     setMissionList,
     setItemList,
     setBullet,
@@ -93,11 +94,13 @@ const useStartGame = () => {
         const newTargetId = metadata.targetName;
         const newGamePlayTime = parseInt(metadata.gameInfo.time, 10) * 60; // 초 단위
         const newBullet = parseInt(metadata.bullets, 10);
+        const newPlayerCount = parseInt(metadata.playerCount);
 
         console.log(`newGamePlayTime: ${newGamePlayTime}`);
         console.log(`newBullet: ${newBullet}`);
 
         // 상태 업데이트
+        setPlayerCount(newPlayerCount);
         setAreaRadius(newAreaRadius);
         setAreaCenter(newAreaCenter);
         setTargetId(newTargetId);
