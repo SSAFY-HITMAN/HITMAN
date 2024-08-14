@@ -27,15 +27,21 @@ const GameHeader = ({ switchCamera, publisher, handleMainVideoStream }) => {
   const handleMissionClick = missionId => {
     setOpenCamera(missionId);
     setIsSpread(true); // 드롭다운을 계속 열어둠
+
+    if (currentCameraFacingMode !== "environment") {
+      setCurrentCameraFacingMode("environment");
+      switchCamera("environment"); // 후방 카메라로 전환
+    }
   };
 
   useEffect(() => {
-    if (openCamera !== null) {
-      switchCamera(); // 후방 카메라로 전환
-    } else {
-      switchCamera(); // 정면 카메라로 다시 전환
+    if (!openCamera && currentCameraFacingMode !== "user") {
+      setCurrentCameraFacingMode("user");
+      switchCamera("user"); // 정면 카메라로 다시 전환
     }
-  }, [openCamera, switchCamera]);
+  }, [openCamera, switchCamera, currentCameraFacingMode]);
+
+
 
   return (
     <div className="flex flex-col items-center justify-center bg-gradient-to-r from-blue-700 to-teal-700 p-4">
