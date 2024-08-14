@@ -36,12 +36,12 @@ const GameHeader = ({ switchCamera, publisher, handleMainVideoStream }) => {
     }
   };
 
-  useEffect(() => {
-    if (!openCamera && currentCameraFacingMode !== "user") {
-      setCurrentCameraFacingMode("user");
-      switchCamera("user"); // 정면 카메라로 다시 전환
-    }
-  }, [openCamera, switchCamera, currentCameraFacingMode]);
+  // useEffect(() => {
+  //   if (!openCamera && currentCameraFacingMode !== "user") {
+  //     setCurrentCameraFacingMode("user");
+  //     switchCamera("user"); // 정면 카메라로 다시 전환
+  //   }
+  // }, [openCamera, switchCamera, currentCameraFacingMode]);
 
 
 
@@ -137,6 +137,7 @@ const GameHeader = ({ switchCamera, publisher, handleMainVideoStream }) => {
                       publisher={publisher} // publisher 전달
                       missionId={mission.missionId}
                       handleMainVideoStream={handleMainVideoStream} // handleMainVideoStream 전달
+                      switchCamera={switchCamera}
                     />
                   </Popover.Content>
                 </Popover.Root>

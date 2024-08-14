@@ -11,6 +11,7 @@ import UserVideoComponent from "@/hooks/WebRTC/UserVideoComponent";
 
 // missionId 추가
 const PopOverCamera = ({
+  switchCamera,
   open,
   publisher,
   missionId,
@@ -22,6 +23,21 @@ const PopOverCamera = ({
   const { getItem } = useItemCount();
   const { getBullet } = useBullet();
   const { gameRoomId: paramGameRoomId } = useParams();
+
+
+  // 새로운 미션이 시작될 때 후면 카메라로 전환
+  useEffect(() => {
+    if (open) {
+      // 미션이 열렸을 때 후면 카메라로 전환
+      switchCamera("environment");
+    }
+
+    // 컴포넌트 언마운트 시 카메라를 원래 상태로 복원
+    return () => {
+      switchCamera("user"); // 정면 카메라로 전환
+    };
+  }, [open, switchCamera]);
+
 
   const captureImage = () => {
     setIsButtonDisabled(true); // 수정부분

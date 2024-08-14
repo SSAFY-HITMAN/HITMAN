@@ -421,88 +421,90 @@ const GamePlay = () => {
   }, []);
 
 
-  // const switchCamera = useCallback(async () => {
-  //   if (!currentVideoDevice || !session) return;
-
-  //   try {
-  //     const OV = new OpenVidu(); // switchCamera에서도 OV를 선언
-  //     const devices = await OV.getDevices();
-  //     const videoDevices = devices.filter(
-  //       device => device.kind === "videoinput"
-  //     );
-
-  //     if (videoDevices.length > 1) {
-  //       const newVideoDevice = videoDevices.find(
-  //         device => device.deviceId !== currentVideoDevice.deviceId
-  //       );
-
-  //       if (newVideoDevice) {
-  //         const newPublisher = OV.initPublisher(undefined, {
-  //           videoSource: newVideoDevice.deviceId,
-  //           publishAudio: true,
-  //           publishVideo: true,
-  //           mirror: true,
-  //         });
-
-  //         await session.unpublish(mainStreamManager);
-  //         await session.publish(newPublisher);
-
-  //         setCurrentVideoDevice(newVideoDevice);
-  //         setMainStreamManager(newPublisher);
-  //         setPublisher(newPublisher);
-  //       }
-  //     }
-  //   } catch (e) {
-  //     console.error(e);
-  //   }
-  // }, [session, mainStreamManager, currentVideoDevice]);
-
-
-  const switchCamera = useCallback(async (facingMode = "environment") => {
+  const switchCamera = useCallback(async () => {
     if (!session) return;
   
     try {
-      // 현재 카메라가 전환 중인지 여부를 나타내는 상태를 추가합니다.
-      let isSwitching = true;
-  
-      // 기존 카메라 스트림을 유지하면서 새로운 카메라 스트림을 준비합니다.
-      const newStream = await navigator.mediaDevices.getUserMedia({
+      // 후면 카메라 스트림을 가져옵니다.
+      const stream = await navigator.mediaDevices.getUserMedia({
         video: {
-          facingMode: { exact: facingMode },
+          facingMode: { exact: "environment" }, // 후면 카메라
         },
-        audio: true, // 오디오 설정 유지
+        audio: false, // 오디오 설정 유지
       });
   
       const OV = new OpenVidu();
   
+      // 새로운 퍼블리셔를 초기화하고, 비디오 및 오디오 소스로 가져온 스트림을 설정합니다.
       const newPublisher = OV.initPublisher(undefined, {
-        videoSource: newStream.getVideoTracks()[0],
-        audioSource: newStream.getAudioTracks()[0],
+        videoSource: stream.getVideoTracks()[0], // 스트림에서 비디오 트랙을 가져옵니다.
+        audioSource: stream.getAudioTracks()[0], // 스트림에서 오디오 트랙을 가져옵니다.
         publishAudio: true,
         publishVideo: true,
-        mirror: facingMode === "user", // 정면 카메라일 경우 거울 효과 적용
-        resolution: "640x480",
-        frameRate: 30,
+        mirror: false, // 후면 카메라일 경우 거울 효과 제거
+        resolution: "640x480", // 기존 설정 유지
+        frameRate: 30, // 기존 설정 유지
       });
   
-      // 새 스트림이 준비된 후에 기존 스트림을 언퍼블리시합니다.
-      if (isSwitching && mainStreamManager) {
-        await session.unpublish(mainStreamManager);
-      }
-  
+      // 기존 퍼블리셔를 언퍼블리시하고 새로운 퍼블리셔를 퍼블리시합니다.
+      await session.unpublish(mainStreamManager);
       await session.publish(newPublisher);
   
       // 상태 업데이트
       setMainStreamManager(newPublisher);
       setPublisher(newPublisher);
-  
-      // 카메라 전환 완료
-      isSwitching = false;
-  
     } catch (e) {
       console.error("Error switching camera: ", e);
     }
   }, [session, mainStreamManager]);
+  
+
+
+  // const switchCamera = useCallback(async (facingMode = "environment") => {
+  //   if (!session) return;
+  
+  //   try {
+  //     // 현재 카메라가 전환 중인지 여부를 나타내는 상태를 추가합니다.
+  //     let isSwitching = true;
+  
+  //     // 기존 카메라 스트림을 유지하면서 새로운 카메라 스트림을 준비합니다.
+  //     const newStream = await navigator.mediaDevices.getUserMedia({
+  //       video: {
+  //         facingMode: { exact: facingMode },
+  //       },
+  //       audio: true, // 오디오 설정 유지
+  //     });
+  
+  //     const OV = new OpenVidu();
+  
+  //     const newPublisher = OV.initPublisher(undefined, {
+  //       videoSource: newStream.getVideoTracks()[0],
+  //       audioSource: newStream.getAudioTracks()[0],
+  //       publishAudio: true,
+  //       publishVideo: true,
+  //       mirror: facingMode === "user", // 정면 카메라일 경우 거울 효과 적용
+  //       resolution: "640x480",
+  //       frameRate: 30,
+  //     });
+  
+  //     // 새 스트림이 준비된 후에 기존 스트림을 언퍼블리시합니다.
+  //     if (isSwitching && mainStreamManager) {
+  //       await session.unpublish(mainStreamManager);
+  //     }
+  
+  //     await session.publish(newPublisher);
+  
+  //     // 상태 업데이트
+  //     setMainStreamManager(newPublisher);
+  //     setPublisher(newPublisher);
+  
+  //     // 카메라 전환 완료
+  //     isSwitching = false;
+  
+  //   } catch (e) {
+  //     console.error("Error switching camera: ", e);
+  //   }
+  // }, [session, mainStreamManager]);
   
 
   const getToken = async () => {
