@@ -38,7 +38,10 @@ const GameHeader = ({ publisher, handleMainVideoStream }) => {
               타겟 : <span className="text-red-500">{targetId}</span>,
             </div>
             <div className="text-center font-bold">
-              남은 사람 : <span className="text-rose-500">{playerCount}</span>{" "}
+              남은 사람 :{" "}
+              <span className="text-rose-500">
+                {isNaN(playerCount) ? 0 : playerCount}
+              </span>{" "}
               명
             </div>
           </div>
