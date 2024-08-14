@@ -456,28 +456,29 @@ const GamePlay = () => {
   //   }
   // }, [session, mainStreamManager, currentVideoDevice]);
 
+
   const switchCamera = useCallback(async () => {
-    if (!currentVideoDevice || !session) return; // currentVideoDevice 검사는 필요 없음
+    if (!session) return;
   
     try {
+      // 후면 카메라 스트림을 직접 가져옵니다.
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: {
+          facingMode: { exact: "environment" },
+        },
+        audio: true, // 오디오 설정 유지
+      });
+  
       const OV = new OpenVidu();
   
-      // 후면 카메라로 전환하려면 facingMode를 "environment"로 설정합니다.
-      const constraints = {
-        video: {
-          facingMode: { exact: "environment" }, // 후면 카메라
-        },
-      };
-  
       const newPublisher = OV.initPublisher(undefined, {
-        videoSource: undefined, // videoSource를 undefined로 설정하면 constraints 사용
-        audioSource: undefined, // 오디오 설정은 기존대로 유지
+        videoSource: stream.getVideoTracks()[0], // 스트림에서 비디오 트랙을 가져옵니다.
+        audioSource: stream.getAudioTracks()[0], // 스트림에서 오디오 트랙을 가져옵니다.
         publishAudio: true,
         publishVideo: true,
         mirror: false, // 후면 카메라일 경우 거울 효과 제거
         resolution: "640x480", // 기존 설정 유지
         frameRate: 30, // 기존 설정 유지
-        constraints: constraints, // constraints 전달
       });
   
       // 기존의 퍼블리셔를 언퍼블리시하고 새로운 퍼블리셔를 퍼블리시
@@ -488,10 +489,10 @@ const GamePlay = () => {
       setMainStreamManager(newPublisher);
       setPublisher(newPublisher);
     } catch (e) {
-      console.error(e);
+      console.error("Error switching camera: ", e);
     }
-  }, [session, mainStreamManager, currentVideoDevice]);
-  
+  }, [session, mainStreamManager]);  
+
 
   const getToken = async () => {
     const sessionId = await createSession(paramGameRoomId);
