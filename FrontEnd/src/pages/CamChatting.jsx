@@ -27,8 +27,12 @@ const CamChatting = () => {
     const [subscribers, setSubscribers] = useState([]);
     const [currentVideoDevice, setCurrentVideoDevice] = useState(undefined);
     const initializedRef = useRef(false);
+    const [timeLeft, setTimeLeft] = useState(50);  // 남은 시간을 상태로 관리
 
     const room = useRef(null);
+    const timeoutRef = useRef(null);  // 타이머를 저장하는 ref
+    const intervalRef = useRef(null);  // 시간 업데이트 인터벌을 저장하는 ref
+
     useEffect(() => {
         if (initializedRef.current) return;
 
@@ -39,7 +43,25 @@ const CamChatting = () => {
 
             joinSession(camChatting, name); // 자동으로 세션에 입장
             initializedRef.current = true;
+
+            // 50초 후에 자동으로 나가기 설정
+            timeoutRef.current = setTimeout(() => {
+                leaveRoomAndNavigate();  // 50초 후에 나가게 하는 함수 호출
+            }, 50000);  // 50,000ms = 50초
+
+            intervalRef.current = setInterval(() => {
+                setTimeLeft(prevTime => prevTime - 1);
+            }, 1000);
         }
+        return () => {
+            // 컴포넌트 언마운트 시 타이머와 인터벌을 정리
+            if (timeoutRef.current) {
+                clearTimeout(timeoutRef.current);
+            }
+            if (intervalRef.current) {
+                clearInterval(intervalRef.current);
+            }
+        };
     }, [location.state]);
 
     const handleMainVideoStream = (stream) => {
@@ -175,6 +197,12 @@ const CamChatting = () => {
                             onClick={leaveRoomAndNavigate}
                             value="방 떠나기"
                         />
+                        {/* 남은 시간 표시 */}
+                        
+                        <div>
+                            <p>남은 시간: {timeLeft}초</p>
+                        </div>
+                        
                     </div>
 
                     {mainStreamManager !== undefined ? (
@@ -183,16 +211,6 @@ const CamChatting = () => {
                         </div>
                     ) : null}
                     <div>
-                        {/* <div>
-                            {publisher !== undefined ? (
-                                <div 
-                                    onClick={() => handleMainVideoStream(publisher)}
-                                >
-                                    <UserVideoComponent streamManager={publisher} />
-                                </div>
-                            ) : null}
-                        </div> */}
-
                         <Carousel opts={{ align : "start" }}>
                             <CarouselContent>
                                 <div style={{ display: 'flex', flexWrap: 'wrap', width: '100%' }}>
