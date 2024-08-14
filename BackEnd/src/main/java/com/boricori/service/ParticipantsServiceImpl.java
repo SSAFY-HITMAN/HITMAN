@@ -28,7 +28,7 @@ public class ParticipantsServiceImpl implements ParticipantsService {
 
     List<User> gameUsers = userRepositoryImpl.getUserList(playerInfoList);
     gameUsers.forEach(user -> {
-      participantRepository.save(new GameParticipants(gameRoom, user));
+      participantRepository.save(new GameParticipants(gameRoom, user, 0));
     });
 
     return gameUsers;

@@ -20,4 +20,10 @@ public class ItemRepositoryImpl {
         .orderBy(Expressions.numberTemplate(Double.class, "function('rand')").asc())
         .fetchFirst();
   }
+
+  public List<Item> allItems(){
+    return jpaQueryFactory.select(items)
+        .from(items)
+        .fetch();
+  }
 }

@@ -86,6 +86,7 @@ public class InGameServiceImpl implements InGameService{
   public GameParticipants completeMission(Long gameId, String username, long missionId) {
     GameParticipants player = participantRepository.getByUsername(username, gameId);
     player.getBullet();
+    player.missionCompleted();
     inGameRepositoryImpl.updateMission(missionId, player);
     return player;
   }
@@ -240,5 +241,15 @@ public class InGameServiceImpl implements InGameService{
   @Transactional
   public void finishGame(long gameId){
     gameRoomRepository.findById(gameId).ifPresent(GameRoom::finish);
+  }
+
+  //임시
+  @Override
+  @Transactional
+  public void tempGiveItem(GameParticipants player) {
+    List<Item> items = itemRepositoryImpl.allItems();
+    for (Item item : items) {
+      inGameItemsRepository.save(InGameItems.builder().item(item).user(player).count(1).build());
+    }
   }
 }

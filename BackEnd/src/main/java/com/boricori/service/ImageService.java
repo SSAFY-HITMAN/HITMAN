@@ -38,12 +38,14 @@ public class ImageService {
     int red = Integer.valueOf(hexCode.substring(1, 3), 16);
     int green = Integer.valueOf(hexCode.substring(3, 5), 16);
     int blue = Integer.valueOf(hexCode.substring(5, 7), 16);
+    System.out.println("targetRGB: " + red + " " + green + " " + blue);
       for (ColorInfo color : res){
         float score = color.getScore();
         if (score >= 0.1){
           float r = color.getColor().getRed();
           float g = color.getColor().getGreen();
           float b = color.getColor().getBlue();
+          System.out.println("sampleRGB: " + r + " " + g + " " + b);
           double euclideanD = Math.sqrt(Math.pow(red - r, 2) +
               Math.pow(green - g, 2) +
               Math.pow(blue - b, 2));

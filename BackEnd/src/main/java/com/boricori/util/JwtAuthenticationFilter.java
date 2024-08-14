@@ -59,8 +59,10 @@ public class JwtAuthenticationFilter implements Filter {
        processRefreshToken(httpRequest, httpResponse, accessToken, refreshToken);
      }
     } catch (NoSuchTokenException | TokenExpiredException | TokenFormatException e) {
+      System.out.println("filter exception");
       httpResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED, "유효하지 않은 토큰입니다. 다시 로그인 해주세요.");
     } catch (Exception e) {
+      System.out.println("filter exception2");
       httpResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED, e.getMessage());
     }
   }

@@ -94,11 +94,14 @@ public class GameRoomController {
       HttpServletRequest req) {
     String username = (String) req.getAttribute("username");
     GameRoom game = gameRoomService.findGameByCode(gameCode);
+    if (null == game){
+      return ResponseEntity.status(FAIL.getCode()).body(new EnterRoomResponse("wrong code", null));
+    }
     int maxCount = game.getMaxPlayer();
     int currCount = gameRoomService.getCurrentRoomPlayerCount(String.valueOf(game.getId()));
 //    int currCount = 1;
     if (currCount >= maxCount) {
-      return ResponseEntity.status(FAIL.getCode()).body(new EnterRoomResponse("Full", null));
+      return ResponseEntity.status(SUCCESS.getCode()).body(new EnterRoomResponse("Full", null));
     }
     return ResponseEntity.status(SUCCESS.getCode()).body(new EnterRoomResponse("Available",
         game.getId()));
@@ -125,9 +128,17 @@ public class GameRoomController {
     for (String u : usernames) {
       users.add(userService.findByUsername(u));
     }
-    users.forEach(u -> participantsService.addRecord(
-        GameParticipants.builder().gameRoom(gameRoom).user(u).build()));
-//     게임 참여 방 id에 맞게 꼬리잡기 리스트 생성 Map<int, List<ParticipantNameDto>>
+//    users.forEach(u -> participantsService.addRecord(
+//        GameParticipants.builder().gameRoom(gameRoom).user(u).build()));
+
+    // 여기부터
+    for (User u : users){
+      GameParticipants p = GameParticipants.builder().gameRoom(gameRoom).user(u).bullets(1).build();
+      participantsService.addRecord(p);
+      inGameService.tempGiveItem(p);
+    }
+    // 여기까지 전부 임시
+
     makeCatchableList(gameRoom.getId(), users);
     // 알림 시간 Redis에 넣기
     int interval = gameRoom.getGameTime() * 60 / 4;

@@ -77,8 +77,11 @@ public class MessageController {
     StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
     String sessionId = headerAccessor.getSessionId();
     String destination = headerAccessor.getDestination();
+    System.out.println("destination:" + destination);
     String status = destination.split("/")[2];
     String roomId = destination.split("/")[3];
+    System.out.println("status:" + status);
+    System.out.println("roomId: " + roomId);
     headerAccessor.getSessionAttributes().put("status", status);
     headerAccessor.getSessionAttributes().put("roomId", roomId);
     String username = (String) headerAccessor.getSessionAttributes().get("username");
@@ -100,6 +103,8 @@ public class MessageController {
     StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
     String sessionId = headerAccessor.getSessionId();
     Map<String, Object> attr = headerAccessor.getSessionAttributes();
+    System.out.println("=======================Attributes =============================");
+    attr.forEach((x, y) -> System.out.println(x + ":" + y));
     String roomId = (String) attr.get("roomId");
     String status = (String) attr.get("status");
     String username = (String) attr.get("username");

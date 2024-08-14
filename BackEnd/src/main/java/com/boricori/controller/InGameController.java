@@ -97,10 +97,14 @@ public class InGameController {
         Item item = inGameService.getItem(player);
         return ResponseEntity.status(ResponseEnum.SUCCESS.getCode()).body(ItemResponse.of(item));
       }
-      return ResponseEntity.status(ResponseEnum.FAIL.getCode()).body(null);
+      System.out.println("mission fail");
+      return ResponseEntity.status(ResponseEnum.CREATED.getCode()).body(null);
       } catch (IOException e) {
       return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+    }catch (Exception e){
+      e.printStackTrace();
     }
+    return null;
   }
 
   @PostMapping("/useItem")
@@ -116,6 +120,8 @@ public class InGameController {
     if (itemId == 1 || itemId == 2){
       Node<User> hunter = gameManager.identifyHunter(gameId, username);
       String effect = itemId == 1 ? "blockGPS" : "blockScreen";
+      System.out.println("====================hunter: " + hunter.data.getUsername());
+      System.out.println("====================effect: " + effect);
       messageService.useItem(gameId, hunter.data.getUsername(), effect);
     }
   }
@@ -137,9 +143,9 @@ public class InGameController {
         inGameService.addGamePlayerScore(gameId);
         GameResult res = inGameService.finishGameAndHandleLastTwoPlayers(gameId);
         messageService.endGameScore(res);
-        return ResponseEntity.status(ResponseEnum.REDIRECT.getCode()).body("게임 종료");
+        return ResponseEntity.status(ResponseEnum.SUCCESS.getCode()).body("END");
       }else {
-          return ResponseEntity.status(ResponseEnum.SUCCESS.getCode()).body("잡았습니다.");
+          return ResponseEntity.status(ResponseEnum.SUCCESS.getCode()).body("CONTINUE");
       }
     } catch (Exception e) {
       return ResponseEntity.status(ResponseEnum.FAIL.getCode()).body("알 수 없는 오류");
@@ -154,6 +160,7 @@ public class InGameController {
   public ResponseEntity<InitResponse> initiate(@PathVariable long gameId, HttpServletRequest req){
     String username = (String) req.getAttribute("username");
     try{
+      System.out.println("===================init called================");
       GameParticipants player = inGameService.checkIfPlayer(username, gameId);
       GameRoom game = gameRoomService.findGame(gameId);
       if (!player.isAlive()){ // 게임이 진행중이고, 플레이어는 아웃된 상태
@@ -164,6 +171,7 @@ public class InGameController {
       User target = gameManager.identifyTarget(gameId, username).data;
       List<MissionResponse> myMissions = inGameService.getMissions(player);
       List<ItemCount> myItems = null;
+      myItems = inGameService.getPlayerItems(player); // 임시값
 
       if (myMissions == null || myMissions.isEmpty()){
         // 게임 시작 전 초기 설정 단계
@@ -179,6 +187,10 @@ public class InGameController {
 
     }catch (NotAPlayerException e){
       return ResponseEntity.status(ResponseEnum.NOT_ACCEPTABLE.getCode()).body(null);
+    }catch (Exception e){
+      System.out.println(e.getMessage());
+      e.printStackTrace();
+      return null;
     }
   }
 

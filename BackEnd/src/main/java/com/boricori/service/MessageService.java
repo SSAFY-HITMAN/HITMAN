@@ -51,6 +51,7 @@ public class MessageService {
   public void useItem(long gameId, String username, String effect) {
     String jsonPayload = String.format(
         "{\"msgType\":\"useItem\", \"username\":\"%s\", \"effect\":\"%s\"}", username, effect);
+    messagingTemplate.convertAndSend(String.format("/topic/play/%d", gameId), jsonPayload);
   }
 
   public void endGameScore(GameResult result) {

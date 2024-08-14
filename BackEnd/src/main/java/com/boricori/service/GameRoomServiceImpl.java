@@ -49,7 +49,7 @@ public class GameRoomServiceImpl implements GameRoomService {
     String code = currTime.substring(currTime.length() - 8, currTime.length());
     gameRoom.setCodeNumber(code);
     gameRoom = gameRoomRepository.save(gameRoom);
-    String roomUrl = "http://runtail/join-room/" + gameRoom.getId();
+    String roomUrl = "https://i11b205.p.ssafy.io/room/" + gameRoom.getId();
     String qrCode = generateQRCodeImage(roomUrl);
     gameRoom.createQrCode(qrCode);
     CreateGameRoomResponse response = new CreateGameRoomResponse(gameRoom.getId(), qrCode,
@@ -148,7 +148,7 @@ public class GameRoomServiceImpl implements GameRoomService {
 
   @Override
   public GameRoom findGameByCode(String gameCode) {
-    return gameRoomRepository.findByGameCode(gameCode);
+    return gameRoomRepository.findByGameCodeAndIsActivated(gameCode, true).orElse(null);
   }
 
   private String generateQRCodeImage(String text) throws IOException, WriterException {
