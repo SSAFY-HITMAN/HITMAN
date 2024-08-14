@@ -107,15 +107,15 @@ const useGameWebSocket = () => {
       case "playerCount":
         const count = parseInt(msg.count, 10);
         setPlayerCount(count);
-        alert(`player count: ${count}`);
+        alert(`남은 인원 수: ${count}`);
         break;
       case "useItem":
         const effect = msg.effect;
         const affected = msg.username;
         if (username === affected) {
           handleItemEffect(effect);
+          alert(`아이템을 맞았습니다! ${effect}`);
         }
-        alert(`아이템을 맞았습니다! ${effect}`);
         break;
       default:
         break;
