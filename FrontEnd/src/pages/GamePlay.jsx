@@ -163,6 +163,12 @@ const GamePlay = () => {
   useEffect(() => {}, [toUser, fromUser]);
 
   useEffect(() => {
+    if (toOffChatting) {
+      leaveSession();
+    }
+  }, [toOffChatting, session]);
+
+  useEffect(() => {
     const handleBeforeUnload = () => {
       leaveSession();
     };

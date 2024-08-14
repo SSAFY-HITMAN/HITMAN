@@ -20,11 +20,6 @@ const GameHeader = ({ publisher, handleMainVideoStream }) => {
   const [isSpread, setIsSpread] = useState(null);
   const { targetId, missionList, playerCount } = useContext(GameContext);
 
-  const missions = [
-    { id: 1, name: "미션 이름", description: "미션 내용" }, // 임시 데이터
-    { id: 2, name: "ddd", description: "hahaha" },
-  ];
-
   //================= 카메라 미션 =========================
 
   const [openCamera, setOpenCamera] = useState(false);
