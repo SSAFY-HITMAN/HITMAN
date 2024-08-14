@@ -421,57 +421,39 @@ const GamePlay = () => {
   }, []);
 
 
-  const switchCamera = useCallback(async (facingMode = "environment") => {
-    if (!session) return;
-  
+  const switchCamera = useCallback(async () => {
+    if (!session || !publisher) return;
+
     try {
-      const devices = await navigator.mediaDevices.enumerateDevices();
-      const videoDevices = devices.filter(device => device.kind === "videoinput");
-  
-      let selectedDeviceId = null;
-  
-      if (facingMode === "environment") {
-        selectedDeviceId = videoDevices.find(device => device.label.includes("back"))?.deviceId;
-      } else {
-        selectedDeviceId = videoDevices.find(device => device.label.includes("front"))?.deviceId;
-      }
-  
-      if (!selectedDeviceId) {
-        console.error("No suitable camera found for the requested facing mode.");
-        return;
-      }
-  
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: {
-          deviceId: { exact: selectedDeviceId },
-        },
-        audio: false, // 오디오 설정 유지
-      });
-  
-      const OV = new OpenVidu();
-  
-      const newPublisher = OV.initPublisher(undefined, {
-        videoSource: stream.getVideoTracks()[0],
-        audioSource: stream.getAudioTracks()[0],
-        publishAudio: true,
-        publishVideo: true,
-        mirror: facingMode === "user", // 정면 카메라일 경우 거울 효과 적용
-        resolution: "640x480",
-        frameRate: 30,
-      });
-  
-      // 기존 퍼블리셔를 언퍼블리시하고 새로운 퍼블리셔를 퍼블리시합니다.
-      await session.unpublish(mainStreamManager);
-      await session.publish(newPublisher);
-  
-      // 상태 업데이트
-      setMainStreamManager(newPublisher);
-      setPublisher(newPublisher);
-    } catch (e) {
-      console.error("Error switching camera: ", e);
+        // 모든 비디오 입력 장치 가져오기
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        const videoDevices = devices.filter(device => device.kind === 'videoinput');
+
+        // 후방 카메라 장치 선택 (label에서 'back', 'rear' 등 키워드를 찾음)
+        const rearCamera = videoDevices.find(device => 
+            device.label.toLowerCase().includes('back') ||
+            device.label.toLowerCase().includes('rear')
+        );
+
+        // 후방 카메라가 없으면 기본 카메라 사용 (일반적으로 첫 번째 장치)
+        const selectedDeviceId = rearCamera ? rearCamera.deviceId : videoDevices[0].deviceId;
+
+        // 선택된 장치 ID로 스트림 가져오기
+        const mediaStream = await navigator.mediaDevices.getUserMedia({
+            video: { deviceId: { exact: selectedDeviceId } },
+            audio: false
+        });
+
+        const newTrack = mediaStream.getVideoTracks()[0];
+
+        // 기존 퍼블리셔의 트랙을 새 트랙으로 교체
+        await publisher.replaceTrack(newTrack);
+        console.log('New track has been published');
+
+    } catch (error) {
+        console.error('Error replacing track', error);
     }
-  }, [session, mainStreamManager]);
-  
+  }, [session, publisher]); 
   
 
   const getToken = async () => {
