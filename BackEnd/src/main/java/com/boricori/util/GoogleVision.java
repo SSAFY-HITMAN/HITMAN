@@ -60,6 +60,7 @@ public class  GoogleVision {
           results.addAll(res.getLabelAnnotationsList());
         }
       }catch(Exception e){
+      e.printStackTrace();
       throw new RuntimeException();
     }
     return results;
@@ -90,6 +91,7 @@ public class  GoogleVision {
         results.addAll(res.getTextAnnotationsList());
       }
     }catch(Exception e){
+      e.printStackTrace();
       throw new RuntimeException();
     }
     return results;
@@ -126,6 +128,7 @@ public class  GoogleVision {
         results.addAll(colors.getColorsList());
       }
     }catch(Exception e){
+      e.printStackTrace();
       throw new RuntimeException();
     }
     return results;
@@ -157,6 +160,7 @@ public class  GoogleVision {
         results.addAll(res.getLocalizedObjectAnnotationsList());
       }
     }catch(Exception e){
+      e.printStackTrace();
       throw new RuntimeException();
     }
     return results;

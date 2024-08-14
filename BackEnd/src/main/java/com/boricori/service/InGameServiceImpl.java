@@ -159,6 +159,7 @@ public class InGameServiceImpl implements InGameService{
     redisTemplate.opsForValue().getAndDelete((username + "-" + roomId + "-left"));
   }
 
+  @Transactional
   @Override
   public void eliminateUser(String username, long roomId) {
     participantRepository.changeStatusByName(username, roomId);

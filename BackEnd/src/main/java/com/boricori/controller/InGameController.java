@@ -99,12 +99,10 @@ public class InGameController {
       }
       System.out.println("mission fail");
       return ResponseEntity.status(ResponseEnum.CREATED.getCode()).body(null);
-      } catch (IOException e) {
-      return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
     }catch (Exception e){
       e.printStackTrace();
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
     }
-    return null;
   }
 
   @PostMapping("/useItem")
