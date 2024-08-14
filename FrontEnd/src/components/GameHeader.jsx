@@ -23,6 +23,8 @@ const GameHeader = ({ switchCamera, publisher, handleMainVideoStream }) => {
   //================= 카메라 미션 =========================
 
   const [openCamera, setOpenCamera] = useState(false);
+  const [currentCameraFacingMode, setCurrentCameraFacingMode] = useState("user");
+
 
   const handleMissionClick = missionId => {
     setOpenCamera(missionId);
