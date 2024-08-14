@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useEffect, useContext, useState } from "react";
 import { GameContext } from "@/context/GameContext";
 
 import {
@@ -24,23 +24,18 @@ const GameHeader = ({ switchCamera, publisher, handleMainVideoStream }) => {
 
   const [openCamera, setOpenCamera] = useState(false);
 
-
   const handleMissionClick = missionId => {
     setOpenCamera(missionId);
     setIsSpread(true); // 드롭다운을 계속 열어둠
   };
 
-
   useEffect(() => {
     if (openCamera !== null) {
-      switchCamera();  // 후방 카메라로 전환
+      switchCamera(); // 후방 카메라로 전환
     } else {
-      switchCamera();  // 정면 카메라로 다시 전환
+      switchCamera(); // 정면 카메라로 다시 전환
     }
   }, [openCamera, switchCamera]);
-
-
-
 
   return (
     <div className="flex flex-col items-center justify-center bg-gradient-to-r from-blue-700 to-teal-700 p-4">
