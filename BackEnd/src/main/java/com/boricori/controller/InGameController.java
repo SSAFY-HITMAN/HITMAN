@@ -166,7 +166,7 @@ public class InGameController {
         InitResponse data = InitResponse.builder().status("dead").gameInfo(GameInfo.of(game)).playerCount(playerCnt).build();
         return ResponseEntity.status(ResponseEnum.SUCCESS.getCode()).body(data);
       }
-      // 플레이어가 살아있는 상태. 게임 시작전일수도, 진행중일 수도 있음
+      // 플레이어가 살아있는 상태. 게임 시작전일수도, 진행중일 수도 있음git p
       User target = gameManager.identifyTarget(gameId, username).data;
       List<MissionResponse> myMissions = inGameService.getMissions(player);
       List<ItemCount> myItems = null;
