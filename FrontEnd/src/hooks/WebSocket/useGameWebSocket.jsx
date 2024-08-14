@@ -83,28 +83,28 @@ const useGameWebSocket = () => {
           `/topic/play/${gameRoomId}`,
           serverMsg => {
             console.log("서버에서 게임웹소켓 메시지 수신됨:", serverMsg.body);
-            // try {
-            //   const msg = JSON.parse(serverMsg.body);
-            //   console.log("게임웹소켓 메시지 수신 완료:", msg); // 이 메시지가 안나오면 구독 경로 또는 WebSocket 서버 설정 문제
-            //   handleAlertMessage(msg);
-            // } catch (error) {
-            //   console.error("게임웹소켓 메시지 수신 실패:", error);
-            // }
-            let jsonString = serverMsg.body;
             try {
-              // 먼저 JSON 파싱 시도
-              let parsedData = JSON.parse(jsonString);
-
-              // 만약 `result`가 문자열로 되어 있다면
-              if (typeof parsedData.result === "string") {
-                parsedData.result = JSON.parse(parsedData.result);
-              }
-
-              console.log(`parsedData: ${parsedData}`);
-              handleAlertDegree(parsedData);
+              const msg = JSON.parse(serverMsg.body);
+              console.log("게임웹소켓 메시지 수신 완료:", msg); // 이 메시지가 안나오면 구독 경로 또는 WebSocket 서버 설정 문제
+              handleAlertMessage(msg);
             } catch (error) {
-              console.error("JSON 파싱 실패:", error);
+              console.error("게임웹소켓 메시지 수신 실패:", error);
             }
+            // let jsonString = serverMsg.body;
+            // try {
+            //   // 먼저 JSON 파싱 시도
+            //   let parsedData = JSON.parse(jsonString);
+
+            //   // 만약 `result`가 문자열로 되어 있다면
+            //   if (typeof parsedData.result === "string") {
+            //     parsedData.result = JSON.parse(parsedData.result);
+            //   }
+
+            //   console.log(`parsedData: ${parsedData}`);
+            //   handleAlertDegree(parsedData);
+            // } catch (error) {
+            //   console.error("JSON 파싱 실패:", error);
+            // }
           }
         );
       },
