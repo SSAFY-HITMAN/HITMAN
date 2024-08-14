@@ -12,10 +12,10 @@ const useCatchTarget = () => {
     username,
     distToCatch,
     setDistToCatch,
+    setBullet,
     DISTANCE_TO_CATCH,
     DISTANCE_ENHANCED_BULLET,
   } = useContext(GameContext);
-  const { getBulletByCatchTarget } = useBullet();
   const [isAbleToCatchTarget, setIsAbleToCatchTarget] = useState(false);
   const catchTimeoutRef = useRef(null);
 
@@ -46,7 +46,7 @@ const useCatchTarget = () => {
 
         // 총알 합산 갱신
         const newBullet = parseInt(metadata.bullets, 10);
-        getBulletByCatchTarget(newBullet);
+        setBullet(newBullet);
 
         // 아이템 합산 갱신
         setItemList(metadata.myItems);

@@ -80,7 +80,7 @@ const useGameWebSocket = () => {
           const newTargetId = msg.target;
           setTargetId(newTargetId);
           sessionStorage.setItem("targetId", newTargetId);
-          alert(`changeTarget: ${newTargetId}`);
+          alert(`타겟 변경: ${newTargetId}`);
         }
         break;
       case "eliminated":
@@ -88,9 +88,9 @@ const useGameWebSocket = () => {
         if (username === msg.user) {
           setIsAlive(false);
           setTargetId(null);
-          sessionStorage.setItem("setIsAlive", false);
+          sessionStorage.setItem("isAlive", false);
           sessionStorage.removeItem("targetId");
-          alert(`eliminated!`);
+          alert(`사망했습니다!`);
         }
         break;
       case "alert":
@@ -100,6 +100,7 @@ const useGameWebSocket = () => {
       case "end": // 게임 종료 조건(인원수)
         setGameStatus(false);
         setToOffChatting(true); // 종료 시 true로 변환
+        alert("게임 종료!");
         const data = JSON.parse(msg.data);
         endGame(data);
         break;
