@@ -1,14 +1,10 @@
 package com.boricori.service;
 
 import com.boricori.dto.GameResult;
-import com.boricori.dto.response.gameroom.end.EndGameResponse;
-import com.boricori.dto.response.inGame.EndGameUserInfoResponse;
 import com.boricori.entity.GameRoom;
 import com.boricori.game.GameManager;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
 
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
@@ -43,7 +39,7 @@ public class MessageService {
     messagingTemplate.convertAndSend(String.format("/topic/play/%d", gameId), jsonPayload);
   }
 
-  public void eliminateUser(String username, long gameId) {
+  public void notifyEliminated(String username, long gameId) {
     String jsonPayload = String.format("{\"msgType\":\"eliminated\", \"user\":\"%s\"}", username);
     messagingTemplate.convertAndSend(String.format("/topic/play/%d", gameId), jsonPayload);
   }

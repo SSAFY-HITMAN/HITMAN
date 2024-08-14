@@ -27,7 +27,6 @@ public class RedisKeyExpirationListener implements MessageListener {
   public void onMessage(Message message, byte[] pattern) {
     String expiredKey = new String(message.getBody());
     System.out.println("Key expired: " + expiredKey);
-
     // 키 형식: gameRoomId-AlertDegree
     String[] parts = expiredKey.split("-");
     if (parts.length == 2) {
@@ -36,6 +35,7 @@ public class RedisKeyExpirationListener implements MessageListener {
       }
       String gameRoomId = parts[0];
       String alertDegree = parts[1];
+      System.out.println("roomId: " + gameRoomId + "degree: " + alertDegree);
       if (!alertDegree.equals(GAME_ENDED)){
         String jsonData = String.format("{\"msgType\":\"alert\", \"alertDegree\":\"%s\"}", alertDegree);
         messageService.processAlertMessage(gameRoomId, jsonData);
@@ -50,6 +50,7 @@ public class RedisKeyExpirationListener implements MessageListener {
       String username = parts[0];
       long roomId = Long.parseLong(parts[1]);
       inGameService.eliminateUser(username, roomId);
+      messageService.playersCount(roomId, gameManager.numPlayers(roomId));
       // 해당 유저 쫓던 유저의 타겟이 바뀌는 로직
       Node<User> hunter = gameManager.removePlayerAndReturnHunter(roomId, username);
       if (gameManager.isLastTwo(roomId)) {

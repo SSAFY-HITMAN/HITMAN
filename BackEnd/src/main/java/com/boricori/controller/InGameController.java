@@ -28,7 +28,6 @@ import org.springframework.web.multipart.MultipartFile;
 import com.boricori.dto.GameResult;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 @Tag(name = "게임 컨트롤러", description = "게임 진행 중 일어나는 이벤트 관리")
@@ -133,7 +132,8 @@ public class InGameController {
       Node<User> targetNode = gameManager.catchTargetForUser(gameId, username);
       Node<User> newTarget = targetNode.next;
       messageService.changeTarget(username, newTarget.data.getUsername(), gameId);
-      messageService.eliminateUser(targetNode.data.getUsername(), gameId);
+      messageService.notifyEliminated(targetNode.data.getUsername(), gameId);
+      messageService.playersCount(gameId, gameManager.numPlayers(gameId));
       User user = userService.findByUsername(username);
       inGameService.catchTarget(user, targetNode.data, gameId);
 
@@ -222,7 +222,8 @@ public class InGameController {
     long gameId = request.getGameId();
     String username = request.getUsername();
     inGameService.eliminateUser(username, gameId);
-    messageService.eliminateUser(username,gameId);
+    messageService.notifyEliminated(username,gameId);
+    messageService.playersCount(gameId, gameManager.numPlayers(gameId));
     Node<User> hunter = gameManager.removePlayerAndReturnHunter(gameId, username);
     if (gameManager.isLastTwo(gameId)) {
       GameResult res = inGameService.finishGameAndHandleLastTwoPlayers(gameId);
