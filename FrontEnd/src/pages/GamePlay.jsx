@@ -346,14 +346,13 @@ const GamePlay = () => {
           
           console.log(message)
           if (message.type === "offer"){
-            const accept = window.alert("비밀채팅으로 초대하셨습니다.");
+              window.alert("비밀채팅으로 초대하셨습니다.");
               handleAcceptClick();      
           } else if (message.type === "answer"){
-            // toast(<MoveToPrivateChatToast />)
-            const accept = window.alert("초대에 응답했습니다");
+            window.alert("초대에 응답했습니다");
             leaveRoomAndNavigate();
           }else if (message.type === "refuse"){
-            toast(<RefuseToast />)
+
           } 
         };
 

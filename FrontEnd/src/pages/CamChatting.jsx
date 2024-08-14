@@ -8,6 +8,7 @@ import {
     CarouselContent,
     CarouselItem,
 } from '../components/ui/Carousel.jsx';
+import { BASE_URL } from '@/constants/baseURL.js';
 
 const APPLICATION_SERVER_URL =
   process.env.NODE_ENV === "production"
