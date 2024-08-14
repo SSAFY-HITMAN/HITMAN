@@ -82,7 +82,7 @@ const useGameWebSocket = () => {
         stompClient.current.subscribe(
           `/topic/play/${gameRoomId}`,
           serverMsg => {
-            console.log("서버에서 게임웹소켓 메시지 수신됨:", serverMsg);
+            console.log("서버에서 게임웹소켓 메시지 수신됨:", serverMsg.body);
             // try {
             //   const msg = JSON.parse(serverMsg.body);
             //   console.log("게임웹소켓 메시지 수신 완료:", msg); // 이 메시지가 안나오면 구독 경로 또는 WebSocket 서버 설정 문제
