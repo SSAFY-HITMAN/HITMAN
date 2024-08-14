@@ -491,6 +491,7 @@ const GamePlay = () => {
 
       {/* publisher 의 카메라 인자 전달 */}
       <GameHeader
+        switchCamera={switchCamera}
         publisher={publisher}
         handleMainVideoStream={handleMainVideoStream}
       />
@@ -649,7 +650,7 @@ const GamePlay = () => {
                     {subscribers
                       .filter(sub => sub !== publisher) // publisher와 동일한 객체 필터링
                       .map((sub, index) => (
-                        <CarouselItem key={sub.id} className="stream-container">
+                        <CarouselItem key={index} className="stream-container">
                           <UserVideoComponent
                             streamManager={sub}
                             currentUserNickname={username} // username 전달
