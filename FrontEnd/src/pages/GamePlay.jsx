@@ -315,7 +315,7 @@ const GamePlay = () => {
         console.warn(exception);
       });
 
-      newSession.on("sessionDisconnected", async event => {});
+      newSession.on("sessionDisconnected", async (event) => {});
       setSession(newSession);
       room.data = newSession;
     }
@@ -345,9 +345,13 @@ const GamePlay = () => {
         await newSession.publish(newPublisher);
 
         const devices = await OV.getDevices();
+        console.log("devices ----------> ", devices);
+
         const videoDevices = devices.filter(
           device => device.kind === "videoinput"
         );
+
+        console.log("videoDevices ---------> ", videoDevices);
         const currentVideoDeviceId = newPublisher.stream
           .getMediaStream()
           .getVideoTracks()[0]
@@ -426,9 +430,12 @@ const GamePlay = () => {
     try {
       const OV = new OpenVidu(); // switchCamera에서도 OV를 선언
       const devices = await OV.getDevices();
+      console.log("devices =============> ", devices);
       const videoDevices = devices.filter(
         device => device.kind === "videoinput"
       );
+
+      console.log("videoDevices =============> ", videoDevices);
 
       if (videoDevices.length > 1) {
         const newVideoDevice = videoDevices.find(
