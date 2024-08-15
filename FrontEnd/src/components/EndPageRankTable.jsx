@@ -27,27 +27,14 @@ const EndPageRankTable = () => {
                 </h1>
               )}
               <div id="player-result" className="flex h-[10vh]">
-                {user.userName !== winner1 && user.userName !== winner2 ? (
-                  <div
-                    id="player-rank-other"
-                    className={`m-2 flex w-[10%] flex-col justify-center text-center text-2xl font-bold ${
-                      idx + 1 === 2
-                        ? "rounded-full bg-gray-400 text-white" // 은메달
-                        : idx + 1 === 3
-                          ? "rounded-full bg-yellow-800 text-white" // 동메달
-                          : ""
-                    }`}
-                  >
-                    {idx + 1}
-                  </div>
-                ) : (
-                  <div
-                    id="player-rank-winner"
-                    className="m-2 flex w-[10%] flex-col justify-center text-center text-2xl font-bold"
-                  >
-                    {/* {idx + 1} */}
-                  </div>
-                )}
+                <div
+                  id="player-rank"
+                  className={
+                    "m-2 flex w-[10%] flex-col justify-center text-center text-2xl font-bold"
+                  }
+                >
+                  {idx + 1}
+                </div>
                 <div
                   id="player-name"
                   className="mx-4 flex w-[45%] items-center justify-center text-xl font-bold"
