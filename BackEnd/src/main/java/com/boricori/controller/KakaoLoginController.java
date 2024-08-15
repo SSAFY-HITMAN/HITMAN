@@ -67,7 +67,8 @@ public class KakaoLoginController {
         + "client_id=" + apiKey + "&"
         + "redirect_uri=" + redirectUri +"&"
         + "state=" + state;
-    return ResponseEntity.status(200).body(url);
+    String body = String.format("{\"link\":\"%s\"}", url);
+    return ResponseEntity.status(200).body(body);
   }
 
 

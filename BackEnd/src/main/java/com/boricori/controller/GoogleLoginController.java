@@ -68,7 +68,8 @@ public class GoogleLoginController {
         + "state=" + state + "&"
         + "redirect_uri=" + REDIRECT_URL + "&"
         + "client_id=" + CLIENT_ID;
-    return ResponseEntity.status(200).body(url);
+    String body = String.format("{\"link\":\"%s\"}", url);
+    return ResponseEntity.status(200).body(body);
   }
 
   @GetMapping("/getToken")
