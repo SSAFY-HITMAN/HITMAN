@@ -170,33 +170,57 @@ public class InGameServiceImpl implements InGameService{
     return missionRepository.findById(missionId).orElse(null);
   }
 
-  @Override
-  public void addGamePlayerScore(long gameId) {
+  @Transactional
+  public List<GameParticipants> updateWinnerScore(long gameId) {
+    List<GameParticipants> res = new ArrayList<>();
     List<String> users = gameManager.EndGameUserInfo(gameId);
-    UpdatePlayerScoreRequest userA = participantRepository.getTwoUserInfo(users.get(0), gameId);
-    UpdatePlayerScoreRequest userB = participantRepository.getTwoUserInfo(users.get(1), gameId);
-
-    int scoreA = 2000;
-    int scoreB = 1000;
-
-    if (userA.getKills() == userB.getKills()) {
-      if (userA.getMissionComplete() == userB.getMissionComplete()) {
-        scoreB = 2000; // 두 사용자 모두 2000점
-      } else if (userA.getMissionComplete() < userB.getMissionComplete()) {
-        scoreA = 1000;
-        scoreB = 2000;
-      }
-    } else if (userA.getKills() < userB.getKills()) {
-      scoreA = 1000;
-      scoreB = 2000;
+    if (users.isEmpty()){
+      updatePlayersScore(gameId);
+      return res;
+    }
+    if (users.size() == 1){
+      GameParticipants userA = participantRepository.getByUsername(users.get(0), gameId);
+      userA.addScore(2000);
+      updatePlayersScore(gameId);
+      res.add(userA);
+      return res;
     }
 
-    participantRepository.updateUserScore(userA.getUserId(), scoreA);
-    participantRepository.updateUserScore(userB.getUserId(), scoreB);
+    GameParticipants userA = participantRepository.getByUsername(users.get(0), gameId);
+    GameParticipants userB = participantRepository.getByUsername(users.get(1), gameId);
 
+    // 킬 수 비교
+    if (userA.getKills() > userB.getKills()) {
+      userA.addScore(2000); // userA가 1등
+      userB.addScore(1000); // userB가 2등
+      res.add(userA);
+    } else if (userA.getKills() < userB.getKills()) {
+      userA.addScore(1000); // userA가 2등
+      userB.addScore(2000); // userB가 1등
+      res.add(userB);
+    } else {
+      // 킬 수가 같을 경우 미션 완료 수 비교
+      if (userA.getMissionComplete() > userB.getMissionComplete()) {
+        userA.addScore(2000); // userA가 1등
+        userB.addScore(1000); // userB가 2등
+        res.add(userA);
+      } else if (userA.getMissionComplete() < userB.getMissionComplete()) {
+        userA.addScore(1000); // userA가 2등
+        userB.addScore(2000); // userB가 1등
+        res.add(userB);
+      } else {
+        // 킬 수와 미션 완료 수 모두 같을 경우 무승부
+        userA.addScore(2000);
+        userB.addScore(2000);
+        res.add(userA);
+        res.add(userB);
+      }
+    }
+
+    // 추가적인 처리
     updatePlayersScore(gameId);
+    return res;
   }
-
 
   private void updatePlayersScore(long gameId) {
     List<GameParticipants> playersInfo = participantRepository.getPlayersInfo(gameId);
@@ -206,27 +230,19 @@ public class InGameServiceImpl implements InGameService{
   }
 
   @Override
-  public GameResult finishGameAndHandleLastTwoPlayers(long gameId){
+  public GameResult finishGameAndHandleLastTwoPlayers(long gameId, List<GameParticipants> winners){
     finishGame(gameId);
-    List<String> users = gameManager.EndGameUserInfo(gameId);
-    if (users.isEmpty()){
+
+    if (winners.isEmpty()){
       List<EndGameUserInfoResponse> usersInfo = participantRepository.getEndGamePlayersInfo(gameId);
       return new GameResult(gameId, null, null, usersInfo);
-    }else if (users.size() == 1){
-      GameParticipants userA = participantRepository.getByUsername(users.get(0), gameId);
+    }else if (winners.size() == 1){ // 최종 승자가 1명 뿐일 때
       List<EndGameUserInfoResponse> usersInfo = participantRepository.getEndGamePlayersInfo(gameId);
-      return new GameResult(gameId, userA.getUser().getUsername(), null, usersInfo);
+      return new GameResult(gameId, winners.get(0).getUser().getUsername(), null, usersInfo);
     }
-    GameParticipants userA = participantRepository.getByUsername(users.get(0), gameId);
-    GameParticipants userB = participantRepository.getByUsername(users.get(1), gameId);
-    String winner = determineWinner(userA, userB);
-    String winner2 = null;
-    if (winner == null){
-      winner = userA.getUser().getUsername();
-      winner2 = userB.getUser().getUsername();
-    }
+    // 승자가 2명일때 (무승부)
     List<EndGameUserInfoResponse> usersInfo = participantRepository.getEndGamePlayersInfo(gameId);
-    return new GameResult(gameId, winner, winner2, usersInfo);
+    return new GameResult(gameId,  winners.get(0).getUser().getUsername(), winners.get(1).getUser().getUsername(), usersInfo);
   }
 
 

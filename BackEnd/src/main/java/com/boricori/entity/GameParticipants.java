@@ -74,6 +74,10 @@ public class GameParticipants {
     this.bullets++;
   }
 
+  public void addScore(int add){
+    score += add;
+  }
+
 
   public void addBullets(int bullets) {
     this.bullets += bullets;

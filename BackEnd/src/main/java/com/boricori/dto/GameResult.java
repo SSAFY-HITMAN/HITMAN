@@ -6,7 +6,6 @@
   import lombok.Data;
 
   @Data
-  @AllArgsConstructor
   public class GameResult {
 
     long gameId;
@@ -17,4 +16,11 @@
 
     List<EndGameUserInfoResponse> result;
 
+    public GameResult(long gameId, String winner1, String winner2,
+        List<EndGameUserInfoResponse> result) {
+      this.gameId = gameId;
+      this.winner1 = winner1;
+      this.winner2 = winner2;
+      this.result = result;
+    }
   }

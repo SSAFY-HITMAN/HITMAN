@@ -138,8 +138,8 @@ public class InGameController {
       inGameService.catchTarget(user, targetNode.data, gameId);
 
       if (gameManager.isLastTwo(gameId)) {
-        inGameService.addGamePlayerScore(gameId);
-        GameResult res = inGameService.finishGameAndHandleLastTwoPlayers(gameId);
+        List<GameParticipants> winners = inGameService.updateWinnerScore(gameId);
+        GameResult res = inGameService.finishGameAndHandleLastTwoPlayers(gameId, winners);
         messageService.endGameScore(res);
         return ResponseEntity.status(ResponseEnum.SUCCESS.getCode()).body("END");
       }else {
@@ -227,7 +227,8 @@ public class InGameController {
     Node<User> hunter = gameManager.removePlayerAndReturnHunter(gameId, username);
     messageService.playersCount(gameId, gameManager.numPlayers(gameId));
     if (gameManager.isLastTwo(gameId)) {
-      GameResult res = inGameService.finishGameAndHandleLastTwoPlayers(gameId);
+      List<GameParticipants> winners = inGameService.updateWinnerScore(gameId);
+      GameResult res = inGameService.finishGameAndHandleLastTwoPlayers(gameId, winners);
       messageService.endGameScore(res);
     }else{
       messageService.changeTarget(hunter.data.getUsername(), hunter.next.data.getUsername(), gameId);

@@ -1,10 +1,12 @@
 package com.boricori.util;
 
 import com.boricori.dto.GameResult;
+import com.boricori.entity.GameParticipants;
 import com.boricori.entity.User;
 import com.boricori.game.GameManager;
 import com.boricori.service.InGameService;
 import com.boricori.service.MessageService;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.connection.Message;
 import org.springframework.data.redis.connection.MessageListener;
@@ -54,7 +56,8 @@ public class RedisKeyExpirationListener implements MessageListener {
       Node<User> hunter = gameManager.removePlayerAndReturnHunter(roomId, username);
       messageService.playersCount(roomId, gameManager.numPlayers(roomId));
       if (gameManager.isLastTwo(roomId)) {
-        GameResult res = inGameService.finishGameAndHandleLastTwoPlayers(roomId);
+        List<GameParticipants> winners = inGameService.updateWinnerScore(roomId);
+        GameResult res = inGameService.finishGameAndHandleLastTwoPlayers(roomId, winners);
         messageService.endGameScore(res);
       }else{
         messageService.changeTarget(hunter.data.getUsername(), hunter.next.data.getUsername(), roomId);

@@ -40,9 +40,9 @@ public interface InGameService {
 
   Mission getMissionById(long missionId);
 
-  void addGamePlayerScore(long gameId);
+  List<GameParticipants> updateWinnerScore(long gameId);
 
-  GameResult finishGameAndHandleLastTwoPlayers(long gameId);
+  GameResult finishGameAndHandleLastTwoPlayers(long gameId, List<GameParticipants> winners);
 
   void finishGame(long gameId);
 

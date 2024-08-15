@@ -15,22 +15,6 @@ public class UserCircularLinkedList extends CircularLinkedList {
     super(list);
   }
 
-  public void removeByName(String name) {
-    Node<User> currNode = tail.next;
-    Node<User> prevNode;
-
-    for (int i = 0; i < size; i++) {
-      prevNode = currNode;
-      currNode = currNode.next;
-
-      if (currNode.data.getUsername().equals(name)) {
-        prevNode.next = currNode.next;
-        size--;
-        return;
-      }
-    }
-  }
-
   public Node<User> identifyTarget(String username) {
     Node<User> currNode = tail.next; // 시작 노드
     do {
@@ -45,6 +29,14 @@ public class UserCircularLinkedList extends CircularLinkedList {
 
   public Node<User> removeTargetForUser(String username){
 
+    if (size == 1) {
+      // 만약 리스트에 하나의 노드만 있을 경우, 그 노드를 제거하고 리스트를 비웁니다.
+      Node<User> soleNode = tail;
+      tail = null;
+      size = 0;
+      return null; // 유저가 한명 남았을 때 타겟 잡기를 요청시 여기로 들어옴, 생길 일 없는 상황
+    }
+
     Node<User> currNode = tail.next; // 시작 노드
 
     do {
@@ -52,7 +44,12 @@ public class UserCircularLinkedList extends CircularLinkedList {
         Node<User> target = currNode.next;
         currNode.next = target.next;
         size--;
-        return target;
+        // 타겟이 tail인 경우 tail 업데이트
+        if (target == tail) {
+          tail = currNode;
+        }
+
+        return target; // 제거된 타겟 반환
       }
       currNode = currNode.next;
     } while (currNode != tail.next); // 한 바퀴 다 돌면 종료
@@ -76,31 +73,52 @@ public class UserCircularLinkedList extends CircularLinkedList {
   }
 
   public Node<User> identifyHunter(String username) {
-    Node<User> currNode = tail.next; // 시작 노드
+    if (isEmpty()) {
+      return null; // 리스트가 비어 있는 경우 null 반환
+    }
+
+    Node<User> currNode = tail.next;
     do {
       if (currNode.next.data.getUsername().equals(username)) {
-        return currNode;
+        return currNode; // 헌터 반환
       }
       currNode = currNode.next;
-    } while (currNode != tail.next); // 한 바퀴 다 돌면 종료
+    } while (currNode != tail.next);
 
-    return null;
+    return null; // 헌터를 찾지 못한 경우 null 반환
   }
+
 
   public Node<User> removePlayerAndReturnHunter(String username) {
-    Node<User> currNode = tail.next; // 시작 노드
+    // 리스트에 노드가 하나만 남아 있을 경우 처리
+    if (size == 1) {
+      Node<User> soleNode = tail;
+      tail = null;
+      size = 0;
+      return null;  // 유저가 혼자남았는데 나가버리면 여기 실행, 낮은 가능성 있지만 시간 없으므로 패스
+    }
 
+    Node<User> currNode = tail.next;  // 시작 노드
+
+    // 원형 리스트에서 노드를 탐색하면서 헌터를 찾음
     do {
       if (currNode.next.data.getUsername().equals(username)) {
-        Node<User> target = currNode.next;
-        currNode.next = target.next;
+        Node<User> target = currNode.next;  // 타겟 노드
+        currNode.next = target.next;  // 타겟 제거
+
+        // 타겟이 tail인 경우 tail 업데이트
+        if (target == tail) {
+          tail = currNode;
+        }
+
         size--;
-        return currNode;
+        return currNode;  // 타겟의 헌터(이전 노드) 반환
       }
       currNode = currNode.next;
-    } while (currNode != tail.next); // 한 바퀴 다 돌면 종료
+    } while (currNode != tail.next);  // 리스트 한 바퀴 돌기
 
-    return null;
+    return null;  // 해당 유저를 찾지 못한 경우 null 반환
   }
+
 }
 

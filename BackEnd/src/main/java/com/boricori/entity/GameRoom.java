@@ -65,7 +65,7 @@ public class GameRoom {
   }
 
   public void startGameTime(){
-    this.startTime = LocalDateTime.now().plusSeconds(63);
+    this.startTime = LocalDateTime.now().plusSeconds(13);
   }
 
   public void finish(){
