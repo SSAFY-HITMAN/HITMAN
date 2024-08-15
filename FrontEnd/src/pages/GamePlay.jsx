@@ -157,7 +157,6 @@ const GamePlay = () => {
   const { gameRoomId: paramGameRoomId } = useParams(); // 추가
   const [userInvitationStatus, setUserInvitationStatus] = useState({});
 
-
   const privateRoom = useRef("");
   const fromUser = useRef("");
   const toUser = useRef("");
@@ -193,7 +192,10 @@ const GamePlay = () => {
     const parsedData = JSON.parse(publisherName);
     const parsedPublisherName = parsedData.clientData;
 
-    if (userInvitationStatus[username]?.isInviting || userInvitationStatus[parsedPublisherName]?.isBeingInvited) {
+    if (
+      userInvitationStatus[username]?.isInviting ||
+      userInvitationStatus[parsedPublisherName]?.isBeingInvited
+    ) {
       alert(`다른 유저로부터 초대중입니다`);
       return;
     }
@@ -242,7 +244,6 @@ const GamePlay = () => {
             [toUser.current]: { isInviting: false, isBeingInvited: false },
             [fromUser.current]: { isInviting: false, isBeingInvited: false },
           }));
-
         } catch (error) {
           console.error("Error creating or sending answer:", error);
         }
@@ -315,7 +316,7 @@ const GamePlay = () => {
         console.warn(exception);
       });
 
-      newSession.on("sessionDisconnected", async (event) => {});
+      newSession.on("sessionDisconnected", async event => {});
       setSession(newSession);
       room.data = newSession;
     }
@@ -411,7 +412,6 @@ const GamePlay = () => {
     }
   }, [username, session, subscribers]);
 
-
   useEffect(() => {
     const initSession = async () => {
       if (!session) {
@@ -421,55 +421,61 @@ const GamePlay = () => {
     initSession();
   }, []);
 
-
   const switchCamera = useCallback(async () => {
     if (!session || !publisher) return;
-  
+
     try {
       // 우선 환경 설정으로 후방 카메라 시도 (environment)
       const mediaStream = await navigator.mediaDevices.getUserMedia({
         video: { facingMode: { exact: "environment" } },
         audio: false,
       });
-      
+
       const newTrack = mediaStream.getVideoTracks()[0];
 
       await publisher.replaceTrack(newTrack);
       console.log("New track has been published using facingMode: environment");
-  
     } catch (error) {
-      console.warn("facingMode: 'environment' failed, trying with deviceId", error);
-  
+      console.warn(
+        "facingMode: 'environment' failed, trying with deviceId",
+        error
+      );
+
       // facingMode가 실패할 경우, deviceId 방식으로 시도
       try {
         const devices = await navigator.mediaDevices.enumerateDevices();
-        const videoDevices = devices.filter(device => device.kind === "videoinput");
-        
-        const rearCamera = videoDevices.find(device => 
-          device.label.toLowerCase().includes("back") ||
-          device.label.toLowerCase().includes("rear") ||
-          device.label.toLowerCase().includes("환경") ||
-          device.label.toLowerCase().includes("후면")
+        const videoDevices = devices.filter(
+          device => device.kind === "videoinput"
         );
-  
-        const selectedDeviceId = rearCamera ? rearCamera.deviceId : videoDevices[0].deviceId;
-  
+
+        const rearCamera = videoDevices.find(
+          device =>
+            device.label.toLowerCase().includes("back") ||
+            device.label.toLowerCase().includes("rear") ||
+            device.label.toLowerCase().includes("환경") ||
+            device.label.toLowerCase().includes("후면")
+        );
+
+        const selectedDeviceId = rearCamera
+          ? rearCamera.deviceId
+          : videoDevices[0].deviceId;
+
         const mediaStream = await navigator.mediaDevices.getUserMedia({
           video: { deviceId: { exact: selectedDeviceId } },
           audio: false,
         });
-  
+
         const newTrack = mediaStream.getVideoTracks()[0];
         await publisher.replaceTrack(newTrack);
         console.log("New track has been published using deviceId");
-  
       } catch (fallbackError) {
-        console.error("Error switching camera with both facingMode and deviceId", fallbackError);
+        console.error(
+          "Error switching camera with both facingMode and deviceId",
+          fallbackError
+        );
       }
     }
   }, [session, publisher]);
-  
-  
 
   const getToken = async () => {
     const sessionId = await createSession(paramGameRoomId);
@@ -653,7 +659,7 @@ const GamePlay = () => {
         </>
       ) : (
         <>
-          <div className="relative h-[45vh] w-full rounded-lg bg-white">
+          <div className="relative h-[45vh] w-full">
             <Button
               onClick={() => setCamChatting(false)}
               className="border-1 absolute right-[3%] top-[3%] z-20 h-12 w-20 rounded-lg border-black bg-gradient-to-r from-emerald-300 to-emerald-500 font-bold text-white shadow-3d"
@@ -705,10 +711,11 @@ const GamePlay = () => {
                       // <Button key={idx} onClick={handleButtonClick}>
                       //   {clientData}
                       // </Button>
-                      <div className="flex justify-center">
+                      <div className="grid grid-cols-2 gap-4">
                         <Button
                           key={idx}
                           onClick={() => handleButtonClick(clientData)}
+                          className="bg-gradient-to-r from-purple-600 to-teal-300 p-2"
                         >
                           {clientData}
                         </Button>
