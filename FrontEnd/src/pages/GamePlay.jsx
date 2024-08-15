@@ -410,6 +410,7 @@ const GamePlay = () => {
       );
     }
   }, [username, session, subscribers]);
+  
 
   useEffect(() => {
     const initSession = async () => {
@@ -423,37 +424,50 @@ const GamePlay = () => {
 
   const switchCamera = useCallback(async () => {
     if (!session || !publisher) return;
-
+  
     try {
-        // 모든 비디오 입력 장치 가져오기
-        const devices = await navigator.mediaDevices.enumerateDevices();
-        const videoDevices = devices.filter(device => device.kind === 'videoinput');
-
-        // 후방 카메라 장치 선택 (label에서 'back', 'rear' 등 키워드를 찾음)
-        const rearCamera = videoDevices.find(device => 
-            device.label.toLowerCase().includes('back') ||
-            device.label.toLowerCase().includes('rear')
-        );
-
-        // 후방 카메라가 없으면 기본 카메라 사용 (일반적으로 첫 번째 장치)
-        const selectedDeviceId = rearCamera ? rearCamera.deviceId : videoDevices[0].deviceId;
-
-        // 선택된 장치 ID로 스트림 가져오기
-        const mediaStream = await navigator.mediaDevices.getUserMedia({
-            video: { deviceId: { exact: selectedDeviceId } },
-            audio: false
-        });
-
-        const newTrack = mediaStream.getVideoTracks()[0];
-
-        // 기존 퍼블리셔의 트랙을 새 트랙으로 교체
-        await publisher.replaceTrack(newTrack);
-        console.log('New track has been published');
-
+      // 우선 환경 설정으로 후방 카메라 시도 (environment)
+      const mediaStream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: { exact: "environment" } },
+        audio: false,
+      });
+  
+      const newTrack = mediaStream.getVideoTracks()[0];
+      await publisher.replaceTrack(newTrack);
+      console.log("New track has been published using facingMode: environment");
+  
     } catch (error) {
-        console.error('Error replacing track', error);
+      console.warn("facingMode: 'environment' failed, trying with deviceId", error);
+  
+      // facingMode가 실패할 경우, deviceId 방식으로 시도
+      try {
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        const videoDevices = devices.filter(device => device.kind === "videoinput");
+  
+        const rearCamera = videoDevices.find(device => 
+          device.label.toLowerCase().includes("back") ||
+          device.label.toLowerCase().includes("rear") ||
+          device.label.toLowerCase().includes("환경") ||
+          device.label.toLowerCase().includes("후면")
+        );
+  
+        const selectedDeviceId = rearCamera ? rearCamera.deviceId : videoDevices[0].deviceId;
+  
+        const mediaStream = await navigator.mediaDevices.getUserMedia({
+          video: { deviceId: { exact: selectedDeviceId } },
+          audio: false,
+        });
+  
+        const newTrack = mediaStream.getVideoTracks()[0];
+        await publisher.replaceTrack(newTrack);
+        console.log("New track has been published using deviceId");
+  
+      } catch (fallbackError) {
+        console.error("Error switching camera with both facingMode and deviceId", fallbackError);
+      }
     }
-  }, [session, publisher]); 
+  }, [session, publisher]);
+  
   
 
   const getToken = async () => {
