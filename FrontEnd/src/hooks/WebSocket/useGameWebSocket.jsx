@@ -160,14 +160,16 @@ const useGameWebSocket = () => {
       case "end": // 게임 종료 조건(인원수)
         setGameStatus(false);
         setToOffChatting(true); // 종료 시 true로 변환
-        alert("게임이 종료되었습니다.");
+        alert("게임이 종료되었습니다. 결과를 확인해주세요.");
         endGame(msg);
         break;
       case "playerCount":
         const count = parseInt(msg.count, 10);
         console.log("웹소켓 메시지로 받는 남은 인원수 : " + count);
         setPlayerCount(count);
-        alert(`남은 인원 수: ${count}`);
+        if (count > 2) {
+          alert(`인원 변동! 이제 ${count}명 남았습니다.`);
+        }
         break;
       case "useItem":
         const effect = msg.effect;
@@ -210,8 +212,8 @@ const useGameWebSocket = () => {
 
     if (effect === "blockScreen") {
       sessionStorage.setItem("itemInEffect", "blockScreen");
-      alert("방해 폭탄 공격을 맞았습니다!");
       setBlockScreen(true); // GamePlay.jsx
+      alert("방해 폭탄 공격을 맞았습니다!");
       effectTimeoutRef.current = setTimeout(() => {
         setBlockScreen(false);
         if (sessionStorage.getItem("itemInEffect") === "blockScreen") {
@@ -222,8 +224,8 @@ const useGameWebSocket = () => {
       }, 30 * 1000);
     } else if (effect === "blockGPS") {
       sessionStorage.setItem("itemInEffect", "blockGPS");
-      alert("상대가 스텔스 망토를 작동했습니다!");
       setBlockGPS(true); // useTargetMarker.jsx
+      alert("상대가 스텔스 망토를 작동했습니다!");
       effectTimeoutRef.current = setTimeout(() => {
         setBlockGPS(false);
         if (sessionStorage.getItem("itemInEffect") === "blockGPS") {

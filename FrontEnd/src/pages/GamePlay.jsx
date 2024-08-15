@@ -95,6 +95,9 @@ const GamePlay = () => {
 
       if (response.status == 200) {
         useItem(itemId);
+        if (itemId == 3) {
+          alert("강화 총알 효과가 30초간 적용됩니다!");
+        }
       } else {
         alert("아이템 사용중 오류가 발생했습니다.");
       }

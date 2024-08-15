@@ -24,7 +24,6 @@ const PopOverCamera = ({
   const { getBullet } = useBullet();
   const { gameRoomId: paramGameRoomId } = useParams();
 
-
   // 새로운 미션이 시작될 때 후면 카메라로 전환
   useEffect(() => {
     if (open) {
@@ -37,7 +36,6 @@ const PopOverCamera = ({
       switchCamera("user"); // 정면 카메라로 전환
     };
   }, [open, switchCamera]);
-
 
   const captureImage = () => {
     setIsButtonDisabled(true); // 수정부분
@@ -81,7 +79,7 @@ const PopOverCamera = ({
               const obtained = response.data.itemId;
               getItem(obtained);
               getBullet(1);
-              alert(`미션 성공! 아이템 ID: ${obtained}`);
+              alert("미션 성공! 유용한 도구와 총알을 획득했습니다.");
             } else if (response.status === 202) {
               alert("미션 실패!");
               setIsButtonDisabled(false); // 수정부분
