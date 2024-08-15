@@ -31,7 +31,7 @@ export const GameProvider = ({ children }) => {
   }); // 게임방 플레이 상태
   const [isAlive, setIsAlive] = useState(() => {
     const savedIsAlive = sessionStorage.getItem("isAlive");
-    return savedIsAlive === "true";
+    return savedIsAlive == "true";
   }); // 플레이어의 생존 상태 (게임 시작 시 true로 전환되고 sessionStorage에 저장됨)
   const [areaCenter, setAreaCenter] = useState(() => {
     const savedCenter = sessionStorage.getItem("areaCenter"); // 기본적으로 String
@@ -72,8 +72,11 @@ export const GameProvider = ({ children }) => {
   const [blockGPS, setBlockGPS] = useState(false); // 스텔스 망토
   const [blockScreen, setBlockScreen] = useState(false); // 방해 폭탄
 
-  const DISTANCE_TO_CATCH = 5; // 잡기 버튼이 활성화되기 위한 타겟과의 거리
-  const DISTANCE_ENHANCED_BULLET = 10; // 강화 총알 거리
+  // const DISTANCE_TO_CATCH = 5; // 잡기 버튼이 활성화되기 위한 타겟과의 거리
+  // const DISTANCE_ENHANCED_BULLET = 10; // 강화 총알 거리
+
+  const DISTANCE_TO_CATCH = 20; // 시연용
+  const DISTANCE_ENHANCED_BULLET = 40; // 시연용
   const [distToCatch, setDistToCatch] = useState(DISTANCE_TO_CATCH);
 
   // 총알 관리

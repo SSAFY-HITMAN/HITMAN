@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef, useContext } from "react";
 import { GameContext } from "@/context/GameContext";
 import axiosInstance from "@/api/axiosInstance";
-import useBullet from "@/hooks/Map/useBullet";
 
 const useCatchTarget = () => {
   const {
