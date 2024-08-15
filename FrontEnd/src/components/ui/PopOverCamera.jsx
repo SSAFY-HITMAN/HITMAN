@@ -7,7 +7,7 @@ import useBullet from "@/hooks/Map/useBullet";
 import axiosInstance from "@/api/axiosInstance"; // 추가
 
 import * as Popover from "@radix-ui/react-popover";
-import UserVideoComponent from "@/hooks/WebRTC/UserVideoComponent";
+import MissionVideoComponent from "@/hooks/WebRTC/MissionVideoComponent";
 
 // missionId 추가
 const PopOverCamera = ({
@@ -110,7 +110,7 @@ const PopOverCamera = ({
             style={{ objectFit: "cover", width: "320px", zIndex: 500 }}
             onClick={() => handleMainVideoStream(publisher)}
           >
-            <UserVideoComponent streamManager={publisher} />
+            <MissionVideoComponent streamManager={publisher} />
           </div>
         )}
       </div>

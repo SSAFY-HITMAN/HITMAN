@@ -431,10 +431,8 @@ const GamePlay = () => {
         video: { facingMode: { exact: "environment" } },
         audio: false,
       });
-      console.log("아이폰 시작! mediaStream =====> ",  mediaStream);
       
       const newTrack = mediaStream.getVideoTracks()[0];
-      console.log("아이폰 시작! newTrack =====> ",  newTrack);
 
       await publisher.replaceTrack(newTrack);
       console.log("New track has been published using facingMode: environment");
@@ -446,7 +444,6 @@ const GamePlay = () => {
       try {
         const devices = await navigator.mediaDevices.enumerateDevices();
         const videoDevices = devices.filter(device => device.kind === "videoinput");
-        console.log("갤럭시 시작! videoDevices ====> ", videoDevices);
         
         const rearCamera = videoDevices.find(device => 
           device.label.toLowerCase().includes("back") ||
@@ -454,7 +451,6 @@ const GamePlay = () => {
           device.label.toLowerCase().includes("환경") ||
           device.label.toLowerCase().includes("후면")
         );
-        console.log("갤럭시 시작! rearCamera ====> ", rearCamera);
   
         const selectedDeviceId = rearCamera ? rearCamera.deviceId : videoDevices[0].deviceId;
   

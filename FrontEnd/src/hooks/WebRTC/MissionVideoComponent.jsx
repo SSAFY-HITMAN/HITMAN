@@ -1,10 +1,10 @@
-// UserVideoComponent.jsx
+// MissionVideoComponent.jsx
 import React, { Component } from 'react';
-import OpenViduVideoComponent from './OvVideo';
+import MissionVideo from './MissionVideo';
 import "./UserVideo.css";  
 import { UndoIcon } from 'lucide-react';
 
-export default class UserVideoComponent extends Component {
+export default class MissionVideoComponent extends Component {
 
     getNicknameTag() {
         // 사용자 닉네임을 가져옵니다.
@@ -26,8 +26,8 @@ export default class UserVideoComponent extends Component {
             <div>
                 {/* {this.props.streamManager !== undefined ? ( */}
                     <div className="streamcomponent">
-                        <OpenViduVideoComponent 
-                            style={{ height: "60%" }}
+                        <MissionVideo 
+                            style={{ height: "70%" }}
                             streamManager={this.props.streamManager}
                         />
                         <div><p>{this.getNicknameTag()}</p></div>
