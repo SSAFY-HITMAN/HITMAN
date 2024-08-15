@@ -46,7 +46,7 @@ const CamChatting = () => {
 
             // 30초 후에 자동으로 나가기 설정
             timeoutRef.current = setTimeout(() => {
-                leaveRoomAndNavigate();  // 30초 후에 나가게 하는 함수 호출
+                leaveRoomAndNavigate();  // 20초 후에 나가게 하는 함수 호출
             }, 20000);  // 20,000ms = 20초
 
             intervalRef.current = setInterval(() => {
@@ -186,8 +186,8 @@ const CamChatting = () => {
     };
 
     return (
-        <div className="min-h-screen flex flex-col items-center justify-start pt-12">
-            <div id="session" className="flex flex-col items-center w-full">
+        <div className="min-h-screen flex flex-col items-center justify-start pt-5">
+            <div id="session" className="flex flex-col items-cente">
                 <div id="session-header" className="flex flex-col items-center w-full space-y-2">
                     <input
                         className="bg-red-500 text-white text-lg font-bold py-2 px-4 rounded-lg shadow-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400 w-full max-w-xs"
@@ -202,10 +202,10 @@ const CamChatting = () => {
                     </div>
                 </div>
 
-                <div className="w-full max-w-screen-lg flex flex-col items-center">
+                <div>
                     <Carousel opts={{ align: "start" }}>
                         <CarouselContent>
-                            <div className="flex flex-col w-full space-y-0">
+                            <div>
                                 {subscribers.map((sub, i) => (
                                     <div 
                                         key={sub.id} 
@@ -214,7 +214,7 @@ const CamChatting = () => {
                                     >
                                         <CarouselItem key={`${sub}-${i}`}>
                                             <span>{sub.id}</span>
-                                            <div className="aspect-w-16 aspect-h-36">  
+                                            <div style={{ width: '200px', height: '160px' }}>
                                                 <UserVideoComponent streamManager={sub} />
                                             </div>
                                         </CarouselItem>
@@ -227,7 +227,7 @@ const CamChatting = () => {
 
                 {mainStreamManager ? (
                     <div id="main-video">  
-                        <div className="aspect-w-16 aspect-h-36">  
+                        <div style={{ width: '200px', height: '160px' }}>  
                             <UserVideoComponent streamManager={mainStreamManager} />
                         </div>
                     </div>
