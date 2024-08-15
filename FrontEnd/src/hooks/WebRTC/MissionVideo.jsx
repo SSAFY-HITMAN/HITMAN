@@ -23,14 +23,14 @@ export default class MissionVideo extends Component {
         }
     }
 
-    // applyVideoInversion() {
-    //     // 비디오 요소에 좌우 반전 스타일 적용
-    //     if (this.videoRef.current) {
-    //         this.videoRef.current.style.transform = 'rotateY(180deg)';
-    //         this.videoRef.current.style.WebkitTransform = 'rotateY(180deg)';
-    //         this.videoRef.current.style.MozTransform = 'rotateY(180deg)';
-    //     }
-    // }
+    applyVideoInversion() {
+        // 비디오 요소에 좌우 반전 스타일 적용
+        if (this.videoRef.current) {
+            this.videoRef.current.style.transform = 'rotateY(180deg)';
+            this.videoRef.current.style.WebkitTransform = 'rotateY(180deg)';
+            this.videoRef.current.style.MozTransform = 'rotateY(180deg)';
+        }
+    }
 
     render() {
         // 비디오 요소 생성 및 ref 연결
