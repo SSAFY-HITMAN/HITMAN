@@ -18,13 +18,14 @@ import * as Popover from "@radix-ui/react-popover";
 // { publisher, handleMainVideoStream }
 const GameHeader = ({ switchCamera, publisher, handleMainVideoStream }) => {
   const [isSpread, setIsSpread] = useState(null);
-  const { targetId, missionList, playerCount } = useContext(GameContext);
+  const { targetId, missionList, setMissionList, playerCount } =
+    useContext(GameContext);
 
   //================= 카메라 미션 =========================
 
   const [openCamera, setOpenCamera] = useState(false);
-  const [currentCameraFacingMode, setCurrentCameraFacingMode] = useState("user");
-
+  const [currentCameraFacingMode, setCurrentCameraFacingMode] =
+    useState("user");
 
   const handleMissionClick = missionId => {
     setOpenCamera(missionId);
@@ -36,14 +37,21 @@ const GameHeader = ({ switchCamera, publisher, handleMainVideoStream }) => {
     }
   };
 
+  // 미션 완료시 새로고침 없이 취소선 렌더링 되도록 추가
+  const handleMissionComplete = missionId => {
+    setMissionList(prevMissionList =>
+      prevMissionList.map(mission =>
+        mission.missionId === missionId ? { ...mission, done: true } : mission
+      )
+    );
+  };
+
   // useEffect(() => {
   //   if (!openCamera && currentCameraFacingMode !== "user") {
   //     setCurrentCameraFacingMode("user");
   //     switchCamera("user"); // 정면 카메라로 다시 전환
   //   }
   // }, [openCamera, switchCamera, currentCameraFacingMode]);
-
-
 
   return (
     <div className="flex flex-col items-center justify-center bg-gradient-to-r from-blue-700 to-teal-700 p-4">
@@ -95,6 +103,7 @@ const GameHeader = ({ switchCamera, publisher, handleMainVideoStream }) => {
                         // setOpenCamera(openCamera === mission.id ? null : mission.id)
                         e.preventDefault();
                         setOpenCamera(mission.missionId);
+                        handleMissionComplete(mission.missionId);
                       }}
                       className={`m-1 ${mission.done ? "inset-0 z-40 bg-black bg-opacity-75 text-white line-through" : ""}`}
                     >
