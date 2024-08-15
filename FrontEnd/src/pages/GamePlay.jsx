@@ -384,7 +384,7 @@ const GamePlay = () => {
 
           console.log(message);
           if (message.type === "offer") {
-            window.alert("비밀채팅으로 초대하셨습니다.");
+            window.alert("1:1 채팅으로 초대되었습니다.");
             handleAcceptClick();
           } else if (message.type === "answer") {
             window.alert("초대에 응답했습니다");
