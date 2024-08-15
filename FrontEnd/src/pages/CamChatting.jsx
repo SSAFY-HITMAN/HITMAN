@@ -186,55 +186,51 @@ const CamChatting = () => {
     };
 
     return (
-        <div className="min-h-screen flex flex-col items-center justify-start pt-5">
-            <div id="session" className="flex flex-col items-cente">
-                <div id="session-header" className="flex flex-col items-center w-full space-y-2">
-                    <input
-                        className="bg-red-500 text-white text-lg font-bold py-2 px-4 rounded-lg shadow-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400 w-full max-w-xs"
-                        type="button"
-                        id="buttonLeaveSession"
-                        onClick={leaveRoomAndNavigate}
-                        value="방 떠나기"
-                    />
-                    {/* 남은 시간 표시 */}
-                    <div className="p-2 rounded-lg shadow-md bg-white">
-                        <p className="text-xl font-bold text-center text-red-500">남은 시간: {timeLeft}초</p>
-                    </div>
+        <div>
+            <div id="session-header" className="flex flex-col items-center w-full">
+                <input
+                    className="bg-red-500 text-white text-lg font-bold my-3 py-2 px-4 rounded-lg shadow-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400 w-full max-w-xs"
+                    type="button"
+                    id="buttonLeaveSession"
+                    onClick={leaveRoomAndNavigate}
+                    value="방 떠나기"
+                />
+                {/* 남은 시간 표시 */}
+                <div className="p-2 rounded-lg shadow-md bg-white">
+                    <p className="text-xl font-bold text-center text-red-500">
+                        남은 시간: {timeLeft}초
+                    </p>
                 </div>
-
-                <div>
-                    <Carousel opts={{ align: "start" }}>
-                        <CarouselContent>
-                            <div>
-                                {subscribers.map((sub, i) => (
-                                    <div 
-                                        key={sub.id} 
-                                        className="w-full md:w-1/8" 
-                                        onClick={() => handleMainVideoStream(sub)}
-                                    >
-                                        <CarouselItem key={`${sub}-${i}`}>
-                                            <span>{sub.id}</span>
-                                            <div style={{ width: '200px', height: '160px' }}>
-                                                <UserVideoComponent streamManager={sub} />
-                                            </div>
-                                        </CarouselItem>
-                                    </div>
-                                ))}
-                            </div>
-                        </CarouselContent>
-                    </Carousel>
-                </div>
-
-                {mainStreamManager ? (
-                    <div id="main-video">  
-                        <div style={{ width: '200px', height: '160px' }}>  
-                            <UserVideoComponent streamManager={mainStreamManager} />
-                        </div>
-                    </div>
-                ) : null}
- 
             </div>
+    
+            <div className="flex justify-center mt-4">
+                <Carousel opts={{ align: "start" }}>
+                    <CarouselContent>
+                        <div className="flex flex-wrap justify-center">
+                            {subscribers.map((sub, i) => (
+                                <div key={sub.id} className="p-2">
+                                    <CarouselItem key={`${sub}-${i}`}>
+                                        <span>{sub.id}</span>
+                                        <div style={{ width: '300px', height: '130px' }}>
+                                            <UserVideoComponent streamManager={sub} />
+                                        </div>
+                                    </CarouselItem>
+                                </div>
+                            ))}
+                        </div>
+                    </CarouselContent>
+                </Carousel>
+            </div>
+    
+            {mainStreamManager ? (
+                <div id="main-video" className="flex justify-center mt-4">
+                    <div style={{ width: '300px', height: '130px' }}>
+                        <UserVideoComponent streamManager={mainStreamManager} />
+                    </div>
+                </div>
+            ) : null}
         </div>
     );
+    
 }
 export default CamChatting;
