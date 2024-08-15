@@ -41,15 +41,16 @@ const Home = () => {
     localStorage.clear();
     document.cookie =
       "refreshToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;"; // 쿠키 삭제
-
     // 카카오 로그아웃
-    window.Kakao.Auth.logout()
-      .then(function (response) {
-        console.log(Kakao.Auth.getAccessToken()); // null
-      })
-      .catch(function (error) {
-        console.log("카카오로 로그인한 사용자가 아닙니다.");
-      });
+    if (window.Kakao) {
+      window.Kakao.Auth.logout()
+        .then(function (response) {
+          console.log(Kakao.Auth.getAccessToken()); // null
+        })
+        .catch(function (error) {
+          console.log("카카오로 로그인한 사용자가 아닙니다.");
+        });
+    }
     navigate("/login");
   };
 

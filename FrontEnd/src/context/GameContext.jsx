@@ -98,16 +98,16 @@ export const GameProvider = ({ children }) => {
   // 위치 보정
   const GET_POSITION_COUNT = 5;
 
-  const myLocationRef = useRef(myLocation);
+  // const myLocationRef = useRef(myLocation);
   const targetLocationRef = useRef(targetLocation);
   const areaCenterRef = useRef(areaCenter);
 
-  useEffect(() => {
-    myLocationRef.current = myLocation;
-    // console.log(
-    //   `myLocation: ${myLocationRef.current.lat} ${myLocationRef.current.lng}`
-    // );
-  }, [myLocation]);
+  // useEffect(() => {
+  //   myLocationRef.current = myLocation;
+  //   console.log(
+  //     `myLocation: ${myLocationRef.current.lat} ${myLocationRef.current.lng}`
+  //   );
+  // }, [myLocation]);
 
   useEffect(() => {
     targetLocationRef.current = targetLocation;
@@ -122,21 +122,113 @@ export const GameProvider = ({ children }) => {
     sessionStorage.setItem("playerCount", playerCount);
   }, [playerCount]);
 
-  const calculationAverageLocation = (latSum, lngSum, count) => {
-    const averageLat = latSum / count;
-    const averageLng = lngSum / count;
+  // const calculationAverageLocation = (latSum, lngSum, count) => {
+  //   const averageLat = latSum / count;
+  //   const averageLng = lngSum / count;
 
+  //   const newLocation = {
+  //     lat: averageLat.toFixed(5),
+  //     lng: averageLng.toFixed(5),
+  //   };
+
+  //   setMyLocation(newLocation);
+
+  //   if (areaCenterRef.current) {
+  //     const myDist = approximateDistance(
+  //       myLocationRef.current.lat,
+  //       myLocationRef.current.lng,
+  //       areaCenterRef.current.lat,
+  //       areaCenterRef.current.lng
+  //     );
+  //     setDistance(myDist);
+  //   }
+
+  //   if (targetLocationRef.current) {
+  //     const targetDist = approximateDistance(
+  //       myLocationRef.current.lat,
+  //       myLocationRef.current.lng,
+  //       targetLocationRef.current.lat,
+  //       targetLocationRef.current.lng
+  //     );
+  //     setDistToTarget(targetDist);
+  //   }
+  // };
+
+  // // 내 위치를 잡고, 거리를 계산하는 함수
+  // const fetchLocation = async () => {
+  //   let latSum = 0;
+  //   let lngSum = 0;
+  //   let count = 0;
+
+  //   const successCallback = position => {
+  //     const { latitude, longitude } = position.coords;
+  //     latSum += latitude;
+  //     lngSum += longitude;
+  //     count += 1;
+
+  //     if (count === GET_POSITION_COUNT) {
+  //       calculationAverageLocation(latSum, lngSum, count);
+  //     }
+  //   };
+
+  //   const errorCallback = error => {
+  //     console.log(error);
+  //   };
+
+  //   const positionPromises = [];
+  //   for (let i = 0; i < GET_POSITION_COUNT; i++) {
+  //     positionPromises.push(
+  //       new Promise(resolve => {
+  //         navigator.geolocation.getCurrentPosition(
+  //           position => {
+  //             successCallback(position);
+  //             resolve();
+  //           },
+  //           error => {
+  //             errorCallback(error);
+  //             resolve();
+  //           }
+  //         );
+  //       })
+  //     );
+  //   }
+  //   await Promise.all(positionPromises);
+  // };
+
+  // // gameRoomId 값에 변동이 있다면 sessionStorage에 저장
+  // // 기본적으로 /room 접속 시 useParams 활용해 gameRoomId를 세팅하나, 새로고침 등을 대비해 sessionStorage에 저장
+  // useEffect(() => {
+  //   if (gameRoomId) {
+  //     sessionStorage.setItem("gameRoomId", gameRoomId);
+  //   }
+  // }, [gameRoomId]);
+
+  // // /game-play/:gameRoomId 페이지에 있을 때 내 위치를 실시간으로 변경
+  // const location = useLocation();
+
+  // useEffect(() => {
+  //   const isGamePlayPage = location.pathname.includes(
+  //     `/game-play/${gameRoomId}`
+  //   );
+  //   if (!isGamePlayPage || !navigator.geolocation) return;
+
+  //   const intervalId = setInterval(fetchLocation, 1000); // 1초마다 내 위치 및 거리 계산 함수 실행
+
+  //   return () => clearInterval(intervalId);
+  // }, [location.pathname]);
+
+  const calculationDistanceAndUpdate = (lat, lng) => {
     const newLocation = {
-      lat: averageLat.toFixed(5),
-      lng: averageLng.toFixed(5),
+      lat: parseFloat(lat.toFixed(5)),
+      lng: parseFloat(lng.toFixed(5)),
     };
 
     setMyLocation(newLocation);
 
     if (areaCenterRef.current) {
       const myDist = approximateDistance(
-        myLocationRef.current.lat,
-        myLocationRef.current.lng,
+        newLocation.lat,
+        newLocation.lng,
         areaCenterRef.current.lat,
         areaCenterRef.current.lng
       );
@@ -145,63 +237,14 @@ export const GameProvider = ({ children }) => {
 
     if (targetLocationRef.current) {
       const targetDist = approximateDistance(
-        myLocationRef.current.lat,
-        myLocationRef.current.lng,
+        newLocation.lat,
+        newLocation.lng,
         targetLocationRef.current.lat,
         targetLocationRef.current.lng
       );
       setDistToTarget(targetDist);
     }
   };
-
-  // 내 위치를 잡고, 거리를 계산하는 함수
-  const fetchLocation = async () => {
-    let latSum = 0;
-    let lngSum = 0;
-    let count = 0;
-
-    const successCallback = position => {
-      const { latitude, longitude } = position.coords;
-      latSum += latitude;
-      lngSum += longitude;
-      count += 1;
-
-      if (count === GET_POSITION_COUNT) {
-        calculationAverageLocation(latSum, lngSum, count);
-      }
-    };
-
-    const errorCallback = error => {
-      console.log(error);
-    };
-
-    const positionPromises = [];
-    for (let i = 0; i < GET_POSITION_COUNT; i++) {
-      positionPromises.push(
-        new Promise(resolve => {
-          navigator.geolocation.getCurrentPosition(
-            position => {
-              successCallback(position);
-              resolve();
-            },
-            error => {
-              errorCallback(error);
-              resolve();
-            }
-          );
-        })
-      );
-    }
-    await Promise.all(positionPromises);
-  };
-
-  // gameRoomId 값에 변동이 있다면 sessionStorage에 저장
-  // 기본적으로 /room 접속 시 useParams 활용해 gameRoomId를 세팅하나, 새로고침 등을 대비해 sessionStorage에 저장
-  useEffect(() => {
-    if (gameRoomId) {
-      sessionStorage.setItem("gameRoomId", gameRoomId);
-    }
-  }, [gameRoomId]);
 
   // /game-play/:gameRoomId 페이지에 있을 때 내 위치를 실시간으로 변경
   const location = useLocation();
@@ -212,9 +255,32 @@ export const GameProvider = ({ children }) => {
     );
     if (!isGamePlayPage || !navigator.geolocation) return;
 
-    const intervalId = setInterval(fetchLocation, 1000); // 1초마다 내 위치 및 거리 계산 함수 실행
+    let latestPosition = null;
 
-    return () => clearInterval(intervalId);
+    const successCallback = position => {
+      latestPosition = position.coords;
+    };
+
+    const errorCallback = error => {
+      console.log(error);
+    };
+
+    const watchId = navigator.geolocation.watchPosition(
+      successCallback,
+      errorCallback
+    );
+
+    const intervalId = setInterval(() => {
+      if (latestPosition) {
+        const { latitude, longitude } = latestPosition;
+        calculationDistanceAndUpdate(latitude, longitude);
+      }
+    }, 1000); // 1초에 1번 갱신
+
+    return () => {
+      clearInterval(intervalId);
+      navigator.geolocation.clearWatch(watchId);
+    };
   }, [location.pathname]);
 
   return (
