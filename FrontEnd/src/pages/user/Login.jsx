@@ -39,7 +39,7 @@ const Login = () => {
   const handleKakaoLogin = async () => {
     try {
       await axios.get(`${BASE_URL}/auth/kakao/getURL`).then(resp => {
-        url = resp.data;
+        url = resp.data.link;
       });
 
       Kakao.Auth.authorize({
@@ -55,7 +55,7 @@ const Login = () => {
   const handleGoogleLogin = async () => {
     try {
       await axios.get(`${BASE_URL}/auth/google/getURL`).then(resp => {
-        url = resp.data;
+        url = resp.data.link;
       });
 
       window.location.href = url;
