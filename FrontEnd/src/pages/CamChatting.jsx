@@ -201,28 +201,20 @@ const CamChatting = () => {
                         <p className="text-xl font-bold text-center text-red-500">남은 시간: {timeLeft}초</p>
                     </div>
                 </div>
-    
-                {mainStreamManager ? (
-                    <div id="main-video" className="w-full md:w-1/2">
-                        <div className="aspect-w-16 aspect-h-9">
-                            <UserVideoComponent streamManager={mainStreamManager} />
-                        </div>
-                    </div>
-                ) : null}
-    
+
                 <div className="w-full max-w-screen-lg flex flex-col items-center">
                     <Carousel opts={{ align: "start" }}>
                         <CarouselContent>
-                            <div className="flex flex-col w-full space-y-0"> {/* space-y-0으로 요소 간 간격 없앰 */}
+                            <div className="flex flex-col w-full space-y-0">
                                 {subscribers.map((sub, i) => (
                                     <div 
                                         key={sub.id} 
-                                        className="w-full md:w-1/2"
+                                        className="w-full md:w-1/8" 
                                         onClick={() => handleMainVideoStream(sub)}
                                     >
                                         <CarouselItem key={`${sub}-${i}`}>
                                             <span>{sub.id}</span>
-                                            <div className="aspect-w-16 aspect-h-9">
+                                            <div className="aspect-w-16 aspect-h-36">  
                                                 <UserVideoComponent streamManager={sub} />
                                             </div>
                                         </CarouselItem>
@@ -232,6 +224,15 @@ const CamChatting = () => {
                         </CarouselContent>
                     </Carousel>
                 </div>
+
+                {mainStreamManager ? (
+                    <div id="main-video">  
+                        <div className="aspect-w-16 aspect-h-36">  
+                            <UserVideoComponent streamManager={mainStreamManager} />
+                        </div>
+                    </div>
+                ) : null}
+ 
             </div>
         </div>
     );
