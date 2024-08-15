@@ -186,40 +186,45 @@ const CamChatting = () => {
     };
 
     return (
-        <div>
-            <div id="session">
-                <div id="session-header">
+        <div className="min-h-screen flex flex-col items-center justify-start pt-12">
+            <div id="session" className="flex flex-col items-center w-full">
+                <div id="session-header" className="flex flex-col items-center w-full space-y-2">
                     <input
-                        className="btn btn-large btn-danger"
+                        className="bg-red-500 text-white text-lg font-bold py-2 px-4 rounded-lg shadow-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400 w-full max-w-xs"
                         type="button"
                         id="buttonLeaveSession"
                         onClick={leaveRoomAndNavigate}
                         value="방 떠나기"
                     />
                     {/* 남은 시간 표시 */}
-                    <div>
-                        <p>남은 시간: {timeLeft}초</p>
+                    <div className="p-2 rounded-lg shadow-md bg-white">
+                        <p className="text-xl font-bold text-center text-red-500">남은 시간: {timeLeft}초</p>
                     </div>
                 </div>
     
                 {mainStreamManager ? (
-                    <div id="main-video" className="col-md-6">
-                        <UserVideoComponent streamManager={mainStreamManager} />
+                    <div id="main-video" className="w-full md:w-1/2">
+                        <div className="aspect-w-16 aspect-h-9">
+                            <UserVideoComponent streamManager={mainStreamManager} />
+                        </div>
                     </div>
                 ) : null}
     
-                <div>
-                    <Carousel opts={{ align : "start" }}>
+                <div className="w-full max-w-screen-lg flex flex-col items-center">
+                    <Carousel opts={{ align: "start" }}>
                         <CarouselContent>
-                            <div style={{ display: 'flex', flexWrap: 'wrap', width: '100%' }}>
+                            <div className="flex flex-col w-full space-y-0"> {/* space-y-0으로 요소 간 간격 없앰 */}
                                 {subscribers.map((sub, i) => (
                                     <div 
                                         key={sub.id} 
+                                        className="w-full md:w-1/2"
                                         onClick={() => handleMainVideoStream(sub)}
                                     >
                                         <CarouselItem key={`${sub}-${i}`}>
                                             <span>{sub.id}</span>
-                                            <UserVideoComponent streamManager={sub} />
+                                            <div className="aspect-w-16 aspect-h-9">
+                                                <UserVideoComponent streamManager={sub} />
+                                            </div>
                                         </CarouselItem>
                                     </div>
                                 ))}
@@ -230,6 +235,5 @@ const CamChatting = () => {
             </div>
         </div>
     );
-};
-
+}
 export default CamChatting;
