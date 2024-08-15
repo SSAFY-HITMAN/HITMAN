@@ -30,13 +30,9 @@ const Login = () => {
         localStorage.setItem("email", email);
 
         navigate("/home");
-      } else {
-        alert("로그인에 실패했습니다. 다시 시도해주세요.");
       }
     } catch (err) {
-      alert(
-        "서버와 통신하는 중에 문제가 발생했습니다. 나중에 다시 시도해주세요."
-      );
+      alert("ID 혹은 비밀번호가 틀립니다. 다시 한 번 확인해주세요.");
     }
   };
 
@@ -91,7 +87,7 @@ const Login = () => {
       </div>
       <Button
         type="submit"
-        className="shadow-3d mb-8 w-60 bg-gradient-to-r from-teal-200 to-blue-800 font-bold"
+        className="mb-8 w-60 bg-gradient-to-r from-teal-200 to-blue-800 font-bold shadow-3d"
         onClick={handleLogin}
       >
         로그인
