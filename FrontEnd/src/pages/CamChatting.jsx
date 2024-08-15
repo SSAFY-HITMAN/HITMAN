@@ -187,50 +187,47 @@ const CamChatting = () => {
 
     return (
         <div>
-            {session !== undefined ? (
-                <div id="session">
-                    <div id="session-header">
-                        <input
-                            className="btn btn-large btn-danger"
-                            type="button"
-                            id="buttonLeaveSession"
-                            onClick={leaveRoomAndNavigate}
-                            value="방 떠나기"
-                        />
-                        {/* 남은 시간 표시 */}
-                        
-                        <div>
-                            <p>남은 시간: {timeLeft}초</p>
-                        </div>
-                        
-                    </div>
-
-                    {mainStreamManager !== undefined ? (
-                        <div id="main-video" className="col-md-6">
-                            <UserVideoComponent streamManager={mainStreamManager} />
-                        </div>
-                    ) : null}
+            <div id="session">
+                <div id="session-header">
+                    <input
+                        className="btn btn-large btn-danger"
+                        type="button"
+                        id="buttonLeaveSession"
+                        onClick={leaveRoomAndNavigate}
+                        value="방 떠나기"
+                    />
+                    {/* 남은 시간 표시 */}
                     <div>
-                        <Carousel opts={{ align : "start" }}>
-                            <CarouselContent>
-                                <div style={{ display: 'flex', flexWrap: 'wrap', width: '100%' }}>
-                                    {subscribers.map((sub, i) => (
-                                        <div 
-                                            key={sub.id} 
-                                            onClick={() => handleMainVideoStream(sub)}
-                                        >
-                                            <CarouselItem key={`${sub}-${i}`}>
-                                                <span>{sub.id}</span>
-                                                <UserVideoComponent streamManager={sub} />
-                                            </CarouselItem>
-                                        </div>
-                                    ))}
-                                </div>
-                            </CarouselContent>
-                        </Carousel>
+                        <p>남은 시간: {timeLeft}초</p>
                     </div>
                 </div>
-            ) : null}
+    
+                {mainStreamManager ? (
+                    <div id="main-video" className="col-md-6">
+                        <UserVideoComponent streamManager={mainStreamManager} />
+                    </div>
+                ) : null}
+    
+                <div>
+                    <Carousel opts={{ align : "start" }}>
+                        <CarouselContent>
+                            <div style={{ display: 'flex', flexWrap: 'wrap', width: '100%' }}>
+                                {subscribers.map((sub, i) => (
+                                    <div 
+                                        key={sub.id} 
+                                        onClick={() => handleMainVideoStream(sub)}
+                                    >
+                                        <CarouselItem key={`${sub}-${i}`}>
+                                            <span>{sub.id}</span>
+                                            <UserVideoComponent streamManager={sub} />
+                                        </CarouselItem>
+                                    </div>
+                                ))}
+                            </div>
+                        </CarouselContent>
+                    </Carousel>
+                </div>
+            </div>
         </div>
     );
 };
