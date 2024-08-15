@@ -195,13 +195,13 @@ export const GameProvider = ({ children }) => {
   //   await Promise.all(positionPromises);
   // };
 
-  // // gameRoomId 값에 변동이 있다면 sessionStorage에 저장
-  // // 기본적으로 /room 접속 시 useParams 활용해 gameRoomId를 세팅하나, 새로고침 등을 대비해 sessionStorage에 저장
-  // useEffect(() => {
-  //   if (gameRoomId) {
-  //     sessionStorage.setItem("gameRoomId", gameRoomId);
-  //   }
-  // }, [gameRoomId]);
+  // gameRoomId 값에 변동이 있다면 sessionStorage에 저장
+  // 기본적으로 /room 접속 시 useParams 활용해 gameRoomId를 세팅하나, 새로고침 등을 대비해 sessionStorage에 저장
+  useEffect(() => {
+    if (gameRoomId) {
+      sessionStorage.setItem("gameRoomId", gameRoomId);
+    }
+  }, [gameRoomId]);
 
   // // /game-play/:gameRoomId 페이지에 있을 때 내 위치를 실시간으로 변경
   // const location = useLocation();
