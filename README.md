@@ -28,7 +28,7 @@
 ### 팀원 소개
 | <br/>이름<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | <br/>역할<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | <br/><div align="center">개발 내용</div><br/> |
 |:-:|:-:|:-|
-| 이서영 | 팀장<br/>BE |  |
+| 이서영 | 팀장, BE |  |
 | 최윤석 | BE 리더 |  |
 | 최태민 | BE |  |
 | 이규빈 | FE 리더 | **- FE 아키텍처 설계** (재사용성, 유지보수성을 고려한 폴더와 컴포넌트 설계 및 코딩 컨벤션 수립)<br/>  **- 라이브러리 선정** (유틸리티 퍼스트 CSS 라이브러리인 Tailwind CSS와 헤드리스 UI 컬렉션인 shadcn/ui를 결합하여 스타일링 개발 시간 단축 및 웹사이트 로딩 속도 향상)<br/> **- UI/UX 디자인 총괄** (사용성과 시각적 요소를 모두 고려한 와이어프레임 설계 및 전체 화면 디자인)<br/> **- PWA(Progressive Web App) 설정** (배포 환경에서 적용되지 않았던 문제 해결)<br/> **- 회원, 게임방, 순위, 프로필 관련 기능 구현** |
@@ -49,7 +49,7 @@
 		<img src="https://img.shields.io/badge/Context--Api-000000?style=for-the-badge&logo=react"/>
 		<img src="https://img.shields.io/badge/React_Router-CA4245?style=for-the-badge&logo=react-router&logoColor=white" />
 		<img src="https://img.shields.io/badge/tailwindcss-%2338B2AC.svg?style=for-the-badge&logo=tailwind-css&logoColor=white" />
-		<img src="https://img.shields.io/badge/shadcn/ui-000000?style=for-the-badge"/><br/>
+		<img src="https://img.shields.io/badge/shadcn/ui-000000?style=for-the-badge"/>
 		<img src="https://img.shields.io/badge/vite-%23646CFF.svg?style=for-the-badge&logo=vite&logoColor=white"/>
 		<img src="https://img.shields.io/badge/NPM-%23CB3837.svg?style=for-the-badge&logo=npm&logoColor=white"/>
 		<img src="https://img.shields.io/badge/node.js-6DA55F?style=for-the-badge&logo=node.js&logoColor=white"/>
