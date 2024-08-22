@@ -121,11 +121,12 @@ Login | SignUp | Home | Ranking
 <br/>
 
 ### 게임 방 생성
-Room Setting Dialog | Room | Game Rule Dialog | Game Start
+Game Setting Dialog | Room | Game Rule Dialog | Game Start
 ------- | ------- | ------- | ------- 
-![게임 설정](https://github.com/kevinlee94/hitman/blob/main/README_image/room_setting.png) | ------- | ------- | ------- 
+![게임 설정](https://github.com/kevinlee94/hitman/blob/main/README_image/room_setting.png) | ![게임 방]() | ![게임 규칙](https://github.com/kevinlee94/hitman/blob/main/README_image/game_rule.png) | ![게임 시작]()
 
-
+* 사용자가 방 인원, 게임 시간, 맵 크기 등을 직접 설정할 수 있습니다.
+* 방을 만들면 8자리 방 코드가 생성되고, 다른 사용자들은 이 코드를 입력해 방에 입장할 수 있습니다.
 
 <br/>
 
