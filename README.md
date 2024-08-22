@@ -1,4 +1,4 @@
-<img src="https://github.com/user-attachments/assets/d1144748-575e-46cc-962d-18efd30f8dbb" />
+![프로젝트 타이틀](https://github.com/kevinlee94/hitman/blob/main/README_image/title.png)
 
 ### **HITMAN - 삼성 청년 SW 아카데미(SSAFY) 11th 공통 프로젝트**
 
@@ -103,15 +103,29 @@ Redis : 7.4.0
 ### 앱 진입
 Splash | Onboarding-1 | Onboarding-2 | Onboarding-3 
 ------- | ------- | ------- | ------- 
- <img src="https://github.com/user-attachments/assets/66a43f22-c19b-485c-9fa3-9d50a1c5bb8c" /> | C1-2 | C1-3 | ㅇㅇ 
+<img src="https://github.com/kevinlee94/hitman/blob/main/README_image/splash.png" width="1500" /> | ![온보딩1](https://github.com/kevinlee94/hitman/blob/main/README_image/onboarding_1.png) | ![온보딩2](https://github.com/kevinlee94/hitman/blob/main/README_image/onboarding_2.png) | ![온보딩3](https://github.com/kevinlee94/hitman/blob/main/README_image/onboarding_3.png)
+
+* PWA를 적용한 결과 네이티브 앱처럼 설치가 가능하고, 사용자가 앱을 실행하면 Splash 화면을 볼 수 있습니다.
+* 사용자는 Onboarding 화면을 통해 게임의 컨셉과 규칙을 이해할 수 있습니다.
 
 <br/>
 
-### 로그인
+### 로그인부터 홈까지
+Login | SignUp | Home | Ranking
+------- | ------- | ------- | ------- 
+![로그인](https://github.com/kevinlee94/hitman/blob/main/README_image/login.png) | ![회원가입](https://github.com/kevinlee94/hitman/blob/main/README_image/signup.png) | ![홈 화면](https://github.com/kevinlee94/hitman/blob/main/README_image/home.png) | ![순위](https://github.com/kevinlee94/hitman/blob/main/README_image/ranking.png)
+
+* 사용자는 카카오 또는 구글 소셜로그인이 가능합니다.
+* 홈 화면에서 게임 점수에 따른 순위를 확인하고, 내 프로필을 확인할 수 있습니다.
 
 <br/>
 
-### 메인화면
+### 게임 방 생성
+Room Setting Dialog | Room | Game Rule Dialog | Game Start
+------- | ------- | ------- | ------- 
+![게임 설정](https://github.com/kevinlee94/hitman/blob/main/README_image/room_setting.png) | ------- | ------- | ------- 
+
+
 
 <br/>
 
