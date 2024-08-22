@@ -2,29 +2,29 @@
 
 ### **HITMAN - 삼성 청년 SW 아카데미(SSAFY) 11th 공통 프로젝트**
 
-<br/>
+<br/><br/>
 
 ## 📅 프로젝트 진행 기간
 
 ### 2024.07.02 ~ 2024.08.16(7주)
 
-<br/>
+<br/><br/>
 
 ## ✅ 프로젝트 개요
 
 예능에서만 보던 **꼬리잡기 게임**을 실제로 해보고 싶다는 생각에서 출발한 프로젝트입니다.
 
 
-<br/>
+<br/><br/>
 
 ## 😃 멤버소개
 <table>
 </table>
-<br/>
+<br/><br/>
 
 ## 🥅 프로젝트 목표
 
-<br/>
+<br/><br/>
 
 ## 🛠 기술스택
 
@@ -86,7 +86,7 @@ react : 18.3.1 / javascript : 6.0.2 / vite : 5.3.1 / axios : 1.7.2 / tailwind CS
 
 SpringBoot : 3.2.7 / JDK17 : 17.0.11 / JPA : 3.2.7 / Querydsl : 5.0.0 / JWT : 0.12.5 / Mysql : 9.0.1 / Redis : 7.4.0
 
-<br/>
+<br/><br/>
 
 ## ✅ 기능 소개
 
@@ -121,26 +121,27 @@ Game Setting Dialog | Room | Room Number | Game Rule Dialog
 
 <br/>
 
-### 게임 진행
-Game Play | Misson | Item | Game Result
-------- | ------- | ------- | ------- 
+### 게임 진행 규칙
+![rule_1](https://github.com/kevinlee94/HITMAN/blob/main/README_image/rule_1.png)
+![rule_2](https://github.com/kevinlee94/HITMAN/blob/main/README_image/rule_2.png)
+![rule_3](https://github.com/kevinlee94/HITMAN/blob/main/README_image/rule_3.gif)
 
-<br/>
+<br/><br/>
+
+## ✅ 핵심 기술 설명
+
+![core 1](https://github.com/kevinlee94/HITMAN/blob/main/README_image/core_1.gif)
+![core 2](https://github.com/kevinlee94/HITMAN/blob/main/README_image/core_2.gif)
+![core 3](https://github.com/kevinlee94/HITMAN/blob/main/README_image/core_3.gif)
+
+<br/><br/>
 
 ## 🏠 시스템 아키텍쳐
 <img src="https://github.com/user-attachments/assets/2eab37db-a83c-4715-b910-e3bba87823bb" />
 
-<br/>
+<br/><br/>
 
-## ✅ 핵심 기술 설명
 
-### 1. GPS
-
-### 2. 1:1 화상채팅
-
-### 3. 물체 인식
-
-<br/>
 
 ## 📃 산출물(ERD, 명세서)
 
