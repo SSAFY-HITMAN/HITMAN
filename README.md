@@ -18,7 +18,8 @@
 <br/>
 
 ## 😃 멤버소개
-
+<table>
+</table>
 <br/>
 
 ## 🥅 프로젝트 목표
@@ -79,22 +80,11 @@
 
 ### Front-end
 
-react : 18.3.1 /
-javascript : 6.0.2 /
-vite : 5.3.1 /
-axios : 1.7.2 /
-tailwind CSS : 3.4.5 /
-shadcn/ui : 0.8.0
+react : 18.3.1 / javascript : 6.0.2 / vite : 5.3.1 / axios : 1.7.2 / tailwind CSS : 3.4.5 / shadcn/ui : 0.8.0
 
 ### Back-end
 
-SpringBoot : 3.2.7 /
-JDK17 : 17.0.11 /
-JPA : 3.2.7 /
-Querydsl : 5.0.0 /
-JWT : 0.12.5 /
-Mysql : 9.0.1 /
-Redis : 7.4.0
+SpringBoot : 3.2.7 / JDK17 : 17.0.11 / JPA : 3.2.7 / Querydsl : 5.0.0 / JWT : 0.12.5 / Mysql : 9.0.1 / Redis : 7.4.0
 
 <br/>
 
@@ -120,25 +110,39 @@ Login | SignUp | Home | Ranking
 
 <br/>
 
-### 게임 방 생성
-Game Setting Dialog | Room | Game Rule Dialog | Game Start
+### 게임 방
+Game Setting Dialog | Room | Room Number | Game Rule Dialog
 ------- | ------- | ------- | ------- 
-![게임 설정](https://github.com/kevinlee94/hitman/blob/main/README_image/room_setting.png) | ![게임 방]() | ![게임 규칙](https://github.com/kevinlee94/hitman/blob/main/README_image/game_rule.png) | ![게임 시작]()
+![게임 설정](https://github.com/kevinlee94/hitman/blob/main/README_image/room_setting.png) | ![게임 방](https://github.com/kevinlee94/hitman/blob/main/README_image/room.png) | ![방 코드 입력](https://github.com/kevinlee94/hitman/blob/main/README_image/room_number.png) | ![게임 규칙](https://github.com/kevinlee94/hitman/blob/main/README_image/game_rule.png)
 
-* 사용자가 방 인원, 게임 시간, 맵 크기 등을 직접 설정할 수 있습니다.
+* 사용자가 게임 정원, 게임 시간, 맵 사이즈 등을 직접 설정해 게임 방을 만들 수 있습니다.
 * 방을 만들면 8자리 방 코드가 생성되고, 다른 사용자들은 이 코드를 입력해 방에 입장할 수 있습니다.
+* 사용자는 방에서 대기중일 때와 게임중에도 게임 규칙을 확인할 수 있습니다.
+
+<br/>
+
+### 게임 진행
+Game Play | Misson | Item | Game Result
+------- | ------- | ------- | ------- 
 
 <br/>
 
 ## 🏠 시스템 아키텍쳐
 <img src="https://github.com/user-attachments/assets/2eab37db-a83c-4715-b910-e3bba87823bb" />
+
 <br/>
 
 ## ✅ 핵심 기술 설명
 
+### 1. GPS
+
+### 2. 1:1 화상채팅
+
+### 3. 물체 인식
+
 <br/>
 
-## ✅ 산출물(ERD, 명세서)
+## 📃 산출물(ERD, 명세서)
 
 <br/>
 
@@ -150,34 +154,30 @@ Game Setting Dialog | Room | Game Rule Dialog | Game Start
 
 <br/>
 
-## ✅ 추억사진
+## 💯 프로젝트 회고
 
 <br/>
 
-## ✅ 결과공유, 느낀점
+### ❤ 이서영
 
 <br/>
 
-### 이서영
+### 🧡 이규빈
 
 <br/>
 
-### 이규빈
+### 💛 이다율
 
 <br/>
 
-### 이다율
+### 💚 정동찬
 
 <br/>
 
-### 정동찬
+### 💙 최윤석
 
 <br/>
 
-### 최윤석
-
-<br/>
-
-### 최태민
+### 💜 최태민
 
 <br/>
