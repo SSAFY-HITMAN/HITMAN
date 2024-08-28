@@ -156,7 +156,7 @@ Game Setting Dialog | Room | Room Number | Game Rule Dialog
 
 ## 📃 산출물(ERD, 명세서)
 
-![ERD](https://github.com/kevinlee94/HITMAN/blob/main/README_image/ER%20Diagram.png)
+![ERD](https://github.com/user-attachments/assets/ab8aa417-5a5e-4cc8-b4f3-8ab1f13d875d)
 
 <br/>
 
