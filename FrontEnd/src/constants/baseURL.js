@@ -1,4 +1,7 @@
-export const BASE_URL = "https://i11b205.p.ssafy.io/api";
-export const WS_BASE_URL = "wss://i11b205.p.ssafy.io/api";
+// 배포용 URL
+export const BASE_URL = "https://";
+export const WS_BASE_URL = "wss://";
+
+// 개발용 로컬 URL
 // export const BASE_URL = "http://localhost:8080";
 // export const WS_BASE_URL = "ws://localhost:8080";
