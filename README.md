@@ -28,7 +28,7 @@
 ### 팀원 소개
 | <br/>이름<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | <br/>역할<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | <br/><div align="center">개발 내용</div><br/> |
 |:-:|:-:|:-|
-| 이서영 | 팀장, BE |  |
+| 이서영 | 팀장, BE | **전반적인 게임 로직 설계** (웹소켓을 사용한 게임 입장, 플레이, 아이템 사용 등) |
 | 최윤석 | BE 리더 |  |
 | 최태민 | BE |**- WebSocket을 활용한 실시간 통신 기능** (STOMP 프로토콜을 활용한 클라이언트-서버간 실시간 통신 기술을 통해 게임 대기방 로직 구현 및 Handler 프로토콜을 활용한 1 대 1일 채팅 로직 구현)  |
 | 이규빈 | FE 리더 | **- FE 아키텍처 설계** (재사용성, 유지보수성을 고려한 폴더와 컴포넌트 설계 및 코딩 컨벤션 수립)<br/>  **- 라이브러리 선정** (유틸리티 퍼스트 CSS 라이브러리인 Tailwind CSS와 헤드리스 UI 컬렉션인 shadcn/ui를 결합하여 스타일링 개발 시간 단축 및 웹사이트 로딩 속도 향상)<br/> **- UI/UX 디자인 총괄** (사용성과 시각적 요소를 모두 고려한 와이어프레임 설계 및 전체 화면 디자인)<br/> **- PWA(Progressive Web App) 설정** (배포 환경에서 적용되지 않았던 문제 해결)<br/> **- 회원, 게임방, 순위, 프로필 관련 기능 구현** |
@@ -169,7 +169,7 @@ Game Setting Dialog | Room | Room Number | Game Rule Dialog
 ## 💯 프로젝트 회고
 
 ### ❤ 이서영
-
+* 촉박한 일정에도 불구하고 다들 열심히 해주어서 고맙습니다. 처음 해보는 시도에 우여곡절 많았지만 모두의 노력 덕분에 좋은 결과 낼 수 있었던 것 같습니다.
 <br/>
 
 ### 🧡 최윤석
